@@ -3,7 +3,7 @@
 int main()
 {
 	Context *ctx;
-
+	char *msg;
 	ctx = init();
 	while (1)
 	{
@@ -11,8 +11,9 @@ int main()
 		SDLX_InputLoop();
 		SDLX_InputUpdate();
 		SDLX_ButtonUpdate();
-		// SDLX_TimedLoop(&core, ctx);
-		core(ctx);
+		SDLX_TimedLoop(&core, ctx);
+		msg = input(ctx);
+		core(ctx, msg);
 
 		SDL_RenderPresent(ctx->display->renderer);
 	}

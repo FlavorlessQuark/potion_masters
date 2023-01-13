@@ -20,7 +20,7 @@
 # define TOK_B 1
 # define TOK_C 2
 # define TOK_D 3
-# define TOK_S 4
+# define TOK_R 4
 
 
 typedef struct Card
@@ -29,6 +29,7 @@ typedef struct Card
 	uint8_t cost[TOK_COUNT - 1];
 	uint8_t points;
 	uint8_t type;
+	uint8_t id;
 }	Card;
 
 typedef struct Row
@@ -53,9 +54,11 @@ typedef struct Board
 
 typedef struct Player
 {
-	Card reserved[MAX_RESERVE];
+	Card *reserved[MAX_RESERVE];
 	SDLX_Button reservedButton[MAX_ROWCARD];
 	uint8_t tokens[TOK_COUNT];
+	uint8_t owned[TOK_COUNT];
+	uint8_t reserveCount;
 }	Player;
 
 typedef struct Context
@@ -64,6 +67,7 @@ typedef struct Context
 	uint8_t  turn;
 
 	Board	board;
+	Card 	*cards;
 	Player players[MAX_PLAYERS];
 	SDLX_Display *display;
 }	Context;

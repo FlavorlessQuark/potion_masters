@@ -25,6 +25,7 @@ SRCS_NAMES =								\
 	$(addprefix $(SDLX_DIR), $(SDLX_NAMES))	\
 	game				\
 	init				\
+	input 				\
 	main 				\
 	utils				\
 

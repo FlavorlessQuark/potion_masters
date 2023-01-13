@@ -3,14 +3,6 @@
 int checkRow();
 
 
-// msg = "Player|Action"
-// Action -> Reserve : r-[card-id]
-// 		  -> Pay : p-[card_id]
-//        -> Take : t-[tok1, tok2, tok3, tok4, tok5]
-int decodeMsg(Context *ctx, char *msg)
-{
-
-}
 
 int core(void *arg, char *msg)
 {
@@ -32,10 +24,19 @@ int core(void *arg, char *msg)
 							   255);
 			SDL_RenderDrawRect(ctx->display->renderer, ctx->board.rows[0].cardButton[i].boundingBox);
 		// }
-		if ((ctx->board.rows[0].cardButton[i].triggered))
-		{
-			SDL_Log("triggered, %d %d %d %d + %d point| Remaining:  | points : %d");
-		}
+	}
+	for (int i = 0; i < ctx->players[0].reserveCount; i++)
+	{
+		// if (ctx->board.rows[0].revealed[i] != NULL)
+		// {
+
+			SDL_SetRenderDrawColor(ctx->display->renderer,
+							   255 * (ctx->players[0].reservedButton[i].triggered),
+							   255 * (ctx->players[0].reservedButton[i].state == SDLX_FOCUS_STAY),
+							   0,
+							   255);
+			SDL_RenderDrawRect(ctx->display->renderer, ctx->players[0].reservedButton[i].boundingBox);
+		// }
 	}
 	SDL_SetRenderDrawColor(ctx->display->renderer, 0, 0, 0, 255);
 }

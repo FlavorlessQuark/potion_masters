@@ -1,5 +1,11 @@
 #include "../includes/splendor.h"
 
+void payrReserved(Player *player, int position)
+{
+	player->reserved[position] = player->reserved[player->reserveCount - 1];
+	player->reserveCount--;
+}
+
 int replaceCard(Row *row, int position)
 {
 	int random;
