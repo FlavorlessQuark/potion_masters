@@ -11,8 +11,9 @@ int main()
 		SDLX_InputLoop();
 		SDLX_InputUpdate();
 		SDLX_ButtonUpdate();
-		SDLX_TimedLoop(&core, ctx);
+		// SDLX_TimedLoop(&core, ctx);
 		msg = input(ctx);
+		decodeMsg(ctx, msg);
 		core(ctx, msg);
 
 		SDL_RenderPresent(ctx->display->renderer);

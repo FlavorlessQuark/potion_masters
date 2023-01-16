@@ -7,9 +7,30 @@
 
 # define ROW_CARD_COUNT 4
 
-void initPlayerCard(SDLX_RectContainer *card)
+void initPlayers(Context *ctx)
 {
 	// card->alignment = SDLX
+
+	SDL_Rect rect;
+
+	rect.x = 100;
+	rect.y = 300;
+	rect.w = 50;
+	rect.h = 50;
+	memset(ctx->players[0].owned, 0, 5 * sizeof(uint8_t));
+	ctx->players[0].reserveCount = 0;
+	memset(ctx->players[0].tokens, 0, 5 *sizeof(uint8_t));
+	SDLX_ButtonCreate(&ctx->players[0].reservedButton[0], NULL);
+	SDLX_ButtonCreate(&ctx->players[0].reservedButton[1], NULL);
+	SDLX_ButtonCreate(&ctx->players[0].reservedButton[2], NULL);
+	SDLX_ButtonCreate(&ctx->players[0].reservedButton[3], NULL);
+	ctx->players[0].reservedButton[0]._boundingBox = rect;
+	rect.x += 60;
+	ctx->players[0].reservedButton[1]._boundingBox = rect;
+	rect.x += 60;
+	ctx->players[0].reservedButton[2]._boundingBox = rect;
+	rect.x += 60;
+	ctx->players[0].reservedButton[3]._boundingBox = rect;
 }
 
 void initBoardItems(Context *ctx)
@@ -36,7 +57,7 @@ void initRowCards(Row *row, int y)
 
 	for (int i = 0; i < row->remainCount; i++)
 	{
-		row->remaining[i] = (Card) {.cost[0] = 1, .cost[1] = 1, .cost[2] = 1, .cost[3] = 1, .points = rand() % 4};
+		row->remaining[i] = (Card) {.cost[0] = 1, .cost[1] = 1, .cost[2] = 1, .cost[3] = 1, .points = rand() % 4, .type = rand() % 4};
 		SDLX_SpriteCreate(&row->remaining[i].sprite, 1, NULL);
 	}
 
@@ -89,6 +110,7 @@ Context *init()
 	ctx->display = SDLX_DisplayGet();
 	ctx->board.remainingTitles = MAX_TITLES;
 	initRows(ctx->board.rows);
+	initPlayers(ctx);
 
 
 	return ctx;

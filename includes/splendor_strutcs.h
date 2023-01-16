@@ -9,6 +9,8 @@
 # define MAX_ROWCARD 4
 # define MAX_TITLES 5
 
+# define CARD_TYPES 4
+
 # define ROW_COUNT 3
 # define TOK_COUNT 5
 
@@ -23,6 +25,8 @@
 # define TOK_R 4
 
 
+
+
 typedef struct Card
 {
 	SDLX_Sprite sprite;
@@ -31,6 +35,15 @@ typedef struct Card
 	uint8_t type;
 	uint8_t id;
 }	Card;
+
+typedef struct Player
+{
+	Card *reserved[MAX_RESERVE];
+	SDLX_Button reservedButton[MAX_ROWCARD];
+	uint8_t tokens[TOK_COUNT];
+	uint8_t owned[CARD_TYPES];
+	uint8_t reserveCount;
+}	Player;
 
 typedef struct Row
 {
@@ -52,14 +65,6 @@ typedef struct Board
 	Row 	rows[ROW_COUNT];
 }	Board;
 
-typedef struct Player
-{
-	Card *reserved[MAX_RESERVE];
-	SDLX_Button reservedButton[MAX_ROWCARD];
-	uint8_t tokens[TOK_COUNT];
-	uint8_t owned[TOK_COUNT];
-	uint8_t reserveCount;
-}	Player;
 
 typedef struct Context
 {
