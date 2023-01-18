@@ -23,10 +23,11 @@ SDLX_NAMES = 			\
 
 SRCS_NAMES =								\
 	$(addprefix $(SDLX_DIR), $(SDLX_NAMES))	\
+	config_parser		\
 	game				\
 	init				\
 	input 				\
-	main 				\
+	test 				\
 	utils				\
 
 SRCS = $(addprefix $(SRCS_DIR), $(addsuffix .c, $(SRCS_NAMES)))
