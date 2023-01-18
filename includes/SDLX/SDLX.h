@@ -76,6 +76,8 @@ void		SDLX_ButtonSet_Neighbours(SDLX_Button *dest, SDLX_Button *left, SDLX_Butto
  */
 void 		SDLX_SpritePrint(SDLX_Sprite *sprite);
 
+SDLX_RectContainer *parse_UIConfig(char *filename);
+void SDLX_ContainerPrint(SDLX_RectContainer *current,SDLX_RectContainer *parent);
 void SDLX_ContainerElemCreate(SDLX_ContainerElem *dest, SDL_Rect *boundingBox, int margin, int widthType, int heightType);
 void SDLX_ContainerUpdate(SDLX_RectContainer *container, SDLX_RectContainer *parent);
 

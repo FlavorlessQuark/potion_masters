@@ -4,6 +4,7 @@ int main()
 {
 	Context *ctx;
 	char *msg;
+
 	ctx = init();
 	while (1)
 	{

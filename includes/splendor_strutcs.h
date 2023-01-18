@@ -53,7 +53,7 @@ typedef struct Row
 	Card	*remaining;
 	Card	*revealed[MAX_ROWCARD];
 	SDLX_Button cardButton[MAX_ROWCARD];
-
+	SDLX_Sprite rowIcon;
 }	Row;
 
 typedef struct Board

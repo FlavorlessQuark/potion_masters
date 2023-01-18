@@ -27,7 +27,7 @@ SRCS_NAMES =								\
 	game				\
 	init				\
 	input 				\
-	test 				\
+	main 				\
 	utils				\
 
 SRCS = $(addprefix $(SRCS_DIR), $(addsuffix .c, $(SRCS_NAMES)))

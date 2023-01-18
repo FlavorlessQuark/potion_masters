@@ -12,18 +12,31 @@ int core(void *arg, char *msg)
 	static uint8_t owned[4];
 
 	ctx = (Context *)arg;
-	for (int i = 0; i < MAX_ROWCARD; i++)
-	{
-		// if (ctx->board.rows[0].revealed[i] != NULL)
-		// {
 
+	for (int x = 0; x < ROW_COUNT; x++)
+	{
+		if (ctx->board.rows[x].remainCount > 0)
+		{
 			SDL_SetRenderDrawColor(ctx->display->renderer,
-							   255 * (ctx->board.rows[0].cardButton[i].triggered),
-							   255 * (ctx->board.rows[0].cardButton[i].state == SDLX_FOCUS_STAY),
-							   255,
-							   255);
-			SDL_RenderDrawRect(ctx->display->renderer, ctx->board.rows[0].cardButton[i].boundingBox);
-		// }
+								255,
+								255,
+								255,
+								255);
+			SDL_RenderDrawRect(ctx->display->renderer, ctx->board.rows[x].rowIcon.dst);
+		}
+		for (int i = 0; i < MAX_ROWCARD; i++)
+		{
+			if (ctx->board.rows[x].revealed[i] != NULL)
+			{
+
+				SDL_SetRenderDrawColor(ctx->display->renderer,
+								255 * (ctx->board.rows[x].cardButton[i].triggered),
+								255 * (ctx->board.rows[x].cardButton[i].state == SDLX_FOCUS_STAY),
+								255,
+								255);
+				SDL_RenderDrawRect(ctx->display->renderer, ctx->board.rows[x].cardButton[i].boundingBox);
+			}
+		}
 	}
 	for (int i = 0; i < ctx->players[0].reserveCount; i++)
 	{
