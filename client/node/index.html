@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Button Counter</title>
+    <style>
+      body {
+	  margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <p id="statusText"></p>
+    <button onclick="handleClick()">Press Me</button>
+	<canvas id="canvas" width="500" height="500" style="width: 500px; height:500px"> </canvas>
+
+
+<script>
+  const url_arg_str = window.location.search;
+  const url_params = new URLSearchParams(url_arg_str);
+  const subid = url_params.get('subid');
+  const box_ip = window.location.href.split('/')[2].split(':')[0];
+
+  ws = new WebSocket("ws://" + box_ip + ":50079");
+
+  // wait for websocket to connect
+  ws.onopen = (event) => {
+
+      console.log("openned websocket")
+
+      byte_array = new Uint8Array(1);
+      byte_array[0] = subid;
+      ws.send(byte_array.buffer);
+
+      ws.addEventListener('message', (event) => {
+          console.log(event.data);
+          document.getElementById("statusText").innerHTML = event.data;
+      });
+
+  }
+
+  function handleClick() {
+      ws.send("press");
+  }
+
+  </script>
+ <!-- <script type="text/jscript" src="draw.js" onload="console.log(document.getElementById('canvas').getContext)"></script> -->
+ <script type="text/jscript" src="draw.js" onload="console.log('Here');window.Module({canvas: (() => document.getElementById('canvas'))})"></script>
+ <script>
+	console.log(window.Module)
+
+</script>
+
+</body>
+</html>
