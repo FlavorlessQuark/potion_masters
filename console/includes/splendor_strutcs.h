@@ -24,6 +24,7 @@
 # define TOK_D 3
 # define TOK_R 4
 
+# define ASSETS "../assets"
 
 
 

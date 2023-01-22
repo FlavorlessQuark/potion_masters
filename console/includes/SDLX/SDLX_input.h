@@ -1,8 +1,8 @@
 /**
  *  FILE: SDLX_Input.h
- *  AUTHOR: 
+ *  AUTHOR:
 	    FlavorlessQuark
- *  CONTENTS: 
+ *  CONTENTS:
         SDLX function that have to do with input
 
  *  CREATION: 2022-05-10 17:11:13

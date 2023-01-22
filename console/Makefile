@@ -1,4 +1,4 @@
-NAME = test
+NAME = console_bin
 
 DEBUG_FLAGS = -fsanitize=address -g
 FLAGS = $(DEBUG_FLAGS)
@@ -36,6 +36,17 @@ OBJS = $(addprefix $(BIN_DIR), $(SRCS:.c=.o))
 all: $(NAME)
 # all:
 # 	echo $(SRCS)
+
+html:
+	emcc srcs/test.c srcs/SDLX/*.c -I includes -I includes/SDL2 -I includes/SDLX -s USE_SDL=2 \
+        -s USE_SDL_TTF=2 \
+        -s WASM=0 \
+        -s MODULARIZE=1 \
+        -s ENVIRONMENT=web \
+        -s ALLOW_MEMORY_GROWTH=1 \
+        -s EXPORTED_RUNTIME_METHODS='["cwrap"]' \
+        --preload-file srcs/SDLX/default.ttf \
+        -o draw.js
 
 $(NAME): $(BIN_DIR) $(OBJS)
 	gcc $(FLAGS) $(INCLUDES) -o $(NAME) $(OBJS)  $(STATIC_LIB)
