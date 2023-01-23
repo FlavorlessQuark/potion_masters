@@ -13,6 +13,17 @@ app.get('/draw.js', (req, res) => {
     console.log("Load wasm module")
 	res.sendFile(__dirname + '/draw.js');
 });
+
+app.get('/websocket.js', (req, res) => {
+    console.log("Load wasm module")
+	res.sendFile(__dirname + '/wasm.module.js');
+});
+
+app.get('/wasm.module.js', (req, res) => {
+    console.log("Load wasm module")
+	res.sendFile(__dirname + '/wasm.module.js');
+});
+
 app.get('/draw.data', (req, res) => {
     console.log("Load wasm module")
 	res.sendFile(__dirname + '/draw.data');

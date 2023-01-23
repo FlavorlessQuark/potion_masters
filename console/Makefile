@@ -41,10 +41,12 @@ html:
 	emcc srcs/test.c srcs/SDLX/*.c -I includes -I includes/SDL2 -I includes/SDLX -s USE_SDL=2 \
         -s USE_SDL_TTF=2 \
         -s WASM=0 \
+		-s EXPORT_ES6=1 \
         -s MODULARIZE=1 \
         -s ENVIRONMENT=web \
         -s ALLOW_MEMORY_GROWTH=1 \
-        -s EXPORTED_RUNTIME_METHODS='["cwrap"]' \
+        -s EXPORTED_FUNCTIONS=_main,_test_send,_test_receive \
+		-s EXPORTED_RUNTIME_METHODS=ccall,stringToUTF8,lengthBytesUTF8 \
         --preload-file srcs/SDLX/default.ttf \
         -o draw.js
 
