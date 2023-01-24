@@ -21,13 +21,7 @@ from :
  }
 
 ````
-|
-
-|
-
-|
-
-V
+To:
 
 ````
 #include <emscripten.h>
@@ -54,14 +48,14 @@ int main()
 instead of gcc we use `emcc`
 
 Then we need to add some compile lines.
-IF you use SDl2 you need `-s USE_SDL_TTF=2`
+If you use SDl2 you need `-s USE_SDL_TTF=2`
 If you have some assets you need to preload them with
 
 `--preload-file your_file_or_folder `
 Then in order to have your wasm running as a js module you will need
 ````
- -s WASM=0 \
-		-s EXPORT_ES6=1 \
+ 	-s WASM=0 \
+	-s EXPORT_ES6=1 \
         -s MODULARIZE=1 \
         -s ENVIRONMENT=web \
         -s ALLOW_MEMORY_GROWTH=1 \
@@ -72,7 +66,7 @@ the complete compile command should look like
 ```
 emcc srcs/test.c s -I includes
         -s WASM=0 \
-		-s EXPORT_ES6=1 \
+	-s EXPORT_ES6=1 \
         -s MODULARIZE=1 \
         -s ENVIRONMENT=web \
         -s ALLOW_MEMORY_GROWTH=1 \
@@ -89,7 +83,7 @@ To call to and from JS you will need to add these compile options
 ```
 
 -s EXPORTED_FUNCTIONS=_main,your_test_fn, \
-		-s EXPORTED_RUNTIME_METHODS=ccall,stringToUTF8,lengthBytesUTF8 \
+-s EXPORTED_RUNTIME_METHODS=ccall,stringToUTF8,lengthBytesUTF8 \
 ```
 
 To call a JS function from C, you simply need to use `EM_ASM`
@@ -117,8 +111,8 @@ We will need to find the length of our string , allocate that much space and the
 
 ````
 const byteCount = await Module.lengthBytesUTF8(message) + 1;
-		const msgPtr =  Module._malloc(byteCount);
-		Module.stringToUTF8(message, msgPtr, byteCount);
-		await Module.ccall('test', null, ['string', 'number'], [message, byteCount]);
+const msgPtr =  Module._malloc(byteCount);
+Module.stringToUTF8(message, msgPtr, byteCount);
+await Module.ccall('test', null, ['string', 'number'], [message, byteCount]);
 ````
 
