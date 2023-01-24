@@ -43,18 +43,6 @@ void initPlayers(Context *ctx)
 	ctx->players[0].reservedButton[3]._boundingBox = rect;
 }
 
-void initBoardItems(Context *ctx)
-{
-	SDLX_RectContainer container;
-
-	SDLX_ContainerElemCreate(&container.self, NULL, 0, 0, 0);
-	container.containerCount = 3;
-	container.containers = SDL_calloc(container.containerCount, sizeof(SDLX_RectContainer));
-	container.elemCount = 0;
-	container.alignDirection = SDLX_ALIGN_HORIZONTAL;
-	container.alignment = SDLX_SPACE_EVEN;
-}
-
 void initRowCards(Row *row, SDLX_RectContainer *container)
 {
 	//Parse file data here
@@ -80,27 +68,24 @@ void initRowCards(Row *row, SDLX_RectContainer *container)
 
 }
 
-void initRows(Row *rows, SDLX_RectContainer *root)
+void initRows(Context *ctx, SDLX_RectContainer *root)
 {
-	Card *allocated;
+	ctx->board.rows[TOP_ROW].remainCount = TOP_ROW_COUNT;
+	ctx->board.rows[MID_ROW].remainCount = MID_ROW_COUNT;
+	ctx->board.rows[BOT_ROW].remainCount = BOT_ROW_COUNT;
 
 
-	rows[TOP_ROW].remainCount = TOP_ROW_COUNT;
-	rows[MID_ROW].remainCount = MID_ROW_COUNT;
-	rows[BOT_ROW].remainCount = BOT_ROW_COUNT;
-
-
-	allocated = SDL_calloc(
+	ctx->cards = SDL_calloc(
 		TOP_ROW_COUNT + MID_ROW_COUNT + BOT_ROW_COUNT,
 		sizeof(Card));
-	rows[TOP_ROW].remaining = allocated + 0;
-	rows[MID_ROW].remaining = allocated + TOP_ROW_COUNT;
-	rows[BOT_ROW].remaining = allocated + MID_ROW_COUNT;
+	ctx->board.rows[TOP_ROW].remaining = ctx->cards + 0;
+	ctx->board.rows[MID_ROW].remaining = ctx->cards + TOP_ROW_COUNT;
+	ctx->board.rows[BOT_ROW].remaining = ctx->cards + MID_ROW_COUNT;
 
 	// Init textures here
-	initRowCards(&rows[TOP_ROW], &root->containers[TOP_CARD_ROW]);
-	initRowCards(&rows[MID_ROW], &root->containers[MID_CARD_ROW]);
-	initRowCards(&rows[BOT_ROW], &root->containers[BOT_CARD_ROW]);
+	initRowCards(&ctx->board.rows[TOP_ROW], &root->containers[TOP_CARD_ROW]);
+	initRowCards(&ctx->board.rows[MID_ROW], &root->containers[MID_CARD_ROW]);
+	initRowCards(&ctx->board.rows[BOT_ROW], &root->containers[BOT_CARD_ROW]);
 
 }
 
@@ -125,11 +110,12 @@ Context *init()
 	ctx = SDL_calloc(1, sizeof(Context));
 	ctx->display = SDLX_DisplayGet();
 	ctx->board.remainingTitles = MAX_TITLES;
-
+	ctx->state = 0;
 	root = initUI();
-	initRows(ctx->board.rows, &root->containers[UI_BOARD]);
+	initRows(ctx, &root->containers[UI_BOARD]);
 	initPlayers(ctx);
-
+	cleanupUIConfig(root);
+	SDL_free(root);
 
 	return ctx;
 }

@@ -2,7 +2,7 @@
 
 
 
-void payrReserved(Player *player, int position)
+void payReserved(Player *player, int position)
 {
 	player->reserved[position] = player->reserved[player->reserveCount - 1];
 	player->reserveCount--;
@@ -30,4 +30,21 @@ int replaceCard(Row *row, int position)
 	row->remainCount--;
 
 	return 1;
+}
+
+void cleanupUIConfig(SDLX_RectContainer *container)
+{
+	for (int i = 0; i < container->containerCount; i++)
+		cleanupUIConfig(&container->containers[i]);
+	if (container->containerCount > 0)
+		SDL_free(container->containers);
+	if (container->elemCount > 0)
+		SDL_free(container->elems);
+}
+
+void cleanup(Context *ctx)
+{
+	SDL_free(ctx->cards);
+
+	SDL_free(ctx);
 }

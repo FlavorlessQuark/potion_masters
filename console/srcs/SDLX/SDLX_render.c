@@ -8,6 +8,19 @@ typedef struct _internal_Queues
 
 static _intern_Queues queues;
 
+void SDLX_RenderQueuesCleanup(void)
+{
+	uint32_t i;
+
+	i = 0;
+	while (i < queues.count)
+	{
+		SDL_free(queues.queues[i].sprites);
+		++i;
+	}
+	SDL_free(queues.queues);
+}
+
 void SDLX_RenderQueuesInit()
 {
 	uint32_t i;

@@ -43,6 +43,11 @@ int SDLX_GetKeyState(int key)
 	return state;
 }
 
+void SDLX_InputCleanup(void)
+{
+	SDL_free(keymap);
+}
+
 void SDLX_InputMap(int keyType, int fromKey, int toKey)
 {
 	int i;
@@ -53,7 +58,7 @@ void SDLX_InputMap(int keyType, int fromKey, int toKey)
 	if (keymap_cap <= keymap_size)
 	{
 		keymap_cap = (keymap_cap + 1) * 2;
-		keymap = realloc(keymap, keymap_cap * sizeof(SDLX_KeyMap));
+		keymap = SDL_realloc(keymap, keymap_cap * sizeof(SDLX_KeyMap));
 	}
 
 	keymap[keymap_size].type = keyType;

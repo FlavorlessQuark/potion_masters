@@ -25,6 +25,8 @@ void 		SDLX_RenderAll(SDLX_Display *display);
 void 		SDLX_RenderOne(uint32_t id);
 void        SDLX_RenderReset(SDLX_Display *display);
 
+
+void 		SDLX_RenderQueuesCleanup(void);
 void 		SDLX_RenderQueuesInit();
 void		SDLX_RenderQueuePush(SDLX_Sprite *sprite);
 void        SDLX_RenderQueueFlush(uint32_t id);
@@ -46,6 +48,7 @@ void		SDLX_SpriteCreate(SDLX_Sprite *dest, uint32_t layer, SDL_Texture *texture)
  * SDLX Input functions
  */
 
+void 		SDLX_InputCleanup(void);
 void		SDLX_InputUpdate(void);
 SDLX_Input 	SDLX_InputGet(void);
 int SDLX_GetKeyState(int key);
@@ -64,6 +67,7 @@ int			SDLX_PointInCircle(SDL_Point point, SDLX_Circle circle);
 
 
 // buttons
+void 		SDLX_ButtonsCleanup(void);
 void 		SDLX_ButtonUpdate();
 void 		SDLX_ButtonSet_Keys(int left, int right, int up, int down, int select);
 void 		SDLX_ButtonCreate (SDLX_Button *dest, SDL_Rect *boundingBox);

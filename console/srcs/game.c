@@ -1,61 +1,42 @@
 #include "../includes/splendor.h"
 
-int checkRow();
+int connectScreen(Context *ctx)
+{
+	static uint8_t ready[MAX_PLAYERS];
+	c_string_vec *handles;
 
+	handles = getConnections();
+	ctx->playerCount = handles->len;
+	renderConnectScreen(ctx, ready);
+}
 
+int mainGame(Context *ctx)
+{
+	static int turn;
+	int msgWasExec;
+	char *msg;
+
+	msg = recvFrom(turn);
+	if (msg)
+		msgWasExec = execMsg(ctx, msg);
+	if (msgWasExec)
+		turn = (turn + 1) % ctx->playerCount; // 0 if turn == playCount else turn + 1
+		//render board
+}
 
 int core(void *arg, char *msg)
 {
 	Context *ctx;
-	static uint8_t score;
-	static uint8_t money[5];
-	static uint8_t owned[4];
-
 	ctx = (Context *)arg;
 
-	for (int x = 0; x < ROW_COUNT; x++)
-	{
-		if (ctx->board.rows[x].remainCount > 0)
-		{
-			SDL_SetRenderDrawColor(ctx->display->renderer,
-								255,
-								255,
-								255,
-								255);
-			SDL_RenderDrawRect(ctx->display->renderer, ctx->board.rows[x].rowIcon.dst);
-		}
-		for (int i = 0; i < MAX_ROWCARD; i++)
-		{
-			if (ctx->board.rows[x].revealed[i] != NULL)
-			{
+	// if (ctx->state == EXIT_GAME)
+	// {
+		cleanup(ctx);
+		exit(0);
+	// }
+	// else if (ctx->state == CONNECT_SCREEN)
+	// 	connectScreen(ctx);
+	// else
+	// 	mainGame(ctx);
 
-				SDL_SetRenderDrawColor(ctx->display->renderer,
-								255 * (ctx->board.rows[x].cardButton[i].triggered),
-								255 * (ctx->board.rows[x].cardButton[i].state == SDLX_FOCUS_STAY),
-								255,
-								255);
-				SDL_RenderDrawRect(ctx->display->renderer, ctx->board.rows[x].cardButton[i].boundingBox);
-			}
-		}
-	}
-	for (int i = 0; i < ctx->players[0].reserveCount; i++)
-	{
-		// if (ctx->board.rows[0].revealed[i] != NULL)
-		// // {
-			// SDL_Log("BOX %d,%d } %d %d",
-			// 	 ctx->players[0].reservedButton[i].boundingBox->x,
-			// 	 ctx->players[0].reservedButton[i].boundingBox->y,
-			// 	 ctx->players[0].reservedButton[i].boundingBox->h,
-			// 	 ctx->players[0].reservedButton[i].boundingBox->w
-			//  );
-
-			SDL_SetRenderDrawColor(ctx->display->renderer,
-							   255 * (ctx->players[0].reservedButton[i].triggered),
-							   255 * (ctx->players[0].reservedButton[i].state == SDLX_FOCUS_STAY),
-							   255,
-							   255);
-			SDL_RenderDrawRect(ctx->display->renderer, ctx->players[0].reservedButton[i].boundingBox);
-		// }
-	}
-	SDL_SetRenderDrawColor(ctx->display->renderer, 0, 0, 0, 255);
 }

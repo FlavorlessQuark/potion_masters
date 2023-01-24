@@ -12,6 +12,11 @@ static int keys[5] = {-1, -1, -1, -1, -1};
 # define RIGHT 3
 # define SELECT 4
 
+void SDLX_ButtonsCleanup(void)
+{
+	SDL_free(buttons);
+}
+
 void SDLX_ButtonSet_Neighbours(SDLX_Button *dest, SDLX_Button *left, SDLX_Button *right, SDLX_Button *up, SDLX_Button *down)
 {
 	dest->neighbours[UP] = up;
@@ -34,7 +39,7 @@ void SDLX_ButtonCreate (SDLX_Button *dest, SDL_Rect *boundingBox)
 	if (size >= capacity)
 	{
 		capacity = (capacity * 2) + 1;
-		buttons = realloc(buttons, sizeof(SDLX_Button *) * capacity);
+		buttons = SDL_realloc(buttons, sizeof(SDLX_Button *) * capacity);
 	}
 	buttons[size] = dest;
 

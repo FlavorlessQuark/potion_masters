@@ -5,9 +5,13 @@ void 	SDLX_BackgroundSet(SDL_Texture *bg) {display.background = bg;}
 
 void	SDLX_Close(void)
 {
+	SDL_Log("Cleaning up...");
 	SDL_DestroyWindow(display.window);
     TTF_CloseFont(display.defaultFont);
 
+	SDLX_InputCleanup();
+	SDLX_ButtonsCleanup();
+	SDLX_RenderQueuesCleanup();
     TTF_Quit();
     IMG_Quit();
 	SDL_Quit();

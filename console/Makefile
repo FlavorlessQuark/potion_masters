@@ -24,10 +24,12 @@ SDLX_NAMES = 			\
 SRCS_NAMES =								\
 	$(addprefix $(SDLX_DIR), $(SDLX_NAMES))	\
 	config_parser		\
+	connect				\
 	game				\
 	init				\
-	input 				\
+	IO					\
 	main 				\
+	render				\
 	utils				\
 
 SRCS = $(addprefix $(SRCS_DIR), $(addsuffix .c, $(SRCS_NAMES)))
@@ -36,22 +38,8 @@ OBJS = $(addprefix $(BIN_DIR), $(SRCS:.c=.o))
 all: $(NAME)
 # all:
 # 	echo $(SRCS)
-
-html:
-	emcc srcs/test.c srcs/SDLX/*.c -I includes -I includes/SDL2 -I includes/SDLX -s USE_SDL=2 \
-        -s USE_SDL_TTF=2 \
-        -s WASM=0 \
-		-s EXPORT_ES6=1 \
-        -s MODULARIZE=1 \
-        -s ENVIRONMENT=web \
-        -s ALLOW_MEMORY_GROWTH=1 \
-        -s EXPORTED_FUNCTIONS=_main,_test_send,_test_receive \
-		-s EXPORTED_RUNTIME_METHODS=ccall,stringToUTF8,lengthBytesUTF8 \
-        --preload-file srcs/SDLX/default.ttf \
-        -o draw.js
-
 $(NAME): $(BIN_DIR) $(OBJS)
-	gcc $(FLAGS) $(INCLUDES) -o $(NAME) $(OBJS)  $(STATIC_LIB)
+	gcc $(FLAGS) $(INCLUDES) -o $(NAME) $(OBJS) libc_controlpads.a $(STATIC_LIB)
 
 $(BIN_DIR):
 	mkdir -p $(BIN_DIR)

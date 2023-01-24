@@ -164,6 +164,7 @@ SDLX_RectContainer *parse_UIConfig(char *filename)
 
 	parent = calloc(1, sizeof(SDLX_RectContainer));
 	parse_object(parent, NULL, file);
+	SDL_free(file);
 
 	return parent;
 }
