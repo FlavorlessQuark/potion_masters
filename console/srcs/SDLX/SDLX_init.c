@@ -52,6 +52,7 @@ void SDLX_InitDefault()
         DEFAULT_SDL_FLAG
 	);
     SDLX_RenderQueuesInit();
+	SDL_Log("Render queues initialized");
 	atexit(SDLX_Close);
 }
 

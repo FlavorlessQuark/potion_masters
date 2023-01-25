@@ -110,7 +110,7 @@ Context *init()
 	ctx = SDL_calloc(1, sizeof(Context));
 	ctx->display = SDLX_DisplayGet();
 	ctx->board.remainingTitles = MAX_TITLES;
-	ctx->state = 0;
+	ctx->state = CONNECT_SCREEN;
 	root = initUI();
 	initRows(ctx, &root->containers[UI_BOARD]);
 	initPlayers(ctx);

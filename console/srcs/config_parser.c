@@ -107,7 +107,7 @@ char *parse_object(SDLX_RectContainer *current,SDLX_RectContainer *parent, char 
 		for (int i = 0; i < count && line; i++)
 		{
 			// SDL_Log("Parse line %i %s, parent %p %d", i, line, parent, parent != NULL);
-			SDL_Log("Child %d %p of %p", i, &current->containers[i], current);
+			// SDL_Log("Child %d %p of %p", i, &current->containers[i], current);
 			line = parse_object(&current->containers[i], current, line);
 			if (i > 0  && current != NULL)
 			{
@@ -120,13 +120,13 @@ char *parse_object(SDLX_RectContainer *current,SDLX_RectContainer *parent, char 
 					current->containers[i].self.boundingBox->y += current->containers[i - 1].self.boundingBox->y + current->containers[i - 1].self.boundingBox->h;
 				}
 			}
-			SDL_Log("Container  %p | w %d h %d x %d y %d",
-				&current->containers[i],
-				current->containers[i].self.boundingBox->w,
-				current->containers[i].self.boundingBox->h,
-				current->containers[i].self.boundingBox->x,
-				current->containers[i].self.boundingBox->y
-			);
+			// SDL_Log("Container  %p | w %d h %d x %d y %d",
+			// 	&current->containers[i],
+			// 	current->containers[i].self.boundingBox->w,
+			// 	current->containers[i].self.boundingBox->h,
+			// 	current->containers[i].self.boundingBox->x,
+			// 	current->containers[i].self.boundingBox->y
+			// );
 		}
 	}
 	if (line && line[0] == 'e')

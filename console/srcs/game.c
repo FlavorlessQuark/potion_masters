@@ -29,14 +29,14 @@ int core(void *arg, char *msg)
 	Context *ctx;
 	ctx = (Context *)arg;
 
-	// if (ctx->state == EXIT_GAME)
-	// {
+	if (ctx->state == EXIT_GAME)
+	{
 		cleanup(ctx);
 		exit(0);
-	// }
-	// else if (ctx->state == CONNECT_SCREEN)
-	// 	connectScreen(ctx);
-	// else
-	// 	mainGame(ctx);
+	}
+	else if (ctx->state == CONNECT_SCREEN)
+		connectScreen(ctx);
+	else
+		mainGame(ctx);
 
 }
