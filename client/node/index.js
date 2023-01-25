@@ -9,9 +9,14 @@ app.get('/', (req, res) => {
     res.sendFile(__dirname + '/index.html');
 });
 
-app.get('/draw.js', (req, res) => {
+app.get('/client.js', (req, res) => {
     console.log("Load wasm module")
-	res.sendFile(__dirname + '/draw.js');
+	res.sendFile(__dirname + '/client.js');
+});
+
+app.get('/client.data', (req, res) => {
+    console.log("Load wasm module")
+	res.sendFile(__dirname + '/client.data');
 });
 
 app.get('/websocket.js', (req, res) => {
@@ -24,10 +29,7 @@ app.get('/wasm.module.js', (req, res) => {
 	res.sendFile(__dirname + '/wasm.module.js');
 });
 
-app.get('/draw.data', (req, res) => {
-    console.log("Load wasm module")
-	res.sendFile(__dirname + '/draw.data');
-});
+
 
 server.listen(3000, () => {
     console.log('listening on *:3000');

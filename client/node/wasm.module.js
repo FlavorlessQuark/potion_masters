@@ -1,4 +1,4 @@
-import Module from './draw.js'
+import Module from './client.js'
 
 const wasmModule = Module({
         preRun: [],
