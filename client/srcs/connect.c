@@ -5,7 +5,7 @@ static Context *ctx;
 void recvMessage(char *msg)
 {
 	SDL_Log("received message");
-	ctx->connection.status = HASMESSAGE;
+	ctx->connection.hasMessage = SDL_TRUE;
 	ctx->connection.message = msg;
 }
 

@@ -7,11 +7,12 @@ Context ctx;
 void core(void)
 {
 	SDLX_RenderReset(ctx.display);
-	SDLX_InputLoop();
+	window_events(&ctx);
 	SDLX_InputUpdate();
 	SDLX_ButtonUpdate();
-	if (ctx.state == CONNECT)
-		ConnectScreen(&ctx);
+	// if (ctx.state == CONNECT)
+	// 	ConnectScreen(&ctx);
+	main_screen(&ctx);
 	SDL_RenderPresent(ctx.display->renderer);
 }
 

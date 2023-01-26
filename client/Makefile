@@ -25,10 +25,12 @@ SRCS_NAMES =								\
 	$(addprefix $(SDLX_DIR), $(SDLX_NAMES))	\
 	config_parser	\
 	connect			\
-	connectScreen	\
+	connect_screen	\
 	init		\
+	main_screen \
 	main 		\
-	utils
+	utils		\
+	window_events \
 
 SRCS = $(addprefix $(SRCS_DIR), $(addsuffix .c, $(SRCS_NAMES)))
 OBJS = $(addprefix $(BIN_DIR), $(SRCS:.c=.o))
@@ -47,6 +49,7 @@ html:
         -s EXPORTED_FUNCTIONS=_main,_recvMessage,_setConnectionStatus \
 		-s EXPORTED_RUNTIME_METHODS=ccall,stringToUTF8,lengthBytesUTF8 \
         --preload-file srcs/SDLX/default.ttf \
+		--preload-file assets/ \
         -o $(NAME).js
 		mv $(NAME).js node/$(NAME).js
 		mv $(NAME).data node/$(NAME).data

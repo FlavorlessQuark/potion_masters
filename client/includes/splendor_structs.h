@@ -31,7 +31,9 @@
 
 # define DISCONNECTED 0
 # define CONNECTED 1
-# define HASMESSAGE 2
+# define CONNECTEDCONSOLE 2
+
+# define MAIN_SCREEN_SPRITE_COUNT MAX_RESERVE + (CARD_TYPES * 2) + 1 + 3 + 1 + 1
 
 # define ASSETS "../assets"
 
@@ -47,7 +49,6 @@ typedef struct Card
 typedef struct Player
 {
 	Card *reserved[MAX_RESERVE];
-	SDLX_Button reservedButton[MAX_ROWCARD];
 	uint8_t tokens[TOK_COUNT];
 	uint8_t owned[CARD_TYPES];
 	uint8_t reserveCount;
@@ -78,6 +79,8 @@ typedef struct Connection
 {
 	char *message;
 	uint8_t status;
+	uint8_t hasMessage;
+	SDLX_Button connectButton;
 }			Connection;
 
 typedef struct BuyScreen
@@ -89,6 +92,13 @@ typedef struct BuyScreen
 	SDLX_Button addToken[TOK_COUNT];
 	SDLX_Button delToken[TOK_COUNT];
 }			BuyScreen;
+
+typedef struct MainScreen
+{
+	SDLX_Button reserved[MAX_RESERVE];
+	//			 REserved card + tokens + owned + golden + point display + no card + Buy
+	SDLX_Sprite UI[MAIN_SCREEN_SPRITE_COUNT];
+}		MainScreen;
 
 typedef struct BuyMode
 {
@@ -104,6 +114,7 @@ typedef struct Context
 	Connection connection;
 	Board board;
 	int state;
+	MainScreen *mainscreen;
 	SDLX_Display *display;
 }	Context;
 #endif

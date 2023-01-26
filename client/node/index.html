@@ -10,7 +10,8 @@
   </head>
   <body>
     <p id="statusText"></p>
-    <button onclick="handleMsg()">Press Me</button>
+    <button onclick="handleConnect()">Connect</button>
+    <button onclick="handleDisconnect()">Discoonnect</button>
 	<canvas id="canvas" width="500" height="500" style="width: 500px; height:500px"> </canvas>
 
  <script type="module" src="wasm.module.js"></script>
@@ -31,9 +32,11 @@
 			byte_array = new Uint8Array(1);
 			byte_array[0] = subid;
 			ws.send(byte_array.buffer);
+			console.log("Connection data ",byte_array.buffer, byte_array);
 			Module.ccall('setConnectionStatus', null, ['number'], [1]);
+			// Message from console
 			ws.addEventListener('message', (event) => {
-				console.log(event.data);
+
 				sendToWasm(event.data);
 				document.getElementById("statusText").innerHTML = event.data;
 			});
@@ -60,10 +63,15 @@
 		// Module._free(msgPtr);
 	}
 
-	function handleMsg() {
+
+	function handleConnect() {
 		// sendToWasm("Message sent from JS")
-		// ws.send("press");
-		sendToWasm("THIS IS A MESSAGE");
+		ws.send("r1");
+
+  }
+	function handleDisconnect() {
+		// sendToWasm("Message sent from JS")
+		ws.send("r0");
   }
 
 

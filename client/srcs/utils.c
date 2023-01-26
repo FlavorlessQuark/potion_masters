@@ -50,27 +50,27 @@ char *createMsg(Context *ctx)
 			return msg;
 		}
 	}
-	for (int i = 0; i <ctx->player.reserveCount ; i++)
-	{
-		if ((ctx->player.reservedButton[i].triggered) && input.mouse_buttons[SDL_BUTTON_LEFT] == SDLX_KEYDOWN)
-		{
-			msg[0] = '0';
-			msg[1] = 'p';
-			msg[2] = '1';
-			msg[3] = '0';
-			msg[4] = i + '0';
-			msg[5] = '0';
-			msg[6] = '|';
-			msg[7] = ctx->player.reserved[i]->cost[0] + '0';
-			msg[8] = ctx->player.reserved[i]->cost[1] + '0';
-			msg[9] = ctx->player.reserved[i]->cost[2] + '0';
-			msg[10] = ctx->player.reserved[i]->cost[3] + '0';
-			msg[11] = '0';
-			msg[12] = '\0';
-			SDL_Log("Buy reserve %s", msg);
-			return msg;
-		}
-	}
+	// for (int i = 0; i <ctx->player.reserveCount ; i++)
+	// {
+	// 	if ((ctx->player.reservedButton[i].triggered) && input.mouse_buttons[SDL_BUTTON_LEFT] == SDLX_KEYDOWN)
+	// 	{
+	// 		msg[0] = '0';
+	// 		msg[1] = 'p';
+	// 		msg[2] = '1';
+	// 		msg[3] = '0';
+	// 		msg[4] = i + '0';
+	// 		msg[5] = '0';
+	// 		msg[6] = '|';
+	// 		msg[7] = ctx->player.reserved[i]->cost[0] + '0';
+	// 		msg[8] = ctx->player.reserved[i]->cost[1] + '0';
+	// 		msg[9] = ctx->player.reserved[i]->cost[2] + '0';
+	// 		msg[10] = ctx->player.reserved[i]->cost[3] + '0';
+	// 		msg[11] = '0';
+	// 		msg[12] = '\0';
+	// 		SDL_Log("Buy reserve %s", msg);
+	// 		return msg;
+	// 	}
+	// }
 
 	// SDL_Log("MEssage %s", msg);
 	return NULL;
@@ -88,11 +88,21 @@ void parseMsg(Context *ctx, char *msg)
 	if (msg[0] == 'c')
 	{
 		ctx->player.id = msg[1] -'0';
+		ctx->connection.status = CONNECTEDCONSOLE;
 		SDL_Log("Connected as Player %d", ctx->player.id);
 	}
-	if (msg[0] == 's')
+	if (msg[0] == 'd')
+	{
+
+		if(msg[1] == 'c')
+			ctx->connection.status = CONNECTED;
+		if(msg[1] == 's')
+			ctx->connection.status = DISCONNECTED;
+	}
+	else if (msg[0] == 's')
 	{
 		ctx->state = PLAYERSTATUS;
 		SDL_Log("Game starting");
 	}
+	ctx->connection.hasMessage = SDL_FALSE;
 }

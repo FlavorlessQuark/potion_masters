@@ -40,6 +40,7 @@ char *fetch_file(char *filename, size_t *size)
 // Minor optimization but harcoding is in theory faster than loops
 char *fill_elem(SDLX_ContainerElem *elem, SDLX_RectContainer *parent, char *line)
 {
+	SDL_Log("HERE 1");
 	int num;
 	SDLX_Display *display;
 
@@ -51,11 +52,27 @@ char *fill_elem(SDLX_ContainerElem *elem, SDLX_RectContainer *parent, char *line
 	elem->boundingBox->y = num;
 	line = line + extract_num(line, &num);
 	if (line[0] == '%')
-		num = ((parent ? parent->self.boundingBox->w : display->win_w) / 100 ) * num;
+	{
+		// SDL_Log("FOund parent w %d , display w %d, num %d, result %d ",
+		// parent->self.boundingBox->w,
+		// display->win_w,
+		// num,
+		// ((parent ? parent->self.boundingBox->w : display->win_w) * num ) / 100
+		// );
+		num = ((parent ? parent->self.boundingBox->w : display->win_w) * num ) / 100;
+	}
 	elem->boundingBox->w = num;
 	line = line + extract_num(line, &num);
 	if (line[0] == '%')
-		num = (parent ? parent->self.boundingBox->h : display->win_h) / (num * -1);
+	{
+		// SDL_Log("FOund parent h %d , display h %d, num %d, result %d ",
+		// parent->self.boundingBox->h,
+		// display->win_h,
+		// num,
+		// ((parent ? parent->self.boundingBox->h : display->win_h)  * num ) / 100
+		// );
+		num = ((parent ? parent->self.boundingBox->h : display->win_h)  * num ) / 100;
+	}
 	elem->boundingBox->h = num;
 	line = line + extract_num(line, &num);
 	elem->heightTYpe = num;
