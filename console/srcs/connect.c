@@ -4,7 +4,7 @@
 # define FAILURE 1;
 typedef uint64_t Err;
 static c_string_vec handles = {0};
-
+static c_string_vec msg;
 extern void free_strvec(c_string_vec vec);
 extern Err clients_changed(bool * did_change);
 extern Err get_client_handles(c_string_vec * client_handles);
@@ -20,7 +20,7 @@ extern Err get_messages(char * client, c_string_vec * messages);
         }                                                               \
     } while (0)
 
-c_string_vec *getConnections(void)
+c_string_vec *get_connections(void)
 {
 	bool did_change;
 
@@ -33,17 +33,17 @@ c_string_vec *getConnections(void)
 			printf("  %s\n", handles.ptr[i]);
 		}
 	}
+	else
+		return NULL;
 	return &handles;
 }
 
-char *recvFrom(int handle)
+char *recv_from(int handle)
 {
-	c_string_vec msg;
-
 	 CP_CHECK(get_messages(handles.ptr[handle], &msg));
 		if (msg.len > 0) {
 			for (int j = 0; j < msg.len; j++) {
-				printf("received %s from Handle %d (%s)\n",msg.ptr,  handles.ptr[handle]);
+				printf("received %s from Handle(%s)\n",msg.ptr[j],  handles.ptr[handle]);
 			}
 			return msg.ptr[0];
 		}
@@ -51,7 +51,7 @@ char *recvFrom(int handle)
 		// free_strvec(messages);
 }
 
-int sendTo(char *msg, int handle)
+int send_to(char *msg, char *handle)
 {
-	CP_CHECK(send_message(handles.ptr[handle], msg));
+	CP_CHECK(send_message(handle, msg));
 }

@@ -20,27 +20,23 @@
 void initPlayers(Context *ctx)
 {
 	// card->alignment = SDLX
+	char *handles;
+	int offset;
 
-	SDL_Rect rect;
 
-	rect.x = 100;
-	rect.y = 300;
-	rect.w = 50;
-	rect.h = 50;
-	memset(ctx->players[0].owned, 0, 5 * sizeof(uint8_t));
-	ctx->players[0].reserveCount = 0;
-	memset(ctx->players[0].tokens, 0, 5 *sizeof(uint8_t));
-	SDLX_ButtonCreate(&ctx->players[0].reservedButton[0], NULL);
-	SDLX_ButtonCreate(&ctx->players[0].reservedButton[1], NULL);
-	SDLX_ButtonCreate(&ctx->players[0].reservedButton[2], NULL);
-	SDLX_ButtonCreate(&ctx->players[0].reservedButton[3], NULL);
-	ctx->players[0].reservedButton[0]._boundingBox = rect;
-	rect.x += 60;
-	ctx->players[0].reservedButton[1]._boundingBox = rect;
-	rect.x += 60;
-	ctx->players[0].reservedButton[2]._boundingBox = rect;
-	rect.x += 60;
-	ctx->players[0].reservedButton[3]._boundingBox = rect;
+	// handles = SDL_calloc(MAX_PLAYERS, HANDLE_LEN);
+	// offset = 0;
+	for (int i = 0; i < MAX_PLAYERS; i++)
+	{
+		memset(ctx->players[i].owned, 0, 5 * sizeof(uint8_t));
+		memset(ctx->players[i].tokens, 0, 5 *sizeof(uint8_t));
+		ctx->players[i].id = -1;
+		ctx->players[i].reserveCount = 0;
+		ctx->players[i].handle = NULL;
+		// ctx->players[i].handle = handles + offset;
+		// offset += HANDLE_LEN;
+	}
+
 }
 
 void initRowCards(Row *row, SDLX_RectContainer *container)
@@ -111,6 +107,7 @@ Context *init()
 	ctx->display = SDLX_DisplayGet();
 	ctx->board.remainingTitles = MAX_TITLES;
 	ctx->state = CONNECT_SCREEN;
+	ctx->playerCount = 0;
 	root = initUI();
 	initRows(ctx, &root->containers[UI_BOARD]);
 	initPlayers(ctx);

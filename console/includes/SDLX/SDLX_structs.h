@@ -84,9 +84,9 @@ typedef struct SDLX_Button
 	SDL_Rect _boundingBox;
 	SDL_Rect *boundingBox;
 
-	int state;
-	int triggered;
-	int enabled;
+	uint8_t state;
+	uint8_t triggered;
+	uint8_t enabled;
 
 	struct SDLX_Button *neighbours[4];
 }	SDLX_Button;

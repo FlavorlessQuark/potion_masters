@@ -4,13 +4,15 @@ static SDLX_Button **buttons;
 static size_t capacity;
 static size_t size;
 static SDLX_Button *currentFocus;
-static int keys[5] = {-1, -1, -1, -1, -1};
+static int keys[6] = {-1, -1, -1, -1, -1, 0};
 
 # define UP 0
 # define DOWN 1
 # define LEFT 2
 # define RIGHT 3
 # define SELECT 4
+# define HASKEYBOARDSET 5
+
 
 void SDLX_ButtonsCleanup(void)
 {
@@ -39,7 +41,7 @@ void SDLX_ButtonCreate (SDLX_Button *dest, SDL_Rect *boundingBox)
 	if (size >= capacity)
 	{
 		capacity = (capacity * 2) + 1;
-		buttons = SDL_realloc(buttons, sizeof(SDLX_Button *) * capacity);
+		buttons = realloc(buttons, sizeof(SDLX_Button *) * capacity);
 	}
 	buttons[size] = dest;
 
@@ -82,25 +84,30 @@ void SDLX_ButtonUpdate()
 	}
 
 	i = 0;
-	// TODO: Only do bit things on unsigned types :)
+
+	// Button state is None, enter, stay, leave
+	// Triggered is the same a input (non, down, held, up)
+	// Reminder to only do bit things on unsigned types :)
 	while (i < size)
 	{
 		buttons[i]->state = ((buttons[i]->state & 1) << 1);
 		buttons[i]->triggered = ((buttons[i]->triggered & 1) << 1);
 		mouseOver = SDL_PointInRect(&input.mouse, buttons[i]->boundingBox);
-
-		if (buttons[i]->enabled == SDL_TRUE && (mouseOver || buttons[i] == currentFocus))
+		if (buttons[i]->enabled == SDL_TRUE && (mouseOver || (keys[HASKEYBOARDSET] && buttons[i] == currentFocus)))
 		{
 			buttons[i]->state += 1;
 
-			// if (currentFocus != buttons[i])
-			// 	currentFocus->triggered <<= 1;
 
 			currentFocus = buttons[i];
 			// >:) hehe
-			isTriggered = ((input.mouse_buttons[SDL_BUTTON_LEFT] & 1) * mouseOver) | (input.keyboard[keys[SELECT ]] & 1);
+			isTriggered = ((input.mouse_buttons[SDL_BUTTON_LEFT] & 1) * mouseOver) | (input.keyboard[keys[SELECT]] & 1);
 			buttons[i]->triggered += (isTriggered) * !!(input.mouse_buttons[SDL_BUTTON_LEFT] - buttons[i]->triggered - SDLX_KEYHELD);
+			// Trigger will only be set if the mouse was on the rectangle when it was clicked
+			// -> trigger only if mouse button < SDLX_KEYHELD
+			// !! -> set to 0 if number > 0 or  < 1 (! neg = 1 , !1 = 0)  | set to 1 if num == 0
 		}
+		// else
+		// 	SDL_Log("NOT %d %d %d %d",i,  buttons[i]->state, buttons[i]->state & 1, (buttons[i]->state & 1) << 1);
 		i++;
 	}
 }

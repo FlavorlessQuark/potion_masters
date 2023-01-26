@@ -28,6 +28,8 @@
 # define CONNECT_SCREEN 0
 # define PLAYING 1
 
+# define HANDLE_LEN 21
+
 # define ASSETS "../assets"
 
 typedef struct c_string_vec {
@@ -52,6 +54,8 @@ typedef struct Player
 	uint8_t tokens[TOK_COUNT];
 	uint8_t owned[CARD_TYPES];
 	uint8_t reserveCount;
+	uint8_t id;
+	char *handle;
 }	Player;
 
 typedef struct Row
