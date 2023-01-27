@@ -25,4 +25,7 @@ void init_main_screen(Context *ctx);
 void main_screen(Context *ctx);
 
 
+void init_buy_screen(Context *ctx);
+void buy_screen(Context *ctx);
+
 #endif

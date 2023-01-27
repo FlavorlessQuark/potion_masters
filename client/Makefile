@@ -24,6 +24,7 @@ SDLX_NAMES = 			\
 SRCS_NAMES =								\
 	$(addprefix $(SDLX_DIR), $(SDLX_NAMES))	\
 	board_screen	\
+	buy_screen	\
 	config_parser	\
 	connect			\
 	connect_screen	\

@@ -4,6 +4,10 @@
 
 Context ctx;
 
+typedef void (*loop)(Context *);
+
+loop fnloops[2] ={board_screen, buy_screen};
+
 void core(void)
 {
 	SDLX_RenderReset(ctx.display);
@@ -14,6 +18,8 @@ void core(void)
 	// 	ConnectScreen(&ctx);
 	// main_screen(&ctx);
 	board_screen(&ctx);
+	// buy_screen(&ctx);
+	// fnloops[ctx.state](&ctx);
 	SDL_RenderPresent(ctx.display->renderer);
 }
 

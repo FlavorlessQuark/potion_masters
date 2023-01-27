@@ -14,7 +14,8 @@ void render_board_screen(Context *ctx)
 		{
 			// if (ctx->board.rows[x].revealed[i] != NULL)
 			// {
-
+				// if (ctx->board.rows[x].cardButton[i].triggered == SDLX_KEYUP)
+				// 	ctx->state = 1;
 				SDL_SetRenderDrawColor(ctx->display->renderer,
 								255 * (ctx->board.rows[x].cardButton[i].triggered == SDLX_KEYHELD),
 								255 * (ctx->board.rows[x].cardButton[i].state == SDLX_FOCUS_STAY),
