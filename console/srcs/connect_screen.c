@@ -9,64 +9,121 @@ int sortHandles(const void *a, const void *b)
 	return SDL_strcmp(* (char * const *) a, * (char * const *) b);
 }
 
-int handle_Connect(Context *ctx, c_string_vec *handles)
+void connect_handles(Context *ctx, char **handles, int len)
 {
+	int n;
+
+	n = 0;
+	for (int i = 0; i < MAX_PLAYERS && n < len; i++)
+	{
+		if (ctx->players[i].handle == NULL)
+		{
+			ctx->players[i].handle = SDL_calloc(HANDLE_LEN, sizeof(char));
+			SDL_strlcpy(ctx->players[i].handle, handles[n], HANDLE_LEN);
+			SDL_Log("Added player %d - %s", i, handles[n]);
+			n++;
+		}
+	}
+}
+
+void disconnect_handles(Context *ctx, char **handles, int len)
+{
+	int n;
+
+	n = 0;
+	for (int i = 0; i < MAX_PLAYERS && n < len; i++)
+	{
+
+		if (ctx->players[i].handle != NULL && !SDL_strcmp(ctx->players[i].handle, handles[n]))
+		{
+			SDL_Log("Remove player %d - %s", i, handles[n]);
+			SDL_free(ctx->players[i].handle);
+			ctx->players[i].handle = NULL;
+			n++;
+		}
+	}
+}
+
+int handle_Connect(Context *ctx, c_string_vec *new)
+{
+	uint8_t i;
 	uint8_t n;
+	uint8_t cmp;
 	uint8_t newLen;
-	uint8_t nextId;
-	char *(newHandles[]) = {NULL, NULL, NULL, NULL};
-	char *(currentHandles[]) = {
+	uint8_t discLen;
+	char *(newHandles[MAX_PLAYERS]) = {NULL, NULL, NULL, NULL};
+	char *(discHandles[MAX_PLAYERS]) = {NULL, NULL, NULL, NULL};
+	char *(old[MAX_PLAYERS]) = {
 		ctx->players[0].handle,
 		ctx->players[1].handle,
 		ctx->players[2].handle,
 		ctx->players[3].handle
 		};
 
-	SDL_qsort(handles->ptr, handles->len, sizeof(char *), sortHandles);
-	SDL_qsort(currentHandles,MAX_PLAYERS, sizeof(char *), sortHandles);
 
+	if (new->len > MAX_PLAYERS)
+		return -1;
+	SDL_qsort(new->ptr, new->len, sizeof(char *), sortHandles);
+	SDL_qsort(old,MAX_PLAYERS, sizeof(char *), sortHandles);
+
+	i = 0;
 	n = 0;
 	newLen = 0;
 	//current handles is short than handles ptr
-	for (int i = 0; i < handles->len; i++)
+
+
+	while (i < new->len && n < MAX_PLAYERS)
 	{
-		if (currentHandles[n] != NULL )
-		if (currentHandles[n] == NULL || SDL_strcmp(handles->ptr[i], currentHandles[n]))
+		if (old[n] != NULL)
 		{
-			newHandles[newLen] = handles->ptr[i];
-			newLen++;
+			cmp = SDL_strcmp(new->ptr[i], old[n]);
 		}
 		else
-			n++;
-	}
-
-	if (handles->len >= MAX_PLAYERS)
-		return -1;
-	n = 0;
-	for (int i = 0; i < MAX_PLAYERS && n < newLen; i++)
-	{
-		if (ctx->players[i].handle == NULL)
 		{
-			ctx->players[i].handle = SDL_calloc(HANDLE_LEN, sizeof(char));
-			SDL_strlcpy(ctx->players[i].handle, newHandles[n], HANDLE_LEN);
-			SDL_Log("Added player %d", i);
+			cmp = -1;
+		}
+		if (cmp > 0) //-1 = new < old | 1 old < new
+		{
+			newHandles[newLen] = new->ptr[i];
+			SDL_Log("Should connect %s", new->ptr[i]);
+			newLen++;
+			i++;
+		}
+		else if (cmp < 0)
+		{
+			discHandles[newLen] = old[n];
+			SDL_Log("Should disc %s", old[n]);
+			discLen++;
+			n++;
+		}
+		else
+		{
+			i++;
 			n++;
 		}
 	}
-	ctx->playerCount = handles->len;
+	while (i < new->len)
+	{
+		newHandles[newLen] = new->ptr[i];
+		SDL_Log("Should connect %s", new->ptr[i]);
+			newLen++;
+			i++;
+	}
+	while (n < ctx->playerCount)
+	{
+		discHandles[newLen] = old[n];
+		SDL_Log("Should disc %s", old[n]);
+		discLen++;
+		n++;
+	}
 
-	// nextId = 0;
-	// while (nextId < MAX_PLAYERS && ctx->players[nextId].handle != NULL)
-	// 	nextId ++;
 
+	disconnect_handles(ctx, discHandles, discLen);
+	connect_handles(ctx, newHandles, newLen);
 
-
+	ctx->playerCount = new->len;
 }
 
-int handle_Disconnect(Context *ctx, c_string_vec *handles)
-{
-
-}
 
 int connect_screen(Context *ctx)
 {
@@ -76,12 +133,7 @@ int connect_screen(Context *ctx)
 
 	handles = get_connections();
 	if (handles)
-	{
-		if (ctx->playerCount < handles->len)
-			handle_Connect(ctx, handles);
-		else
-			handle_Disconnect(ctx, handles);
-	}
+		handle_Connect(ctx, handles);
 
 	for (int i = 0; i < ctx->playerCount; i++)
 	{

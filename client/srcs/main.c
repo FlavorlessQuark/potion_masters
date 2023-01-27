@@ -12,7 +12,8 @@ void core(void)
 	SDLX_ButtonUpdate();
 	// if (ctx.state == CONNECT)
 	// 	ConnectScreen(&ctx);
-	main_screen(&ctx);
+	// main_screen(&ctx);
+	board_screen(&ctx);
 	SDL_RenderPresent(ctx.display->renderer);
 }
 

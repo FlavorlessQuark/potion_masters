@@ -22,7 +22,6 @@ void initConnectScreen(Context *ctx)
 
 	ctx->connection.connectButton._boundingBox = rect;
 	SDLX_ButtonCreate(&ctx->connection.connectButton, &ctx->connection.connectButton._boundingBox);
-	SDL_Log("Button %d %d",ctx->connection.connectButton.boundingBox->w, ctx->connection.connectButton.boundingBox->h);
 }
 
 void initBuyScreen(Context *ctx)
@@ -43,6 +42,7 @@ void init(Context *ctx)
 	SDLX_Init("Client", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 500, 500, 0);
 	ctx->display = SDLX_DisplayGet();
 	// initConnectScreen(ctx);
-	init_main_screen(ctx);
+	// init_main_screen(ctx);
+	init_board_screen(ctx);
 	initConnection(ctx);
 }

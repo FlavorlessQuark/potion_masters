@@ -66,9 +66,7 @@ typedef struct Row
 typedef struct Board
 {
 	uint8_t tokens[TOK_COUNT];
-	uint8_t remainingTitles;
 
-	Card	titles[MAX_TITLES];
 	Row 	rows[ROW_COUNT];
 	SDLX_Button tokenTake[TOK_COUNT];
 	SDLX_Button tokenRemove[TOK_COUNT];
@@ -88,6 +86,7 @@ typedef struct BuyScreen
 	Card  *selected;
 	SDLX_Sprite showSelected;
 	SDLX_Button buyButton;
+	SDLX_Button reserveButton;
 	SDLX_Button exit;
 	SDLX_Button addToken[TOK_COUNT];
 	SDLX_Button delToken[TOK_COUNT];
@@ -115,6 +114,7 @@ typedef struct Context
 	Board board;
 	int state;
 	MainScreen *mainscreen;
+	BuyScreen *buyscreen;
 	SDLX_Display *display;
 }	Context;
 #endif
