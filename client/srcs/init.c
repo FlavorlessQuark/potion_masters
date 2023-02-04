@@ -24,17 +24,6 @@ void initConnectScreen(Context *ctx)
 	SDLX_ButtonCreate(&ctx->connection.connectButton, &ctx->connection.connectButton._boundingBox);
 }
 
-void initBuyScreen(Context *ctx)
-{
-
-}
-
-void initBoard(Context *ctx)
-{
-
-}
-
-
 void init(Context *ctx)
 {
 	SDLX_RectContainer *root;

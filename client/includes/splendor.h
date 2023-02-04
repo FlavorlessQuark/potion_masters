@@ -3,10 +3,6 @@
 # include "splendor_structs.h"
 
 void init(Context *ctx);
-
-void 	payReserved(Player *player, int position);
-char 	*createMsg(Context *ctx);
-void 	parseMsg(Context *ctx, char *msg);
 char 	*input(Context *ctx);
 
 SDLX_RectContainer *initUI(char *filename);
@@ -24,8 +20,12 @@ void renderConnectScreen(Context *ctx);
 void init_main_screen(Context *ctx);
 void main_screen(Context *ctx);
 
-
 void init_buy_screen(Context *ctx);
 void buy_screen(Context *ctx);
+
+void composeReserve(Context *ctx);
+void composePay(Context *ctx);
+void composeTakeTokens(Context *ctx);
+void parseMsg(Context *ctx, char *msg);
 
 #endif

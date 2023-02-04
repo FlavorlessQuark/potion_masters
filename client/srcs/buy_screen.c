@@ -15,12 +15,12 @@ void render_buy_screen(Context *ctx)
 					255 * (ctx->buyscreen->reserveButton.state == SDLX_FOCUS_STAY),
 					255,
 					255);
-	SDL_RenderDrawRect(ctx->display->renderer, ctx->buyscreen->reserveButton.boundingBox);
-
+	if (ctx->buyscreen->cardOrigin == 0)
+		SDL_RenderDrawRect(ctx->display->renderer, ctx->buyscreen->reserveButton.boundingBox);
 
 	SDL_SetRenderDrawColor(ctx->display->renderer, 0, 0, 255, 255);
-SDL_RenderDrawRect(ctx->display->renderer, ctx->buyscreen->showSelected.dst);
-	SDL_SetRenderDrawColor(ctx->display->renderer, 0, 0, 255, 255);
+
+	SDL_RenderDrawRect(ctx->display->renderer, ctx->buyscreen->showSelected.dst);
 	SDL_SetRenderDrawColor(ctx->display->renderer,
 					255 * (ctx->buyscreen->exit.triggered == SDLX_KEYHELD),
 					255 ,
@@ -32,8 +32,23 @@ SDL_RenderDrawRect(ctx->display->renderer, ctx->buyscreen->showSelected.dst);
 
 void buy_screen(Context *ctx)
 {
-	// if (ctx->buyscreen->exit.triggered == SDLX_KEYUP)
-	// 	ctx->state = 0;
+	if (ctx->buyscreen->exit.triggered == SDLX_KEYDOWN)
+	{
+		ctx->state = 0;
+		ctx->buyscreen->cardOrigin = -1;
+	}
+	else if (ctx->buyscreen->buyButton.triggered == SDLX_KEYDOWN)
+	{
+		composePay(ctx);
+		ctx->state = 0;
+		ctx->buyscreen->cardOrigin = -1;
+	}
+	else if (ctx->buyscreen->reserveButton.triggered == SDLX_KEYDOWN)
+	{
+		composeReserve(ctx);
+		ctx->state = 0;
+		ctx->buyscreen->cardOrigin = -1;
+	}
 	render_buy_screen(ctx);
 }
 

@@ -245,7 +245,7 @@ void SDLX_ContainerUpdate(SDLX_RectContainer *container, SDLX_RectContainer *par
 	position_elems(container, display);
 	while (i < container->containerCount)
 	{
-		SDL_Log("Conainter %d of %d Parent %p", i + 1,container->containerCount, parent);
+		// SDL_Log("Conainter %d of %d Parent %p", i + 1,container->containerCount, parent);
 		SDLX_ContainerUpdate(&container->containers[i], container);
 		i++;
 	}

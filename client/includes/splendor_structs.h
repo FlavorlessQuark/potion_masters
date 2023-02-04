@@ -71,6 +71,7 @@ typedef struct Board
 	SDLX_Button tokenTake[TOK_COUNT];
 	SDLX_Button tokenRemove[TOK_COUNT];
 	SDLX_Sprite tokenSprites[TOK_COUNT];
+	SDLX_Button switchMode;
 }	Board;
 
 typedef struct Connection
@@ -83,18 +84,20 @@ typedef struct Connection
 
 typedef struct BuyScreen
 {
-	Card  *selected;
 	SDLX_Sprite showSelected;
 	SDLX_Button buyButton;
 	SDLX_Button reserveButton;
 	SDLX_Button exit;
 	SDLX_Button addToken[TOK_COUNT];
 	SDLX_Button delToken[TOK_COUNT];
+	Card  *selected;
+	uint8_t cardOrigin; // -1 = no card, 0 = board, 1 reserverd index
 }			BuyScreen;
 
 typedef struct MainScreen
 {
 	SDLX_Button reserved[MAX_RESERVE];
+	SDLX_Button switchMode;
 	//			 REserved card + tokens + owned + golden + point display + no card + Buy
 	SDLX_Sprite UI[MAIN_SCREEN_SPRITE_COUNT];
 }		MainScreen;

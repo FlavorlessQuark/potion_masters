@@ -14,8 +14,11 @@ void render_board_screen(Context *ctx)
 		{
 			// if (ctx->board.rows[x].revealed[i] != NULL)
 			// {
-				// if (ctx->board.rows[x].cardButton[i].triggered == SDLX_KEYUP)
-				// 	ctx->state = 1;
+				if (ctx->board.rows[x].cardButton[i].triggered == SDLX_KEYDOWN)
+				{
+					ctx->state = 2;
+					ctx->buyscreen->cardOrigin = 0;
+				}
 				SDL_SetRenderDrawColor(ctx->display->renderer,
 								255 * (ctx->board.rows[x].cardButton[i].triggered == SDLX_KEYHELD),
 								255 * (ctx->board.rows[x].cardButton[i].state == SDLX_FOCUS_STAY),
@@ -31,6 +34,12 @@ void render_board_screen(Context *ctx)
 			// );
 		}
 	}
+	SDL_SetRenderDrawColor(ctx->display->renderer,
+					255 * (ctx->board.switchMode.state == SDLX_FOCUS_STAY),
+					255 * (ctx->board.switchMode.triggered == SDLX_KEYHELD),
+					255,
+					255);
+		SDL_RenderDrawRect(ctx->display->renderer, ctx->board.switchMode.boundingBox);
 
 	// for (int i = 0; i < MAX_ROWCARD; i++)
 	// {
@@ -50,6 +59,8 @@ void render_board_screen(Context *ctx)
 
 void board_screen(Context *ctx)
 {
+	if (ctx->board.switchMode.triggered == SDLX_KEYDOWN)
+		ctx->state = 0;
 	render_board_screen(ctx);
 }
 
@@ -75,6 +86,12 @@ void init_board_screen(Context *ctx)
 	initRowCards(&ctx->board.rows[TOP_ROW], &root->containers[0]);
 	initRowCards(&ctx->board.rows[MID_ROW], &root->containers[1]);
 	initRowCards(&ctx->board.rows[BOT_ROW], &root->containers[2]);
+	SDLX_ButtonCreate(&ctx->board.switchMode, NULL);
+	ctx->board.switchMode._boundingBox.x = ctx->display->win_w - 55;
+	ctx->board.switchMode._boundingBox.y =( ctx->display->win_h / 2) - 25;
+	ctx->board.switchMode._boundingBox.w = 50;
+	ctx->board.switchMode._boundingBox.h = 50;
+
 }
 
 
