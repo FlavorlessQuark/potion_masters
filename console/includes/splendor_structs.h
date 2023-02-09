@@ -30,6 +30,10 @@
 
 # define HANDLE_LEN 21
 
+# define DISCONNECTED 0
+# define CONNECTED 1
+# define READY 2
+
 # define ASSETS "../assets"
 
 typedef struct c_string_vec {
@@ -50,13 +54,22 @@ typedef struct Card
 typedef struct Player
 {
 	Card *reserved[MAX_RESERVE];
-	SDLX_Button reservedButton[MAX_ROWCARD];
 	uint8_t tokens[TOK_COUNT];
 	uint8_t owned[CARD_TYPES];
 	uint8_t reserveCount;
-	uint8_t id;
-	char *handle;
+	uint8_t status;
+	char handle[HANDLE_LEN];
 }	Player;
+
+typedef struct PlayerUI
+{
+	SDL_Rect nameTag;
+	SDL_Rect pointsTag;
+	SDLX_Sprite ressourceIcon[TOK_COUNT];
+	SDLX_Sprite permanentIcon[CARD_TYPES];
+	SDLX_Sprite reservedIcon[MAX_RESERVE];
+	SDLX_Sprite reservedPrice[CARD_TYPES * (TOK_COUNT - 1)];
+}			PlayerUI;
 
 typedef struct Row
 {
@@ -65,7 +78,6 @@ typedef struct Row
 
 	Card	*remaining;
 	Card	*revealed[MAX_ROWCARD];
-	SDLX_Button cardButton[MAX_ROWCARD];
 	SDLX_Sprite rowIcon;
 }	Row;
 
@@ -74,6 +86,7 @@ typedef struct Board
 	uint8_t tokens[TOK_COUNT];
 	uint8_t remainingTitles;
 
+	PlayerUI playerUI[MAX_PLAYERS];
 	Card	titles[MAX_TITLES];
 	Row 	rows[ROW_COUNT];
 }	Board;

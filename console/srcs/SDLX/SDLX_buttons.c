@@ -25,6 +25,7 @@ void SDLX_ButtonSet_Neighbours(SDLX_Button *dest, SDLX_Button *left, SDLX_Button
 	dest->neighbours[DOWN] = down;
 	dest->neighbours[LEFT] = left;
 	dest->neighbours[RIGHT] = right;
+
 }
 
 void SDLX_ButtonSet_Keys(int left, int right, int up, int down, int select)
@@ -34,6 +35,7 @@ void SDLX_ButtonSet_Keys(int left, int right, int up, int down, int select)
 	keys[LEFT] = left;
 	keys[RIGHT] = right;
 	keys[SELECT] = select;
+	keys[HASKEYBOARDSET] = SDL_TRUE;
 }
 
 void SDLX_ButtonCreate (SDLX_Button *dest, SDL_Rect *boundingBox)
@@ -72,15 +74,19 @@ void SDLX_ButtonUpdate()
 	i = 0;
 	input = SDLX_InputGet();
 
-	while(i < 4)
+	if (  keys[HASKEYBOARDSET] == SDL_TRUE)
 	{
-		if (currentFocus && keys[i] != -1 && SDLX_GetKeyState(keys[i]) == SDLX_KEYDOWN && currentFocus->neighbours[i] != NULL)
+		while(i < 4)
 		{
-			// SDL_Log("Here %d", i);
-			currentFocus = currentFocus->neighbours[i];
-			break ;
+			if (currentFocus && SDLX_GetKeyState(keys[i]) == SDLX_KEYDOWN && currentFocus->neighbours[i] != NULL)
+			{
+				// SDL_Log("Here %d", i);
+				currentFocus = currentFocus->neighbours[i];
+				break ;
+			}
+			i++;
 		}
-		i++;
+
 	}
 
 	i = 0;

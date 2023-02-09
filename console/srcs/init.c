@@ -23,18 +23,12 @@ void initPlayers(Context *ctx)
 	char *handles;
 	int offset;
 
-
-	// handles = SDL_calloc(MAX_PLAYERS, HANDLE_LEN);
-	// offset = 0;
 	for (int i = 0; i < MAX_PLAYERS; i++)
 	{
 		memset(ctx->players[i].owned, 0, 5 * sizeof(uint8_t));
 		memset(ctx->players[i].tokens, 0, 5 *sizeof(uint8_t));
-		ctx->players[i].id = -1;
+		ctx->players[i].status = DISCONNECTED;
 		ctx->players[i].reserveCount = 0;
-		ctx->players[i].handle = NULL;
-		// ctx->players[i].handle = handles + offset;
-		// offset += HANDLE_LEN;
 	}
 
 }
@@ -42,19 +36,12 @@ void initPlayers(Context *ctx)
 void initRowCards(Row *row, SDLX_RectContainer *container)
 {
 	//Parse file data here
-
 	SDLX_SpriteCreate(&row->rowIcon, 1, NULL);
 	row->rowIcon._dst = container->elems[0]._boundingBox;
 	for (int i = 0; i < row->remainCount; i++)
 	{
 		row->remaining[i] = (Card) {.cost[0] = 1, .cost[1] = 1, .cost[2] = 1, .cost[3] = 1, .points = rand() % 4, .type = rand() % 4};
 		SDLX_SpriteCreate(&row->remaining[i].sprite, 1, NULL);
-	}
-
-	for (int i = 0; i < ROW_CARD_COUNT; i++)
-	{
-		SDLX_ButtonCreate(&row->cardButton[i], NULL);
-		row->cardButton[i]._boundingBox = container->elems[i + 1]._boundingBox;
 	}
 
 	replaceCard(row, 0);
@@ -95,6 +82,45 @@ SDLX_RectContainer *initUI(void)
 	return root;
 }
 
+void initPlayerUI(Context *ctx, uint8_t id, SDLX_RectContainer *root)
+{
+	int i;
+
+	ctx->board.playerUI[id].nameTag = root->containers[0].elems[0]._boundingBox;
+	ctx->board.playerUI[id].pointsTag = root->containers[0].elems[1]._boundingBox;
+
+	for (i = 0; i < CARD_TYPES; i++)
+	{
+		ctx->board.playerUI[id].ressourceIcon[i]._dst = root->containers[1].containers[i].elems[0]._boundingBox;
+		ctx->board.playerUI[id].permanentIcon[i]._dst = root->containers[1].containers[i].elems[1]._boundingBox;
+	}
+	ctx->board.playerUI[id].ressourceIcon[i]._dst = root->containers[1].containers[i].elems[0]._boundingBox;
+
+	for (i = 0; i < MAX_RESERVE; i++)
+	{
+		ctx->board.playerUI[id].reservedIcon[i]._dst = root->containers[2].containers[i].self._boundingBox;
+		ctx->board.playerUI[id].reservedPrice[i * (TOK_COUNT - 1) + 0]._dst = root->containers[2].containers[i].elems[0]._boundingBox;
+		ctx->board.playerUI[id].reservedPrice[i * (TOK_COUNT - 1) + 1]._dst = root->containers[2].containers[i].elems[1]._boundingBox;
+		ctx->board.playerUI[id].reservedPrice[i * (TOK_COUNT - 1) + 2]._dst = root->containers[2].containers[i].elems[2]._boundingBox;
+		ctx->board.playerUI[id].reservedPrice[i * (TOK_COUNT - 1) + 3]._dst = root->containers[2].containers[i].elems[3]._boundingBox;
+	}
+}
+
+void print_config(Context *ctx, SDLX_RectContainer *root)
+{
+	SDL_SetRenderDrawColor(ctx->display->renderer, 255, 0,0,255);
+	SDL_RenderDrawRect(ctx->display->renderer, root->self.boundingBox);
+
+	for (int i = 0; i < root->containerCount; i++)
+		print_config(ctx, &root->containers[i]);
+
+	SDL_SetRenderDrawColor(ctx->display->renderer, 255, 255, 255,255);
+	for (int x = 0; x < root->elemCount; x++)
+	{
+		SDL_RenderDrawRect(ctx->display->renderer, root->elems[x].boundingBox);
+	}
+	SDL_SetRenderDrawColor(ctx->display->renderer, 0, 0,0,255);
+}
 
 Context *init()
 {
@@ -109,10 +135,12 @@ Context *init()
 	ctx->state = CONNECT_SCREEN;
 	ctx->playerCount = 0;
 	root = initUI();
-	initRows(ctx, &root->containers[UI_BOARD]);
-	initPlayers(ctx);
+	// initPlayers(ctx);
+	// initRows(ctx, &root->containers[UI_BOARD]);
+	// initPlayerUI(ctx, 0, &root->containers[UI_PLAYER_LEFT].containers[0]);
+	SDLX_RenderReset(ctx->display);
+	print_config(ctx, root);
 	cleanupUIConfig(root);
 	SDL_free(root);
-
 	return ctx;
 }

@@ -12,6 +12,15 @@
 //  e[amount] : elem x amount
 //  containers and elements will be parented to the container that came before
 
+// int	extract_num(char *str, int *number)
+// {
+// 	int spn;
+
+// 	spn = strcspn(str, NUMS);
+// 	*number = atoi(str + spn);
+// 	return spn + strspn(str + spn, NUMS);
+// }
+
 int	extract_num(char *str, int *number)
 {
 	int spn;
@@ -20,6 +29,7 @@ int	extract_num(char *str, int *number)
 	*number = atoi(str + spn);
 	return spn + strspn(str + spn, NUMS);
 }
+
 
 char *fetch_file(char *filename, size_t *size)
 {
@@ -50,12 +60,28 @@ char *fill_elem(SDLX_ContainerElem *elem, SDLX_RectContainer *parent, char *line
 	line = line + extract_num(line, &num);
 	elem->boundingBox->y = num;
 	line = line + extract_num(line, &num);
-	if (num < 0)
-		num = (parent ? parent->self.boundingBox->w : display->win_w) / (num * -1);
+	if (line[0] == '%')
+	{
+		// SDL_Log("FOund parent w %d , display w %d, num %d, result %d ",
+		// parent->self.boundingBox->w,
+		// display->win_w,
+		// num,
+		// ((parent ? parent->self.boundingBox->w : display->win_w) * num ) / 100
+		// );
+		num = ((parent ? parent->self.boundingBox->w : display->win_w) * num ) / 100;
+	}
 	elem->boundingBox->w = num;
 	line = line + extract_num(line, &num);
-	if (num < 0)
-		num = (parent ? parent->self.boundingBox->h : display->win_h) / (num * -1);
+	if (line[0] == '%')
+	{
+		// SDL_Log("FOund parent h %d , display h %d, num %d, result %d ",
+		// parent->self.boundingBox->h,
+		// display->win_h,
+		// num,
+		// ((parent ? parent->self.boundingBox->h : display->win_h)  * num ) / 100
+		// );
+		num = ((parent ? parent->self.boundingBox->h : display->win_h)  * num ) / 100;
+	}
 	elem->boundingBox->h = num;
 	line = line + extract_num(line, &num);
 	elem->heightTYpe = num;

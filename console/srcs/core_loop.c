@@ -6,12 +6,12 @@ int mainGame(Context *ctx)
 	int msgWasExec;
 	char *msg;
 
-	msg = recv_from(turn);
-	if (msg)
-		msgWasExec = execMsg(ctx, msg);
-	if (msgWasExec)
-		turn = (turn + 1) % ctx->playerCount; // 0 if turn == playCount else turn + 1
-		//render board
+	// msg = recv_from(turn);
+	// if (msg)
+	// 	msgWasExec = execMsg(ctx, msg);
+	// if (msgWasExec)
+	// 	turn = (turn + 1) % ctx->playerCount; // 0 if turn == playCount else turn + 1
+	renderBoard(ctx);
 }
 
 int core(void *arg, char *msg)
@@ -24,9 +24,8 @@ int core(void *arg, char *msg)
 		cleanup(ctx);
 		exit(0);
 	}
-	else if (ctx->state == CONNECT_SCREEN)
-		connect_screen(ctx);
-	else
-		mainGame(ctx);
-
+	// else if (ctx->state == CONNECT_SCREEN)
+	// 	connect_screen(ctx);
+	// else
+		// mainGame(ctx);
 }

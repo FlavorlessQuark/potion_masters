@@ -28,21 +28,22 @@ c_string_vec *get_connections(void)
 	if (did_change) {
 		free_strvec(handles);
 		CP_CHECK(get_client_handles(&handles));
-		// for (int i = 0; i < handles.len; i++) {
-		// 	printf("  %s\n", handles.ptr[i]);
-		// }
+		SDL_Log("-----------NEW HANDLES-------");
+		for (int i = 0; i < handles.len; i++) {
+			SDL_Log("  %s\n", handles.ptr[i]);
+		}
 	}
 	else
 		return NULL;
 	return &handles;
 }
 
-char *recv_from(int handle)
+char *recv_from(char *handle)
 {
-	 CP_CHECK(get_messages(handles.ptr[handle], &msg));
+	 CP_CHECK(get_messages(handle, &msg));
 		if (msg.len > 0) {
 			for (int j = 0; j < msg.len; j++) {
-				printf("received %s from Handle(%s)\n",msg.ptr[j],  handles.ptr[handle]);
+				printf("received %s from Handle(%s)\n",msg.ptr[j], handle);
 			}
 			return msg.ptr[0];
 		}
@@ -50,7 +51,8 @@ char *recv_from(int handle)
 		// free_strvec(messages);
 }
 
-int send_to(char *msg, char *handle)
+int send_to(char *handle, char *msg)
 {
+	SDL_Log("Send message %s to %s", msg, handle);
 	CP_CHECK(send_message(handle, msg));
 }

@@ -12,13 +12,14 @@ int 	replaceCard(Row *row, int position);
 extern void 	free_strvec(c_string_vec vec);
 c_string_vec 	*get_connections(void);
 
-char 	*recv_from(int handle);
-void 	render_connect_screen(Context *ctx, uint8_t ready[MAX_PLAYERS]);
-int 	send_to(char *msg, char *handle);
+char 	*recv_from(char *handle);
+void 	render_connect_screen(Context *ctx);
+int 	send_to(char *handle, char *msg);
 int		sendBoardState(Context *ctx, int player);
 int 	execMsg(Context *ctx, char *msg);
 int 	connect_screen(Context *ctx);
 
+void renderBoard(Context *ctx);
 
 void cleanup(Context *ctx);
 void cleanupUIConfig(SDLX_RectContainer *container);
