@@ -33,6 +33,7 @@
 # define CONNECTED 1
 # define CONNECTEDCONSOLE 2
 
+# define MSG_LEN 20
 # define MAIN_SCREEN_SPRITE_COUNT MAX_RESERVE + (CARD_TYPES * 2) + 1 + 3 + 1 + 1
 
 # define ASSETS "../assets"
@@ -76,7 +77,7 @@ typedef struct Board
 
 typedef struct Connection
 {
-	char *message;
+	char message[MSG_LEN];
 	uint8_t status;
 	uint8_t hasMessage;
 	SDLX_Button connectButton;

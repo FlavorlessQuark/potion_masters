@@ -32,11 +32,11 @@
 			byte_array = new Uint8Array(1);
 			byte_array[0] = subid;
 			ws.send(byte_array.buffer);
-			console.log("Connection data ",byte_array.buffer, byte_array);
+			// console.log("Connection data ",byte_array.buffer, byte_array);
 			Module.ccall('setConnectionStatus', null, ['number'], [1]);
 			// Message from console
 			ws.addEventListener('message', (event) => {
-
+				console.log("Received ", event.data);
 				sendToWasm(event.data);
 				document.getElementById("statusText").innerHTML = event.data;
 			});
@@ -67,13 +67,16 @@
 	function handleConnect() {
 		// sendToWasm("Message sent from JS")
 		ws.send("r1");
-
   }
+
 	function handleDisconnect() {
 		// sendToWasm("Message sent from JS")
 		ws.send("r0");
   }
 
+	function sendToConsole(message) {
+		ws.send(message);
+	}
 
 
   </script>

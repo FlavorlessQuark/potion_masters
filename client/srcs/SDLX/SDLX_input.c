@@ -89,7 +89,7 @@ void SDLX_BuildMouseInput(void)
 void SDLX_BuildKeyMapInput(void)
 {
 	SDLX_KeyMap currentMapping;
-	uint8_t		*keyboard;
+	const uint8_t		*keyboard;
 
 	int i;
 

@@ -4,9 +4,11 @@ static Context *ctx;
 
 void recvMessage(char *msg)
 {
-	SDL_Log("received message");
+	SDL_Log("received message %s", msg);
 	ctx->connection.hasMessage = SDL_TRUE;
-	ctx->connection.message = msg;
+	SDL_memcpy(ctx->connection.message, msg, MSG_LEN);
+	SDL_free(msg);
+	// ctx->connection.message = msg;
 }
 
 void setConnectionStatus(int status)
@@ -21,12 +23,7 @@ void initConnection(Context *context)
 	EM_ASM({start_connect()});
 }
 
-void sendPlayerTurn()
+void sendMessage()
 {
-	EM_ASM({testSend("THIS IS A MESSAGE")});
-}
-
-void recvTurn(char *msg, int len)
-{
-	SDL_Log("Received %s", msg);
+	EM_ASM({sendToConsole("THIS IS A MESSAGE")});
 }

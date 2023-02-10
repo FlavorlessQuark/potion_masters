@@ -9,6 +9,8 @@ STATIC_LIB = -l SDL2 -l SDL2_image -l SDL2_ttf -lm
 
 SDLX_DIR = SDLX/
 SRCS_DIR = srcs/
+INIT_DIR = init/
+SCREEN_DIR = screens/
 
 BIN_DIR = bin/
 
@@ -21,18 +23,28 @@ SDLX_NAMES = 			\
 	SDLX_render			\
 	SDLX_utils			\
 
+INIT_NAMES =			\
+	init_board			\
+	init_buy			\
+	init_connect_screen	\
+	init_main_screen	\
+
+SCREEN_NAMES =			\
+	board_screen		\
+	buy_screen			\
+	connect_screen		\
+	main_screen			\
+
 SRCS_NAMES =								\
 	$(addprefix $(SDLX_DIR), $(SDLX_NAMES))	\
-	board_screen	\
-	buy_screen	\
+	$(addprefix $(INIT_DIR), $(INIT_NAMES))	\
+	$(addprefix $(SCREEN_DIR), $(SCREEN_NAMES))	\
 	config_parser	\
 	connect			\
-	connect_screen	\
-	init		\
-	main_screen \
-	main 		\
-	utils		\
-	window_events \
+	main 			\
+	messages		\
+	utils			\
+	window_events 	\
 
 SRCS = $(addprefix $(SRCS_DIR), $(addsuffix .c, $(SRCS_NAMES)))
 OBJS = $(addprefix $(BIN_DIR), $(SRCS:.c=.o))
