@@ -20,3 +20,30 @@ int	extract_num(char *str, int *number)
 	*number = atoi(str + spn);
 	return spn + strspn(str + spn, NUMS);
 }
+
+
+void startTurn(Context *ctx)
+{
+	ctx->mainscreen->reserved->enabled = SDL_TRUE;
+	for (int i = 0; i < MAX_RESERVE; i++)
+		ctx->mainscreen->reserved[i].enabled = SDL_TRUE;
+}
+
+void endTurn(Context *ctx)
+{
+	ctx->mainscreen->reserved->enabled = SDL_FALSE;
+	for (int i = 0; i < MAX_RESERVE; i++)
+		ctx->mainscreen->reserved[i].enabled = SDL_FALSE;
+}
+
+
+void printRect(SDL_Rect *rect, char * msg)
+{
+	SDL_Log("[%s] Rect (%d,%d) | w: %d h: %d",
+			msg,
+			rect->x,
+			rect->y,
+			rect->w,
+			rect->h
+		);
+}

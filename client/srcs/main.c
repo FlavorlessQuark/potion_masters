@@ -12,7 +12,7 @@ void init(Context *ctx)
 {
 	SDLX_RectContainer *root;
 
-	SDLX_Init("Client", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 500, 500, 0);
+	SDLX_Init("Client", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 768, 1366, 0);
 	ctx->display = SDLX_DisplayGet();
 	init_connect_screen(ctx);
 	init_main_screen(ctx);

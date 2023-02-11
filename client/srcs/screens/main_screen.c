@@ -1,5 +1,8 @@
 #include "../includes/splendor.h"
 
+# define SWITCH_BUTTTON MAIN_SCREEN_SPRITE_COUNT - 2
+# define EXTRA_TOKEN MAIN_SCREEN_SPRITE_COUNT - 1
+
 void main_screen(Context *ctx)
 {
 	if (ctx->mainscreen->switchMode.triggered == SDLX_KEYDOWN)
@@ -14,8 +17,8 @@ void render_main_screen(Context *ctx)
 	{
 		SDL_RenderDrawRect(ctx->display->renderer, ctx->mainscreen->UI[i].dst);
 	}
-	SDL_RenderDrawRect(ctx->display->renderer, ctx->mainscreen->UI[MAIN_SCREEN_SPRITE_COUNT - 1].dst);
-	SDL_RenderDrawRect(ctx->display->renderer, ctx->mainscreen->UI[MAIN_SCREEN_SPRITE_COUNT - 2].dst);
+	SDL_RenderDrawRect(ctx->display->renderer, ctx->mainscreen->UI[EXTRA_TOKEN].dst);
+	SDL_RenderDrawRect(ctx->display->renderer, ctx->mainscreen->UI[SWITCH_BUTTTON].dst);
 	for (int i = 0; i < MAX_RESERVE; i++)
 	{
 		SDL_SetRenderDrawColor(ctx->display->renderer,

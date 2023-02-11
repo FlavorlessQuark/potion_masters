@@ -33,4 +33,9 @@ void parseMsg(Context *ctx, char *msg);
 int extract_num(char *str, int *number);
 SDLX_RectContainer *parseUI(char *filename);
 
+void startTurn(Context *ctx);
+void endTurn(Context *ctx);
+
+void printRect(SDL_Rect *rect, char * msg);
+
 #endif

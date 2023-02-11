@@ -74,6 +74,7 @@ void init_main_screen(Context *ctx)
 	SDL_Log("LOAD TOKEN SCREEN");
 	init_reserved_cards(ctx, &offset, &root->containers[1].containers[1]);
 	init_button(ctx, &offset, &root->containers[1].containers[2]);
+	endTurn(ctx);
 }
 
 

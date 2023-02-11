@@ -95,6 +95,7 @@ void parseMsg(Context *ctx, char *input)
 				ctx->board.rows[r].revealed[c] = &ctx->cards[id];
 			}
 		}
+		startTurn(ctx);
 	}
 	ctx->connection.hasMessage = SDL_FALSE;
 }

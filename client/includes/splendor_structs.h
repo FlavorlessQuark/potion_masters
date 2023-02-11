@@ -33,6 +33,10 @@
 # define CONNECTED 1
 # define CONNECTEDCONSOLE 2
 
+
+#define TOKEN_BUTTON_RESET TOK_COUNT + 1
+#define TOKEN_BUTTON_CONFIRM TOK_COUNT + 2
+
 # define MSG_LEN 20
 # define MAIN_SCREEN_SPRITE_COUNT MAX_RESERVE + (CARD_TYPES * 2) + 1 + 3 + 1 + 1
 
@@ -59,7 +63,7 @@ typedef struct Player
 typedef struct Row
 {
 	uint8_t revealedCount;
-
+	SDLX_Sprite 	rowIcon;
 	Card	*revealed[MAX_ROWCARD];
 	SDLX_Button cardButton[MAX_ROWCARD];
 }	Row;
@@ -69,9 +73,8 @@ typedef struct Board
 	uint8_t tokens[TOK_COUNT];
 
 	Row 	rows[ROW_COUNT];
-	SDLX_Button tokenTake[TOK_COUNT];
-	SDLX_Button tokenRemove[TOK_COUNT];
-	SDLX_Sprite tokenSprites[TOK_COUNT];
+	SDLX_Button tokenButton[TOK_COUNT + 2];
+	SDLX_Sprite tokenSprites[TOK_COUNT + 2];
 	SDLX_Button switchMode;
 }	Board;
 
