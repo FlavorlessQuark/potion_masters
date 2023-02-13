@@ -159,7 +159,6 @@ void init_connectScreen(Context *ctx)
 		ctx->connectscreen.playerSprites[i]._dst = root->containers[1].containers[i].elems[0]._boundingBox;
 		ctx->connectscreen.statusSprites[i]._dst = root->containers[1].containers[i].elems[1]._boundingBox;
 	}
-
 }
 
 Context *init()

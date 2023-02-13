@@ -1,9 +1,48 @@
 #include "../includes/splendor.h"
 
+# define MAX_TAKE 3
+
 void board_screen(Context *ctx)
 {
+	static uint8_t  taken[TOK_COUNT];
+	static uint8_t  takenCount;
+	static uint8_t  lock = -1;
+	static uint8_t max = MAX_TAKE;
+
 	if (ctx->board.switchMode.triggered == SDLX_KEYDOWN)
 		ctx->state = 0;
+
+	for (int i = 0; i < TOK_COUNT; i++)
+	{
+		if  ((lock < 0 || lock == i) && takenCount < MAX_TAKE && ctx->board.tokenButton[i].triggered == SDLX_KEYDOWN)
+		{
+			if (++taken[i] > 1)
+			{
+				lock = i;
+				max = MAX_TAKE - 1;
+			}
+			takenCount++;
+		}
+	}
+
+	if (ctx->board.tokenButton[TOKEN_BUTTON_RESET].triggered == SDLX_KEYDOWN)
+	{
+		SDL_memset(taken, 0, sizeof(uint8_t));
+		takenCount = 0;
+		lock = -1;
+		max = MAX_TAKE;
+	}
+	else if (ctx->board.tokenButton[TOKEN_BUTTON_CONFIRM].triggered == SDLX_KEYDOWN)
+	{
+		for (int i = 0; i < TOK_COUNT; i++)
+			ctx->player.tokens[i] += taken[i];
+		sendTakeTokens(ctx, taken);
+		SDL_memset(taken, 0, sizeof(uint8_t));
+		takenCount = 0;
+		lock = -1;
+		max = MAX_TAKE;
+	}
+
 	render_board_screen(ctx);
 }
 

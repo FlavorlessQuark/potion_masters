@@ -61,8 +61,8 @@ void get_innerMeasurements(SDLX_RectContainer *container)
 	{
 		if (container->alignDirection == SDLX_ALIGN_VERTICAL)
 		{
-			container->innerWidth = MAX(elems[i].boundingBox->w + elems[i].margin, container->innerWidth);
-			container->innerHeight += elems[i].boundingBox->h + elems[i].margin;
+			container->innerWidth = MAX(elems[i].boundingBox->w + elems[i].margin * 2, container->innerWidth);
+			container->innerHeight += elems[i].boundingBox->h + elems[i].margin * 2;
 		}
 		else
 		{
@@ -166,12 +166,12 @@ void position_elems( SDLX_RectContainer *container, SDLX_Display *display)
 		// , container->elems[i].boundingBox->h
 		// );
 		// SDL_Log(" %d X %d Y %d | Firection %d", x, y, dir);
-		container->containers[i].self.boundingBox->x = x ;
-		container->containers[i].self.boundingBox->y = y ;
+		container->containers[i].self.boundingBox->x = x + container->containers[i].self.margin;
+		container->containers[i].self.boundingBox->y = y  + container->containers[i].self.margin;
 		// container->elems[i].boundingBox->x = x + container->self.boundingBox->x;
 		// container->elems[i].boundingBox->y = y + container->self.boundingBox->y;
-		x += (container->containers[i].self.boundingBox->w + spacing) * (dir ^ 1);
-		y += (container->containers[i].self.boundingBox->h + spacing) * (dir ^ 0);
+		x += (container->containers[i].self.boundingBox->w + spacing) * (dir ^ 1) + container->containers[i].self.margin;
+		y += (container->containers[i].self.boundingBox->h + spacing) * (dir ^ 0) + container->containers[i].self.margin;
 		// SDL_Log("AFTER Elem %d/%d of %p | w %d h %d x %d y %d",
 		// i, container->elemCount,
 		// container,
@@ -200,12 +200,12 @@ void position_elems( SDLX_RectContainer *container, SDLX_Display *display)
 		// , container->elems[i].boundingBox->h
 		// );
 		// SDL_Log(" %d X %d Y %d | Firection %d", x, y, dir);
-		container->elems[i].boundingBox->x = x ;
-		container->elems[i].boundingBox->y = y ;
+		container->elems[i].boundingBox->x = x + container->containers[i].self.margin;
+		container->elems[i].boundingBox->y = y + container->containers[i].self.margin;
 		// container->elems[i].boundingBox->x = x + container->self.boundingBox->x;
 		// container->elems[i].boundingBox->y = y + container->self.boundingBox->y;
-		x += (container->elems[i].boundingBox->w + spacing) * (dir ^ 1);
-		y += (container->elems[i].boundingBox->h + spacing) * (dir ^ 0);
+		x += (container->elems[i].boundingBox->w + spacing) * (dir ^ 1)+ container->containers[i].self.margin;
+		y += (container->elems[i].boundingBox->h + spacing) * (dir ^ 0)+ container->containers[i].self.margin;
 		// SDL_Log("AFTER Elem %d/%d of %p | w %d h %d x %d y %d",
 		// i, container->elemCount,
 		// container,

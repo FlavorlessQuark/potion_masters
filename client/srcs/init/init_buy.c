@@ -5,8 +5,8 @@ void init_buy_screen(Context *ctx)
 	SDLX_RectContainer *root;
 	SDL_Rect exit;
 
-	exit.x = ctx->display->win_w - 100;
-	exit.y = 50;
+	exit.x = ctx->display->win_w - 75;
+	exit.y = 25;
 	exit.w = 50;
 	exit.h = 50;
 	if (!ctx->buyscreen)

@@ -27,7 +27,7 @@ void render_main_screen(Context *ctx);
 
 void sendReserve(Context *ctx);
 void sendPay(Context *ctx);
-void sendTakeTokens(Context *ctx);
+void sendTakeTokens(Context *ctx, uint8_t *taken);
 void parseMsg(Context *ctx, char *msg);
 
 int extract_num(char *str, int *number);

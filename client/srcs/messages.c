@@ -36,19 +36,20 @@ void sendPay(Context *ctx)
 	msg[9] = ctx->player.tokens[TOK_R] + '0';
 	msg[10] = '\0';
 	sendMessage(msg);
+	endTurn(ctx);
 }
 
-void sendTakeTokens(Context *ctx)
+void sendTakeTokens(Context *ctx, uint8_t *taken)
 {
 	SDL_memset(msg, 0, MSG_LEN);
 
 	msg[0] = ctx->player.id + '0';
 	msg[1] = 't';
-	msg[2] = ctx->player.tokens[TOK_A] + '0';
-	msg[3] = ctx->player.tokens[TOK_B] + '0';
-	msg[4] = ctx->player.tokens[TOK_C] + '0';
-	msg[5] = ctx->player.tokens[TOK_D] + '0';
-	msg[6] = ctx->player.tokens[TOK_R] + '0';
+	msg[2] = taken[TOK_A] + '0';
+	msg[3] = taken[TOK_B] + '0';
+	msg[4] = taken[TOK_C] + '0';
+	msg[5] = taken[TOK_D] + '0';
+	msg[6] = taken[TOK_R] + '0';
 	msg[7] = '\0';
 	sendMessage(msg);
 }
@@ -86,6 +87,7 @@ void parseMsg(Context *ctx, char *input)
 		uint8_t offset;
 		int id;
 
+		SDL_Log("Received board state %s | It's my turn!", input);
 		ctx->board.tokens[0] = input[1] - '0';
 		ctx->board.tokens[1] = input[2] - '0';
 		ctx->board.tokens[2] = input[3] - '0';
