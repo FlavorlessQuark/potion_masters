@@ -19,10 +19,7 @@ void init_buy_screen(Context *ctx)
 	}
 	root = parseUI("assets/UI/buyUI");
 	ctx->buyscreen->showSelected._dst = root->containers[0].elems[0]._boundingBox;
-	ctx->buyscreen->showSelected._dst.x += 100;
 	ctx->buyscreen->buyButton._boundingBox = root->containers[1].elems[0]._boundingBox;
-	ctx->buyscreen->buyButton._boundingBox.x += 100;
 	ctx->buyscreen->reserveButton._boundingBox = root->containers[1].elems[1]._boundingBox;
-	ctx->buyscreen->reserveButton._boundingBox.x += 100;
 	ctx->buyscreen->exit._boundingBox = exit;
 }

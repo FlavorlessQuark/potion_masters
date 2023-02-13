@@ -37,7 +37,7 @@
 #define TOKEN_BUTTON_RESET TOK_COUNT + 1
 #define TOKEN_BUTTON_CONFIRM TOK_COUNT + 2
 
-# define MSG_LEN 20
+# define MSG_LEN 64
 # define MAIN_SCREEN_SPRITE_COUNT MAX_RESERVE + (CARD_TYPES * 2) + 1 + 3 + 1 + 1
 
 # define ASSETS "../assets"
@@ -92,8 +92,6 @@ typedef struct BuyScreen
 	SDLX_Button buyButton;
 	SDLX_Button reserveButton;
 	SDLX_Button exit;
-	SDLX_Button addToken[TOK_COUNT];
-	SDLX_Button delToken[TOK_COUNT];
 	Card  *selected;
 	uint8_t cardOrigin; // -1 = no card, 0 = board, 1 reserverd index
 }			BuyScreen;

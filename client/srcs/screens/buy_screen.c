@@ -9,13 +9,13 @@ void buy_screen(Context *ctx)
 	}
 	else if (ctx->buyscreen->buyButton.triggered == SDLX_KEYDOWN)
 	{
-		composePay(ctx);
+		sendPay(ctx);
 		ctx->state = 0;
 		ctx->buyscreen->cardOrigin = -1;
 	}
 	else if (ctx->buyscreen->reserveButton.triggered == SDLX_KEYDOWN)
 	{
-		composeReserve(ctx);
+		sendReserve(ctx);
 		ctx->state = 0;
 		ctx->buyscreen->cardOrigin = -1;
 	}

@@ -18,7 +18,8 @@ void render_main_screen(Context *ctx)
 		SDL_RenderDrawRect(ctx->display->renderer, ctx->mainscreen->UI[i].dst);
 	}
 	SDL_RenderDrawRect(ctx->display->renderer, ctx->mainscreen->UI[EXTRA_TOKEN].dst);
-	SDL_RenderDrawRect(ctx->display->renderer, ctx->mainscreen->UI[SWITCH_BUTTTON].dst);
+	if (ctx->mainscreen->switchMode.enabled)
+		SDL_RenderDrawRect(ctx->display->renderer, ctx->mainscreen->UI[SWITCH_BUTTTON].dst);
 	for (int i = 0; i < MAX_RESERVE; i++)
 	{
 		SDL_SetRenderDrawColor(ctx->display->renderer,

@@ -24,14 +24,14 @@ int	extract_num(char *str, int *number)
 
 void startTurn(Context *ctx)
 {
-	ctx->mainscreen->reserved->enabled = SDL_TRUE;
+	ctx->mainscreen->switchMode.enabled = SDL_TRUE;
 	for (int i = 0; i < MAX_RESERVE; i++)
 		ctx->mainscreen->reserved[i].enabled = SDL_TRUE;
 }
 
 void endTurn(Context *ctx)
 {
-	ctx->mainscreen->reserved->enabled = SDL_FALSE;
+	ctx->mainscreen->switchMode.enabled = SDL_FALSE;
 	for (int i = 0; i < MAX_RESERVE; i++)
 		ctx->mainscreen->reserved[i].enabled = SDL_FALSE;
 }

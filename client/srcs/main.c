@@ -19,9 +19,9 @@ void init(Context *ctx)
 	init_board_screen(ctx);
 	init_buy_screen(ctx);
 	initConnection(ctx);
+	endTurn(ctx);
 	ctx->state = 0;
 }
-
 
 void core(void)
 {

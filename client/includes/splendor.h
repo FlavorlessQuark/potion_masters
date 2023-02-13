@@ -25,9 +25,9 @@ void render_buy_screen(Context *ctx);
 void render_main_screen(Context *ctx);
 
 
-void composeReserve(Context *ctx);
-void composePay(Context *ctx);
-void composeTakeTokens(Context *ctx);
+void sendReserve(Context *ctx);
+void sendPay(Context *ctx);
+void sendTakeTokens(Context *ctx);
 void parseMsg(Context *ctx, char *msg);
 
 int extract_num(char *str, int *number);
@@ -37,5 +37,6 @@ void startTurn(Context *ctx);
 void endTurn(Context *ctx);
 
 void printRect(SDL_Rect *rect, char * msg);
+void sendMessage(char *message);
 
 #endif
