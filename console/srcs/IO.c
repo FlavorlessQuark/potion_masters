@@ -66,6 +66,7 @@ int execMsg(Context *ctx, char *msg)
 		if(ctx->players[playerID].reserveCount < MAX_RESERVE)
 			ctx->players[playerID].reserveCount++;
 		SDL_Log("Player %d ,reserve %d", ctx->players[playerID].reserveCount);
+		return 1;
 	}
 	else if (msg[0] == 'p')
 	{
@@ -92,6 +93,7 @@ int execMsg(Context *ctx, char *msg)
 			findCard(ctx, cardId, &row, &col);
 			replaceCard(&ctx->board.rows[row], col);
 		}
+		return 1;
 	}
 	else if (msg[0] == 't') { // TODO: Fix redudant if statement
 		msg++;
@@ -104,5 +106,7 @@ int execMsg(Context *ctx, char *msg)
 			ctx->players[playerID].tokens[i] += amount;
 			ctx->board.tokens[i] -= amount;
 		}
+		return 1;
 	}
+	return 0;
 }

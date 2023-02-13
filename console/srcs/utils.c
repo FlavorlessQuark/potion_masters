@@ -69,6 +69,5 @@ void cleanupUIConfig(SDLX_RectContainer *container)
 void cleanup(Context *ctx)
 {
 	SDL_free(ctx->cards);
-
 	SDL_free(ctx);
 }

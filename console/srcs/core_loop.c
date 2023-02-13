@@ -33,12 +33,18 @@ int mainGame(Context *ctx)
 	int msgWasExec;
 	char *msg;
 
+	msgWasExec = 0;
 	msg = recv_from(ctx->players[ctx->turn].handle);
 	if (msg)
+	{
 		SDL_Log("Message from %d %s", ctx->turn, msg);
 		msgWasExec = execMsg(ctx, msg);
-	// if (msgWasExec)
-	// 	turn = (turn + 1) % ctx->playerCount; // 0 if turn == playCount else turn + 1
+	}
+	if (msgWasExec)
+	{
+		send_to(ctx->players[ctx->turn].handle, "e");
+		ctx->turn = (ctx->turn + 1) % ctx->playerCount; // 0 if turn == playCount else turn + 1
+	}
 	renderPlayer(&ctx->board.playerUI[0]);
 	renderPlayer(&ctx->board.playerUI[1]);
 	renderPlayer(&ctx->board.playerUI[2]);

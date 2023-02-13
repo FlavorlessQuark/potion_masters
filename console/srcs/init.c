@@ -61,6 +61,10 @@ void initRowCards(Row *row, SDLX_RectContainer *container)
 
 void initRows(Context *ctx, SDLX_RectContainer *root)
 {
+	SDL_Texture *cards;
+	SDL_Surface *surf;
+
+	// surf = IMG_Load("assets/");
 	ctx->board.rows[TOP_ROW].remainCount = TOP_ROW_COUNT;
 	ctx->board.rows[MID_ROW].remainCount = MID_ROW_COUNT;
 	ctx->board.rows[BOT_ROW].remainCount = BOT_ROW_COUNT;
