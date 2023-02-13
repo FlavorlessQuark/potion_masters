@@ -7,7 +7,7 @@
 # define MAX_PLAYERS 4
 # define MAX_RESERVE 4
 # define MAX_ROWCARD 4
-# define MAX_TITLES 5
+# define MAX_TITLES 4
 
 # define CARD_TYPES 4
 
@@ -34,6 +34,10 @@
 # define CONNECTED 1
 # define READY 2
 
+# define NUMS	"-0123456789"
+# define NMATHC	"0123456789-+()x*=/ "
+
+# define CONNECT_SCREEN_STATUS 0
 # define ASSETS "../assets"
 
 typedef struct c_string_vec {
@@ -68,7 +72,6 @@ typedef struct PlayerUI
 	SDLX_Sprite ressourceIcon[TOK_COUNT];
 	SDLX_Sprite permanentIcon[CARD_TYPES];
 	SDLX_Sprite reservedIcon[MAX_RESERVE];
-	SDLX_Sprite reservedPrice[CARD_TYPES * (TOK_COUNT - 1)];
 }			PlayerUI;
 
 typedef struct Row
@@ -79,6 +82,7 @@ typedef struct Row
 	Card	*remaining;
 	Card	*revealed[MAX_ROWCARD];
 	SDLX_Sprite rowIcon;
+	SDLX_Sprite rowCard[MAX_ROWCARD];
 }	Row;
 
 typedef struct Board
@@ -88,9 +92,17 @@ typedef struct Board
 
 	PlayerUI playerUI[MAX_PLAYERS];
 	Card	titles[MAX_TITLES];
+	SDLX_Sprite tokenUI[TOK_COUNT];
+	SDLX_Sprite titleUI[MAX_TITLES];
 	Row 	rows[ROW_COUNT];
 }	Board;
 
+typedef struct ConnectScreen
+{
+	SDL_Rect status;
+	SDLX_Sprite playerSprites[MAX_PLAYERS];
+	SDLX_Sprite statusSprites[MAX_PLAYERS];
+}	ConnectScreen;
 
 typedef struct Context
 {
@@ -99,6 +111,7 @@ typedef struct Context
 	uint8_t state;
 
 	Board	board;
+	ConnectScreen connectscreen;
 	Card 	*cards;
 	Player players[MAX_PLAYERS];
 	SDLX_Display *display;

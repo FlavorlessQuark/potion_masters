@@ -1,11 +1,39 @@
 #include "../includes/splendor.h"
 
-
-
-void payReserved(Player *player, int position)
+void findCard(Context *ctx, uint8_t id, uint8_t *row, uint8_t *col)
 {
-	player->reserved[position] = player->reserved[player->reserveCount - 1];
-	player->reserveCount--;
+	for (*row = 0; *row < ROW_COUNT;*row += 1)
+	{
+		for (*col = 0; *col < MAX_ROWCARD; *col += 1)
+		{
+			if (ctx->board.rows[*row].revealed[*col] != NULL && ctx->board.rows[*row].revealed[*col]->id == id)
+				return ;
+		}
+	}
+}
+
+
+int	extract_num(char *str, int *number)
+{
+	int spn;
+
+	spn = strcspn(str, NUMS);
+	*number = atoi(str + spn);
+	return spn + strspn(str + spn, NUMS);
+}
+
+
+void payReserved(Player *player, uint8_t cardId)
+{
+	for (int i = 0; i < MAX_RESERVE; i++)
+	{
+		if (player->reserved[i]->id == cardId)
+		{
+			player->reserved[i] = player->reserved[player->reserveCount - 1];
+			player->reserveCount--;
+			break ;
+		}
+	}
 }
 
 int replaceCard(Row *row, int position)

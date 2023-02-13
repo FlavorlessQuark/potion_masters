@@ -12,10 +12,12 @@
 # define UI_PLAYER_RIGHT 2
 
 # define TOKEN_ROW 0
-# define TOP_CARD_ROW 1
-# define MID_CARD_ROW 2
-# define BOT_CARD_ROW 3
-# define TITLE_ROW 4
+# define CARD_ROW 1
+# define TITLE_ROW 2
+# define TOP_CARD_ROW 0
+# define MID_CARD_ROW 1
+# define BOT_CARD_ROW 2
+
 
 void initPlayers(Context *ctx)
 {
@@ -44,6 +46,12 @@ void initRowCards(Row *row, SDLX_RectContainer *container)
 		SDLX_SpriteCreate(&row->remaining[i].sprite, 1, NULL);
 	}
 
+	for (int i = 0; i < MAX_ROWCARD; i++)
+	{
+		SDLX_SpriteCreate(&row->rowCard[i], 1, NULL);
+		row->rowCard[i]._dst = container->elems[i + 1]._boundingBox;
+	}
+
 	replaceCard(row, 0);
 	replaceCard(row, 1);
 	replaceCard(row, 2);
@@ -66,17 +74,27 @@ void initRows(Context *ctx, SDLX_RectContainer *root)
 	ctx->board.rows[BOT_ROW].remaining = ctx->cards + MID_ROW_COUNT;
 
 	// Init textures here
-	initRowCards(&ctx->board.rows[TOP_ROW], &root->containers[TOP_CARD_ROW]);
-	initRowCards(&ctx->board.rows[MID_ROW], &root->containers[MID_CARD_ROW]);
-	initRowCards(&ctx->board.rows[BOT_ROW], &root->containers[BOT_CARD_ROW]);
+	initRowCards(&ctx->board.rows[TOP_ROW], &root->containers[CARD_ROW].containers[TOP_CARD_ROW]);
+	initRowCards(&ctx->board.rows[MID_ROW], &root->containers[CARD_ROW].containers[MID_CARD_ROW]);
+	initRowCards(&ctx->board.rows[BOT_ROW], &root->containers[CARD_ROW].containers[BOT_CARD_ROW]);
 
+	for (int i = 0; i < TOK_COUNT; i++)
+	{
+		SDLX_SpriteCreate(&ctx->board.tokenUI[i], 1, NULL);
+		ctx->board.tokenUI[i]._dst = root->containers[TOKEN_ROW].elems[i]._boundingBox;
+	}
+	for (int i = 0; i < MAX_TITLES; i++)
+	{
+		SDLX_SpriteCreate(&ctx->board.titleUI[i], 1, NULL);
+		ctx->board.titleUI[i]._dst = root->containers[TITLE_ROW].elems[i]._boundingBox;
+	}
 }
 
-SDLX_RectContainer *initUI(void)
+SDLX_RectContainer *initUI(char *filename)
 {
 	SDLX_RectContainer *root;
 
-	root = parse_UIConfig("assets/UIconfig");
+	root = parse_UIConfig(filename);
 	SDLX_ContainerUpdate(root, NULL);
 
 	return root;
@@ -91,18 +109,18 @@ void initPlayerUI(Context *ctx, uint8_t id, SDLX_RectContainer *root)
 
 	for (i = 0; i < CARD_TYPES; i++)
 	{
+		SDLX_SpriteCreate(&ctx->board.playerUI[id].ressourceIcon[i], 1,  NULL);
+		SDLX_SpriteCreate(&ctx->board.playerUI[id].permanentIcon[i], 1,  NULL);
 		ctx->board.playerUI[id].ressourceIcon[i]._dst = root->containers[1].containers[i].elems[0]._boundingBox;
 		ctx->board.playerUI[id].permanentIcon[i]._dst = root->containers[1].containers[i].elems[1]._boundingBox;
 	}
+	SDLX_SpriteCreate(&ctx->board.playerUI[id].ressourceIcon[i], 1, NULL);
 	ctx->board.playerUI[id].ressourceIcon[i]._dst = root->containers[1].containers[i].elems[0]._boundingBox;
 
 	for (i = 0; i < MAX_RESERVE; i++)
 	{
-		ctx->board.playerUI[id].reservedIcon[i]._dst = root->containers[2].containers[i].self._boundingBox;
-		ctx->board.playerUI[id].reservedPrice[i * (TOK_COUNT - 1) + 0]._dst = root->containers[2].containers[i].elems[0]._boundingBox;
-		ctx->board.playerUI[id].reservedPrice[i * (TOK_COUNT - 1) + 1]._dst = root->containers[2].containers[i].elems[1]._boundingBox;
-		ctx->board.playerUI[id].reservedPrice[i * (TOK_COUNT - 1) + 2]._dst = root->containers[2].containers[i].elems[2]._boundingBox;
-		ctx->board.playerUI[id].reservedPrice[i * (TOK_COUNT - 1) + 3]._dst = root->containers[2].containers[i].elems[3]._boundingBox;
+		SDLX_SpriteCreate(&ctx->board.playerUI[id].reservedIcon[i], 1, NULL);
+		ctx->board.playerUI[id].reservedIcon[i]._dst = root->containers[2].elems[i]._boundingBox;
 	}
 }
 
@@ -122,6 +140,24 @@ void print_config(Context *ctx, SDLX_RectContainer *root)
 	SDL_SetRenderDrawColor(ctx->display->renderer, 0, 0,0,255);
 }
 
+void init_connectScreen(Context *ctx)
+{
+	SDLX_RectContainer *root;
+
+	root = initUI("assets/startUI");
+
+	SDL_Log("Container %d", root->containerCount);
+	ctx->connectscreen.status = root->containers[0].elems[0]._boundingBox;
+	for (int i = 0; i < MAX_PLAYERS; i++)
+	{
+		SDLX_SpriteCreate(&ctx->connectscreen.playerSprites[i], 1 , NULL);
+		SDLX_SpriteCreate(&ctx->connectscreen.statusSprites[i], 1 , NULL);
+		ctx->connectscreen.playerSprites[i]._dst = root->containers[1].containers[i].elems[0]._boundingBox;
+		ctx->connectscreen.statusSprites[i]._dst = root->containers[1].containers[i].elems[1]._boundingBox;
+	}
+
+}
+
 Context *init()
 {
 	Context *ctx;
@@ -134,12 +170,16 @@ Context *init()
 	ctx->board.remainingTitles = MAX_TITLES;
 	ctx->state = CONNECT_SCREEN;
 	ctx->playerCount = 0;
-	root = initUI();
-	// initPlayers(ctx);
-	// initRows(ctx, &root->containers[UI_BOARD]);
-	// initPlayerUI(ctx, 0, &root->containers[UI_PLAYER_LEFT].containers[0]);
-	SDLX_RenderReset(ctx->display);
-	print_config(ctx, root);
+	root = initUI("assets/UIconfig");
+	initPlayers(ctx);
+	initRows(ctx, &root->containers[UI_BOARD]);
+	initPlayerUI(ctx, 0, &root->containers[UI_PLAYER_LEFT].containers[0]);
+	initPlayerUI(ctx, 1, &root->containers[UI_PLAYER_RIGHT].containers[0]);
+	initPlayerUI(ctx, 2, &root->containers[UI_PLAYER_LEFT].containers[1]);
+	initPlayerUI(ctx, 3, &root->containers[UI_PLAYER_RIGHT].containers[1]);
+	init_connectScreen(ctx);
+	// SDLX_RenderReset(ctx->display);
+	// print_config(ctx, root);
 	cleanupUIConfig(root);
 	SDL_free(root);
 	return ctx;

@@ -151,12 +151,17 @@ int handle_Connect(Context *ctx, c_string_vec *new)
 int connect_screen(Context *ctx)
 {
 	c_string_vec *handles;
+	uint8_t ready;
 	char *msg;
 
 	handles = get_connections();
 	if (handles)
 		handle_Connect(ctx, handles);
 
+	if (ctx->playerCount > 1)
+		ready = READY;
+	else
+		ready = 0;
 	for (int i = 0; i < ctx->playerCount; i++)
 	{
 		if (ctx->players[i].status != DISCONNECTED)
@@ -165,32 +170,13 @@ int connect_screen(Context *ctx)
 			if (msg != NULL && msg[0] == 'r')
 				ctx->players[i].status = (msg[1] + 1) - '0';
 		}
+		ready &= ctx->players[i].status;
+	}
+	if (ready)
+	{
+		startGame(ctx);
+		ctx->state = PLAYING;
 	}
 	render_connect_screen(ctx);
 }
 
-void render_connect_screen(Context *ctx)
-{
-	int space;
-	SDL_Rect rect;
-
-	rect.h = ctx->display->win_h / 4;
-	rect.w = ctx->display->win_w / 7;
-	rect.y = ctx->display->win_h / 4;
-	rect.x = ctx->display->win_w / 10;
-	space = rect.x;
-
-	for (int i = 0; i < MAX_PLAYERS; i++)
-	{
-		// SDL_Log("Player %d -> %d | %s", i, ctx->players[i].status, ctx->players[i].handle);
-		if (ctx->players[i].status == DISCONNECTED)
-			SDL_SetRenderDrawColor(ctx->display->renderer, 255, 0x0, 0x0,255);
-		else if (ctx->players[i].status == READY)
-			SDL_SetRenderDrawColor(ctx->display->renderer, 0x0, 255, 0x0,255);
-		else if (ctx->players[i].status == CONNECTED)
-			SDL_SetRenderDrawColor(ctx->display->renderer, 0x0, 0x0, 255, 255);
-		SDL_RenderDrawRect(ctx->display->renderer, &rect);
-		rect.x += space + rect.w;
-	}
-	SDL_SetRenderDrawColor(ctx->display->renderer, 0x0, 0x0, 0x0, 255);
-}

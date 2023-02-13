@@ -1,8 +1,4 @@
 #include "../includes/splendor.h"
-
-# define NUMS	"-0123456789"
-# define NMATHC	"0123456789-+()x*=/ "
-
 // Container config format :
 //  1 line per object
 //  First line always describes a container
@@ -11,25 +7,6 @@
 //  c[amount] : container x amount
 //  e[amount] : elem x amount
 //  containers and elements will be parented to the container that came before
-
-// int	extract_num(char *str, int *number)
-// {
-// 	int spn;
-
-// 	spn = strcspn(str, NUMS);
-// 	*number = atoi(str + spn);
-// 	return spn + strspn(str + spn, NUMS);
-// }
-
-int	extract_num(char *str, int *number)
-{
-	int spn;
-
-	spn = strcspn(str, NUMS);
-	*number = atoi(str + spn);
-	return spn + strspn(str + spn, NUMS);
-}
-
 
 char *fetch_file(char *filename, size_t *size)
 {
