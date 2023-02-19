@@ -44,6 +44,8 @@ int mainGame(Context *ctx)
 	{
 		send_to(ctx->players[ctx->turn].handle, "e");
 		ctx->turn = (ctx->turn + 1) % ctx->playerCount; // 0 if turn == playCount else turn + 1
+		sendBoardState(ctx, ctx->turn);
+		SDL_Log("Now player %d turn", ctx->turn);
 	}
 	renderPlayer(&ctx->board.playerUI[0]);
 	renderPlayer(&ctx->board.playerUI[1]);
@@ -57,13 +59,13 @@ int core(void *arg, char *msg)
 	Context *ctx;
 	ctx = (Context *)arg;
 
-	if (ctx->state == EXIT_GAME)
-	{
-		cleanup(ctx);
-		exit(0);
-	}
-	else if (ctx->state == CONNECT_SCREEN)
-		connect_screen(ctx);
-	else
+	// if (ctx->state == EXIT_GAME)
+	// {
+	// 	cleanup(ctx);
+	// 	exit(0);
+	// }
+	// else if (ctx->state == CONNECT_SCREEN)
+	// 	connect_screen(ctx);
+	// else
 		mainGame(ctx);
 }

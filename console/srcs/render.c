@@ -35,7 +35,8 @@ void renderBoard(Context *ctx)
 
 	for (i = 0; i < ROW_COUNT; i++)
 	{
-		SDL_RenderDrawRect(ctx->display->renderer, ctx->board.rows[i].rowIcon.dst);
+		// SDL_RenderDrawRect(ctx->display->renderer, ctx->board.rows[i].rowIcon.dst);
+		SDLX_RenderQueuePush(&ctx->board.rows[i].rowIcon);
 		SDL_RenderDrawRect(ctx->display->renderer, ctx->board.rows[i].rowCard[0].dst);
 		SDL_RenderDrawRect(ctx->display->renderer, ctx->board.rows[i].rowCard[1].dst);
 		SDL_RenderDrawRect(ctx->display->renderer, ctx->board.rows[i].rowCard[2].dst);

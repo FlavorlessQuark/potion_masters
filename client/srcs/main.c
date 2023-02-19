@@ -21,6 +21,8 @@ void init(Context *ctx)
 	initConnection(ctx);
 	endTurn(ctx);
 	ctx->state = 0;
+
+	// sendMessage("Test");
 }
 
 void core(void)
