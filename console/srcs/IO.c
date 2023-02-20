@@ -65,16 +65,17 @@ int execMsg(Context *ctx, char *msg)
 		replaceCard(&ctx->board.rows[row], col);
 		if(ctx->players[playerID].reserveCount < MAX_RESERVE)
 			ctx->players[playerID].reserveCount++;
-		SDL_Log("Player %d ,reserve %d", ctx->players[playerID].reserveCount);
+		SDL_Log("Player %d ,reserve %d",playerID, ctx->players[playerID].reserveCount);
 		return 1;
 	}
 	else if (msg[0] == 'p')
 	{
 		msg++;
+		msg += extract_num(msg, &cardId) + 1;
 		isReserved = msg[0] - '0';
 		msg++;
-		msg += extract_num(msg, &cardId);
-		SDL_Log("Player %d , Buys card %d from reserve? %d row %d col %d", playerID, cardId, isReserved, row, col);
+		findCard(ctx, cardId, &row, &col);
+		SDL_Log("Player %d , Buys card %d from reserve? %d row %d col %d | msg %s", playerID, cardId, isReserved, row, col, msg);
 		for (int i = 0; i < TOK_COUNT; i++)
 		{
 			amount = msg[0] - '0';

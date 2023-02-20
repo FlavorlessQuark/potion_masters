@@ -61,7 +61,7 @@ html:
         -s ENVIRONMENT=web \
         -s ALLOW_MEMORY_GROWTH=1 \
         -s EXPORTED_FUNCTIONS=_main,_recvMessage,_setConnectionStatus \
-		-s EXPORTED_RUNTIME_METHODS=ccall,stringToUTF8,lengthBytesUTF8 \
+		-s EXPORTED_RUNTIME_METHODS=ccall,stringToUTF8,lengthBytesUTF8,UTF8ToString \
         --preload-file srcs/SDLX/default.ttf \
 		--preload-file assets/ \
         -o $(NAME).js

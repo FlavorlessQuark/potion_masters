@@ -32,6 +32,7 @@ void startTurn(Context *ctx)
 void endTurn(Context *ctx)
 {
 	ctx->mainscreen->switchMode.enabled = SDL_FALSE;
+	ctx->state = 0;
 	for (int i = 0; i < MAX_RESERVE; i++)
 		ctx->mainscreen->reserved[i].enabled = SDL_FALSE;
 }

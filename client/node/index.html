@@ -40,6 +40,7 @@
 				sendToWasm(event.data);
 				document.getElementById("statusText").innerHTML = event.data;
 			});
+			console.log('Module',Module, window.Module);
 		}
 	}
 
@@ -61,6 +62,7 @@
 		Module.stringToUTF8(message, msgPtr, byteCount);
 		await Module.ccall('recvMessage', null, ['string'], [message]);
 		// Module._free(msgPtr);
+
 	}
 
 
@@ -76,8 +78,10 @@
 
 	function sendToConsole(message) {
 		// let copy = message
-		console.log("Sending to console", message);
-		ws.send(message);
+		// console.log("What??", window.Module)
+		let msg = Module.UTF8ToString(message);
+		console.log("Sending to console", msg);
+		ws.send(msg);
 	}
 
 

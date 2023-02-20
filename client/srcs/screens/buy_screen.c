@@ -4,7 +4,10 @@ void buy_screen(Context *ctx)
 {
 	if (ctx->buyscreen->exit.triggered == SDLX_KEYDOWN)
 	{
-		ctx->state = 0;
+		if (ctx->buyscreen->cardOrigin == 0)
+			ctx->state = 1;
+		else if (ctx->buyscreen->cardOrigin == 1)
+			ctx->state = 0;
 		ctx->buyscreen->cardOrigin = -1;
 	}
 	else if (ctx->buyscreen->buyButton.triggered == SDLX_KEYDOWN)

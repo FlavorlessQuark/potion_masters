@@ -59,12 +59,36 @@ void initRowCards(Row *row, SDLX_RectContainer *container)
 
 }
 
+void initTextures(Context *ctx)
+{
+	SDL_Surface *surf;
+	SDL_Texture *texture;
+	int yOff = 20;
+	int xOff = 40;
+	int len = 700;
+	int wid = 400;
+
+	surf = IMG_Load("assets/cardData/Cards.png");
+	texture = SDL_CreateTextureFromSurface(ctx->display->renderer, surf);
+	SDL_FreeSurface(surf);
+
+	for (int i = 0; i < ROW_COUNT; i++)
+	{
+		ctx->board.rows[i].rowIcon.texture = texture;
+		ctx->board.rows[i].rowIcon._src.x = (wid + xOff) * i + xOff;
+		ctx->board.rows[i].rowIcon._src.y = yOff;
+		ctx->board.rows[i].rowIcon._src.h = 700;
+		ctx->board.rows[i].rowIcon._src.w = wid;
+		SDLX_SpritePrint(&ctx->board.rows[i].rowIcon);
+		// exit(0);
+	}
+}
+
 void initRows(Context *ctx, SDLX_RectContainer *root)
 {
-	SDL_Texture *cards;
-	SDL_Surface *surf;
+	Card *cards;
 
-	// surf = IMG_Load("assets/");
+
 	ctx->board.rows[TOP_ROW].remainCount = TOP_ROW_COUNT;
 	ctx->board.rows[MID_ROW].remainCount = MID_ROW_COUNT;
 	ctx->board.rows[BOT_ROW].remainCount = BOT_ROW_COUNT;
@@ -181,6 +205,7 @@ Context *init()
 	initPlayerUI(ctx, 2, &root->containers[UI_PLAYER_LEFT].containers[1]);
 	initPlayerUI(ctx, 3, &root->containers[UI_PLAYER_RIGHT].containers[1]);
 	init_connectScreen(ctx);
+	initTextures(ctx);
 	// SDLX_RenderReset(ctx->display);
 	// print_config(ctx, root);
 	cleanupUIConfig(root);

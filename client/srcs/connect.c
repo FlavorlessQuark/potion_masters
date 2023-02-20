@@ -21,12 +21,13 @@ void initConnection(Context *context)
 	ctx = context;
 	context->state = CONNECT;
 	EM_ASM({start_connect()});
-	sendMessage("Test");
+	// sendMessage("Test");
 }
 
 void sendMessage(char *message)
 {
 	SDL_Log("Sending message %s", message);
-	EM_ASM(sendToConsole("test"));
-	// EM_ASM({sendToConsole($0)}, message);
+	// EM_ASM(sendToConsole("test"));
+
+	EM_ASM({sendToConsole($0)}, message);
 }

@@ -36,7 +36,6 @@ void sendPay(Context *ctx)
 	msg[9] = ctx->player.tokens[TOK_R] + '0';
 	msg[10] = '\0';
 	sendMessage(msg);
-	endTurn(ctx);
 }
 
 void sendTakeTokens(Context *ctx, uint8_t *taken)

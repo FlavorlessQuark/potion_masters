@@ -49,7 +49,6 @@ void 		SDLX_RenderAll(SDLX_Display *display)
 	{
 		current = &(queues.queues[i]);
 		n = 0;
-		// SDL_Log("Queue n %d has %ld", i, current->size);
 		while (n < current->size)
 		{
 			SDL_RenderCopyEx(

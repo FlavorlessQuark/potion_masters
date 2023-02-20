@@ -6,7 +6,7 @@ void board_screen(Context *ctx)
 {
 	static uint8_t  taken[TOK_COUNT];
 	static uint8_t  takenCount;
-	static uint8_t  lock = -1;
+	static int  lock = -1;
 	static uint8_t max = MAX_TAKE;
 
 	if (ctx->board.switchMode.triggered == SDLX_KEYDOWN)
@@ -14,13 +14,15 @@ void board_screen(Context *ctx)
 
 	for (int i = 0; i < TOK_COUNT; i++)
 	{
-		if  ((lock < 0 || lock == i) && takenCount < MAX_TAKE && ctx->board.tokenButton[i].triggered == SDLX_KEYDOWN)
+		// SDL_Log("?? %d%d %d | %d %d -> %d", lock < 0, lock == i, takenCount < MAX_TAKE,  ctx->board.tokenButton[i].triggered == SDLX_KEYDOWN, (lock < 0 || lock == i) && (takenCount < MAX_TAKE && ctx->board.tokenButton[i].triggered == SDLX_KEYDOWN));
+		if  ((lock < 0 || lock == i) && (takenCount < MAX_TAKE && ctx->board.tokenButton[i].triggered == SDLX_KEYDOWN))
 		{
 			if (++taken[i] > 1)
 			{
 				lock = i;
 				max = MAX_TAKE - 1;
 			}
+			SDL_Log("Taking %d -> %d", i, takenCount);
 			takenCount++;
 		}
 	}
@@ -69,12 +71,21 @@ void render_board_screen(Context *ctx)
 		}
 	}
 
-	for (int i = 0; i < TOK_COUNT + 2; i++)
+	for (int i = 0; i < TOK_COUNT; i++)
 	{
 		SDL_SetRenderDrawColor(ctx->display->renderer,
 						255 * (ctx->board.tokenButton[i].triggered == SDLX_KEYHELD),
 						255 * (ctx->board.tokenButton[i].state == SDLX_FOCUS_STAY),
 						255,
+						255);
+		SDL_RenderDrawRect(ctx->display->renderer, ctx->board.tokenButton[i].boundingBox);
+	}
+	for (int i = TOK_COUNT; i < TOK_COUNT + 2; i++)
+	{
+		SDL_SetRenderDrawColor(ctx->display->renderer,
+						255 * (ctx->board.tokenButton[i].triggered == SDLX_KEYHELD),
+						255,
+						255 * (ctx->board.tokenButton[i].state == SDLX_FOCUS_STAY),
 						255);
 		SDL_RenderDrawRect(ctx->display->renderer, ctx->board.tokenButton[i].boundingBox);
 	}
