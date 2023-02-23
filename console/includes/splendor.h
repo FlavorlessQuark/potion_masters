@@ -5,8 +5,9 @@
 Context *init();
 int 	core(void *arg, char *msg);
 
-int 	replaceCard(Row *row, int position);
-void	payReserved(Player *player, uint8_t cardId);
+int generateCard(Card *card, int level);
+Card *findCard(Context *ctx, char *id, int _id);
+void delReserved(Player *player, int cardId);
 int 	replaceCard(Row *row, int position);
 
 extern void 	free_strvec(c_string_vec vec);
@@ -25,7 +26,6 @@ void renderPlayer(PlayerUI *player);
 void renderBoard(Context *ctx);
 
 int	extract_num(char *str, int *number);
-void findCard(Context *ctx, uint8_t id, uint8_t *row, uint8_t *col);
 
 void cleanup(Context *ctx);
 void cleanupUIConfig(SDLX_RectContainer *container);

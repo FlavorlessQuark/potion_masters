@@ -158,7 +158,7 @@ int connect_screen(Context *ctx)
 	if (handles)
 		handle_Connect(ctx, handles);
 
-	if (ctx->playerCount > 1)
+	if (ctx->playerCount > 0)
 		ready = READY;
 	else
 		ready = 0;

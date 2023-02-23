@@ -32,84 +32,68 @@ void initPlayers(Context *ctx)
 		ctx->players[i].status = DISCONNECTED;
 		ctx->players[i].reserveCount = 0;
 	}
-
 }
 
-void initRowCards(Row *row, SDLX_RectContainer *container)
+void initRowCards(Row *row, SDLX_RectContainer *container, SDL_Texture *tex)
 {
 	//Parse file data here
 	SDLX_SpriteCreate(&row->rowIcon, 1, NULL);
 	row->rowIcon._dst = container->elems[0]._boundingBox;
-	for (int i = 0; i < row->remainCount; i++)
-	{
-		row->remaining[i] = (Card) {.cost[0] = 1, .cost[1] = 1, .cost[2] = 1, .cost[3] = 1, .points = rand() % 4, .type = rand() % 4};
-		SDLX_SpriteCreate(&row->remaining[i].sprite, 1, NULL);
-	}
+	row->rowIcon.texture = tex;
+	row->rowIcon.src->x = SEP_X;
+	row->rowIcon.src->y = SEP_Y;
+	row->rowIcon.src->h = CARD_H;
+	row->rowIcon.src->w = CARD_W;
 
 	for (int i = 0; i < MAX_ROWCARD; i++)
 	{
-		SDLX_SpriteCreate(&row->rowCard[i], 1, NULL);
-		row->rowCard[i]._dst = container->elems[i + 1]._boundingBox;
+		SDLX_SpriteCreate(&row->revealed[i].sprite, 1, NULL);
+		row->revealed[i].sprite._dst = container->elems[i + 1]._boundingBox;
+		row->revealed[i].sprite.texture = tex;
+		row->revealed[i].sprite._src.h = CARD_H;
+		row->revealed[i].sprite._src.w = CARD_W;
+		generateCard(&row->revealed[i], 0);
 	}
-
-	replaceCard(row, 0);
-	replaceCard(row, 1);
-	replaceCard(row, 2);
-	replaceCard(row, 3);
 
 }
 
-void initTextures(Context *ctx)
-{
-	SDL_Surface *surf;
-	SDL_Texture *texture;
-	int yOff = 20;
-	int xOff = 40;
-	int len = 700;
-	int wid = 400;
-
-	surf = IMG_Load("assets/cardData/Cards.png");
-	texture = SDL_CreateTextureFromSurface(ctx->display->renderer, surf);
-	SDL_FreeSurface(surf);
-
-	for (int i = 0; i < ROW_COUNT; i++)
-	{
-		ctx->board.rows[i].rowIcon.texture = texture;
-		ctx->board.rows[i].rowIcon._src.x = (wid + xOff) * i + xOff;
-		ctx->board.rows[i].rowIcon._src.y = yOff;
-		ctx->board.rows[i].rowIcon._src.h = 700;
-		ctx->board.rows[i].rowIcon._src.w = wid;
-		SDLX_SpritePrint(&ctx->board.rows[i].rowIcon);
-		// exit(0);
-	}
-}
-
-void initRows(Context *ctx, SDLX_RectContainer *root)
+void initCards(Context *ctx, SDLX_RectContainer *root)
 {
 	Card *cards;
+	SDL_Surface *surf;
+	SDL_Texture *tex;
+
+	int yOff = 13;
+	int xOff = 13;
+	int height = 233;
+	int width = 136;
+
+	surf = IMG_Load("assets/cardData/Cards.png");
+	tex = SDL_CreateTextureFromSurface(ctx->display->renderer, surf);
+	SDL_FreeSurface(surf);
 
 
 	ctx->board.rows[TOP_ROW].remainCount = TOP_ROW_COUNT;
 	ctx->board.rows[MID_ROW].remainCount = MID_ROW_COUNT;
 	ctx->board.rows[BOT_ROW].remainCount = BOT_ROW_COUNT;
 
-
-	ctx->cards = SDL_calloc(
-		TOP_ROW_COUNT + MID_ROW_COUNT + BOT_ROW_COUNT,
-		sizeof(Card));
-	ctx->board.rows[TOP_ROW].remaining = ctx->cards + 0;
-	ctx->board.rows[MID_ROW].remaining = ctx->cards + TOP_ROW_COUNT;
-	ctx->board.rows[BOT_ROW].remaining = ctx->cards + MID_ROW_COUNT;
-
 	// Init textures here
-	initRowCards(&ctx->board.rows[TOP_ROW], &root->containers[CARD_ROW].containers[TOP_CARD_ROW]);
-	initRowCards(&ctx->board.rows[MID_ROW], &root->containers[CARD_ROW].containers[MID_CARD_ROW]);
-	initRowCards(&ctx->board.rows[BOT_ROW], &root->containers[CARD_ROW].containers[BOT_CARD_ROW]);
+
+	initRowCards(&ctx->board.rows[TOP_ROW], &root->containers[CARD_ROW].containers[TOP_CARD_ROW], tex);
+	initRowCards(&ctx->board.rows[MID_ROW], &root->containers[CARD_ROW].containers[MID_CARD_ROW], tex);
+	initRowCards(&ctx->board.rows[BOT_ROW], &root->containers[CARD_ROW].containers[BOT_CARD_ROW], tex);
+
 
 	for (int i = 0; i < TOK_COUNT; i++)
 	{
 		SDLX_SpriteCreate(&ctx->board.tokenUI[i], 1, NULL);
 		ctx->board.tokenUI[i]._dst = root->containers[TOKEN_ROW].elems[i]._boundingBox;
+		ctx->board.tokenUI[i].texture = tex;
+		ctx->board.tokenUI[i]._src.h = 53;
+		ctx->board.tokenUI[i]._src.w = CARD_W / 2;
+		// ctx->board.tokenUI[i]._src.y = SEP_Y;
+		ctx->board.tokenUI[i]._src.y = (CARD_H * 2) + SEP_Y * 3 + 8;
+		ctx->board.tokenUI[i]._src.x = (SEP_X ) + (CARD_W / 2 + SEP_X) * i;
 	}
 	for (int i = 0; i < MAX_TITLES; i++)
 	{
@@ -175,39 +159,42 @@ void init_connectScreen(Context *ctx)
 	root = initUI("assets/startUI");
 
 	SDL_Log("Container %d", root->containerCount);
-	ctx->connectscreen.status = root->containers[0].elems[0]._boundingBox;
-	for (int i = 0; i < MAX_PLAYERS; i++)
-	{
-		SDLX_SpriteCreate(&ctx->connectscreen.playerSprites[i], 1 , NULL);
-		SDLX_SpriteCreate(&ctx->connectscreen.statusSprites[i], 1 , NULL);
-		ctx->connectscreen.playerSprites[i]._dst = root->containers[1].containers[i].elems[0]._boundingBox;
-		ctx->connectscreen.statusSprites[i]._dst = root->containers[1].containers[i].elems[1]._boundingBox;
-	}
+	// ctx->connectscreen.status = root->containers[0].elems[0]._boundingBox;
+	SDLX_SpriteCreate(&ctx->connectscreen.playerSprites[0], 1 , NULL);
+	ctx->connectscreen.playerSprites[0]._dst = root->containers[0].elems[0]._boundingBox;
+	SDLX_SpriteCreate(&ctx->connectscreen.playerSprites[1], 1 , NULL);
+	ctx->connectscreen.playerSprites[1]._dst = root->containers[0].elems[1]._boundingBox;
+	SDLX_SpriteCreate(&ctx->connectscreen.playerSprites[2], 1 , NULL);
+	ctx->connectscreen.playerSprites[2]._dst = root->containers[1].elems[0]._boundingBox;
+	SDLX_SpriteCreate(&ctx->connectscreen.playerSprites[3], 1 , NULL);
+	ctx->connectscreen.playerSprites[3]._dst = root->containers[1].elems[1]._boundingBox;
 }
 
 Context *init()
 {
 	Context *ctx;
+
 	SDLX_RectContainer *root;
 
 	srand(time(NULL));
 	SDLX_InitDefault();
+
 	ctx = SDL_calloc(1, sizeof(Context));
 	ctx->display = SDLX_DisplayGet();
 	ctx->board.remainingTitles = MAX_TITLES;
 	ctx->state = CONNECT_SCREEN;
 	ctx->playerCount = 0;
 	root = initUI("assets/UIconfig");
+
 	initPlayers(ctx);
-	initRows(ctx, &root->containers[UI_BOARD]);
+	initCards(ctx, &root->containers[UI_BOARD]);
+
 	initPlayerUI(ctx, 0, &root->containers[UI_PLAYER_LEFT].containers[0]);
 	initPlayerUI(ctx, 1, &root->containers[UI_PLAYER_RIGHT].containers[0]);
 	initPlayerUI(ctx, 2, &root->containers[UI_PLAYER_LEFT].containers[1]);
 	initPlayerUI(ctx, 3, &root->containers[UI_PLAYER_RIGHT].containers[1]);
 	init_connectScreen(ctx);
-	initTextures(ctx);
-	// SDLX_RenderReset(ctx->display);
-	// print_config(ctx, root);
+
 	cleanupUIConfig(root);
 	SDL_free(root);
 	return ctx;
