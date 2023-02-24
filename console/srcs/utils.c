@@ -7,8 +7,10 @@ Card *findCard(Context *ctx, char *id, int _id)
 
 	i = 0;
 	level = id[0] - '0';
-	for (i = 0; i < ROW_COUNT; i++)
+	SDL_Log("Finding %s (%d)", id, _id);
+	for (i = 0; i < MAX_ROWCARD; i++)
 	{
+		SDL_Log("Row %d n %d (%d) <-> (%d)", level, i, ctx->board.rows[level].revealed[i]._id , _id);
 		if (ctx->board.rows[level].revealed[i]._id == _id)
 			return &ctx->board.rows[level].revealed[i];
 	}
@@ -67,6 +69,7 @@ int generateCard(Card *card, int level)
 		length -= 1;
 	}
 
+
 	card->id[0] = level + '0';
 	card->id[1] = type + '0';
 	card->id[2] = variation + '0';
@@ -75,6 +78,16 @@ int generateCard(Card *card, int level)
 	card->id[5] =  card->cost[TOK_C] + '0';
 	card->id[6] =  card->cost[TOK_D] + '0';
 	card->id[7] = '\0';
+	extract_num(card->id, &card->_id);
+	SDL_Log("Generate %s  (%d)| Src (%d,%d) Cost: %d %d %d %d",
+		card->id,
+		card->_id,
+		card->sprite._src.x, card->sprite._src.y,
+		card->cost[0],
+		card->cost[1],
+		card->cost[2],
+		card->cost[3]
+	);
 
 	return 1;
 }

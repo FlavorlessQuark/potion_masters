@@ -34,7 +34,7 @@ void initPlayers(Context *ctx)
 	}
 }
 
-void initRowCards(Row *row, SDLX_RectContainer *container, SDL_Texture *tex)
+void initRowCards(Row *row, SDLX_RectContainer *container, SDL_Texture *tex, int level)
 {
 	//Parse file data here
 	SDLX_SpriteCreate(&row->rowIcon, 1, NULL);
@@ -52,7 +52,7 @@ void initRowCards(Row *row, SDLX_RectContainer *container, SDL_Texture *tex)
 		row->revealed[i].sprite.texture = tex;
 		row->revealed[i].sprite._src.h = CARD_H;
 		row->revealed[i].sprite._src.w = CARD_W;
-		generateCard(&row->revealed[i], 0);
+		generateCard(&row->revealed[i], level);
 	}
 
 }
@@ -79,9 +79,9 @@ void initCards(Context *ctx, SDLX_RectContainer *root)
 
 	// Init textures here
 
-	initRowCards(&ctx->board.rows[TOP_ROW], &root->containers[CARD_ROW].containers[TOP_CARD_ROW], tex);
-	initRowCards(&ctx->board.rows[MID_ROW], &root->containers[CARD_ROW].containers[MID_CARD_ROW], tex);
-	initRowCards(&ctx->board.rows[BOT_ROW], &root->containers[CARD_ROW].containers[BOT_CARD_ROW], tex);
+	initRowCards(&ctx->board.rows[TOP_ROW], &root->containers[CARD_ROW].containers[TOP_CARD_ROW], tex, TOP_ROW);
+	initRowCards(&ctx->board.rows[MID_ROW], &root->containers[CARD_ROW].containers[MID_CARD_ROW], tex, MID_ROW);
+	initRowCards(&ctx->board.rows[BOT_ROW], &root->containers[CARD_ROW].containers[BOT_CARD_ROW], tex, BOT_ROW);
 
 
 	for (int i = 0; i < TOK_COUNT; i++)
@@ -92,8 +92,8 @@ void initCards(Context *ctx, SDLX_RectContainer *root)
 		ctx->board.tokenUI[i]._src.h = 53;
 		ctx->board.tokenUI[i]._src.w = CARD_W / 2;
 		// ctx->board.tokenUI[i]._src.y = SEP_Y;
-		ctx->board.tokenUI[i]._src.y = (CARD_H * 2) + SEP_Y * 3 + 8;
-		ctx->board.tokenUI[i]._src.x = (SEP_X ) + (CARD_W / 2 + SEP_X) * i;
+		ctx->board.tokenUI[i]._src.y = (CARD_H * 2) + SEP_Y * 3 + 35;
+		ctx->board.tokenUI[i]._src.x = (SEP_X + 5) + (CARD_W / 2 + SEP_X) * i;
 	}
 	for (int i = 0; i < MAX_TITLES; i++)
 	{

@@ -17,7 +17,7 @@
  #define CARD_W (136)
  #define CARD_OFF_X (CARD_W + SEP_X)
  #define CARD_OFF_Y (CARD_H + (SEP_Y * 2))
-# define CARD_VARIATIONS *
+# define CARD_VARIATIONS 0
 
 # define CARD_TYPES (4)
 
