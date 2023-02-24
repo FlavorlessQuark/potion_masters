@@ -45,6 +45,21 @@ void board_screen(Context *ctx)
 		max = MAX_TAKE;
 	}
 
+	for (int x = 0; x < ROW_COUNT; x++)
+	{
+		for (int i = 0; i < MAX_ROWCARD; i++)
+		{
+			if (ctx->board.rows[x].cardButton[i].triggered == SDLX_KEYDOWN)
+			{
+				ctx->state = 2;
+				ctx->buyscreen.cardOrigin = 0;
+				ctx->buyscreen.selected = &ctx->board.rows[x].revealed[i];
+				ctx->buyscreen.showSelected.src = ctx->buyscreen.selected->sprite.src;
+				ctx->buyscreen.showSelected.texture = ctx->buyscreen.selected->sprite.texture;
+			}
+		}
+	}
+
 	render_board_screen(ctx);
 }
 
@@ -57,11 +72,8 @@ void render_board_screen(Context *ctx)
 		SDL_RenderDrawRect(ctx->display->renderer, ctx->board.rows[x].rowIcon.dst);
 		for (int i = 0; i < MAX_ROWCARD; i++)
 		{
-			if (ctx->board.rows[x].cardButton[i].triggered == SDLX_KEYDOWN)
-			{
-				ctx->state = 2;
-				ctx->buyscreen->cardOrigin = 0;
-			}
+			if (ctx->board.rows[x].revealed[i].id > 0)
+				SDLX_RenderQueuePush(&ctx->board.rows[x].revealed[i].sprite);
 			SDL_SetRenderDrawColor(ctx->display->renderer,
 							255 * (ctx->board.rows[x].cardButton[i].triggered == SDLX_KEYHELD),
 							255 * (ctx->board.rows[x].cardButton[i].state == SDLX_FOCUS_STAY),

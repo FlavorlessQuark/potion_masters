@@ -10,31 +10,45 @@ static char msg[MSG_LEN];
 
 void sendReserve(Context *ctx)
 {
+	int i;
+	SDL_Rect dst;
+
 	SDL_memset(msg, 0, MSG_LEN);
 
 	msg[0] = ctx->player.id + '0';
 	msg[1] = 'r';
-	msg[2] = '0';
-	msg[3] = '\0';
+	SDL_Log("Card id %s",  ctx->buyscreen.selected->id);
+	for (i = 0; i < CARD_ID_LEN; i++)
+		msg[2 + i] = ctx->buyscreen.selected->id[i];
+	// msg[2] = '0';
+	msg[2 + i] = '\0';
 
 	sendMessage(msg);
+	dst  = ctx->player.reserved[ctx->player.reserveCount].sprite._dst;
+	ctx->player.reserved[ctx->player.reserveCount] = *ctx->buyscreen.selected;
+	ctx->player.reserved[ctx->player.reserveCount].sprite._dst = dst;
+	ctx->player.reserved[ctx->player.reserveCount].sprite.dst = &ctx->player.reserved[ctx->player.reserveCount].sprite._dst;
+	SDLX_SpritePrint(&ctx->player.reserved[ctx->player.reserveCount].sprite);
 }
 
 void sendPay(Context *ctx)
 {
+	int i;
 	SDL_memset(msg, 0, MSG_LEN);
 
 	msg[0] = ctx->player.id + '0';
 	msg[1] = 'p';
 	msg[2] = '0';
 	msg[3] = '|';
-	msg[4] = ctx->buyscreen->cardOrigin + '0';
+	msg[4] = ctx->buyscreen.cardOrigin + '0';
 	msg[5] = ctx->player.tokens[TOK_A] + '0';
 	msg[6] = ctx->player.tokens[TOK_B] + '0';
 	msg[7] = ctx->player.tokens[TOK_C] + '0';
 	msg[8] = ctx->player.tokens[TOK_D] + '0';
 	msg[9] = ctx->player.tokens[TOK_R] + '0';
-	msg[10] = '\0';
+	for (i = 0; ctx->buyscreen.selected->id[i] != '\0'; i++)
+		msg[10 + i] = ctx->buyscreen.selected->id[i];
+	msg[i] = '\0';
 	sendMessage(msg);
 }
 
@@ -84,7 +98,8 @@ void parseMsg(Context *ctx, char *input)
 	else if (input[0] == 'b')
 	{
 		uint8_t offset;
-		int id;
+		int _id;
+		char *id;
 
 		SDL_Log("Received board state %s | It's my turn!", input);
 		ctx->board.tokens[0] = input[1] - '0';
@@ -92,13 +107,16 @@ void parseMsg(Context *ctx, char *input)
 		ctx->board.tokens[2] = input[3] - '0';
 		ctx->board.tokens[3] = input[4] - '0';
 		ctx->board.tokens[4] = input[5] - '0';
-		offset = 7;
+		offset = 6;
 		for (int r = 0; r < ROW_COUNT; r++)
 		{
 			for (int c = 0; c < MAX_ROWCARD; c++)
 			{
-				offset += extract_num(input + offset, &id);
-				ctx->board.rows[r].revealed[c] = &ctx->cards[id];
+				id = input + offset;
+				// SDL_Log("ID %s", id);
+				offset += extract_num(id, &_id) + 1;
+				// SDL_Log("AFTER %s", input + offset);
+				fillCard(&ctx->board.rows[r].revealed[c], _id, id);
 			}
 		}
 		startTurn(ctx);

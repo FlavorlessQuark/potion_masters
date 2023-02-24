@@ -55,6 +55,8 @@ all: $(NAME)
 html:
 	emcc $(SRCS)  -I includes -I includes/SDL2 -I includes/SDLX -s  USE_SDL=2 \
         -s USE_SDL_TTF=2 \
+        -s USE_SDL_IMAGE=2 \
+		-s SDL2_IMAGE_FORMATS='["png"]'\
         -s WASM=0 \
 		-s EXPORT_ES6=1 \
         -s MODULARIZE=1 \

@@ -44,7 +44,10 @@ void SDLX_ButtonCreate (SDLX_Button *dest, SDL_Rect *boundingBox)
 	if (!boundingBox)
 		dest->boundingBox = &dest->_boundingBox;
 	else
+	{
 		dest->boundingBox = boundingBox;
+		dest->_boundingBox = *boundingBox;
+	}
 
 	dest->state = SDLX_NONE;
 	dest->enabled = SDL_TRUE;
