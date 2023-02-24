@@ -1,6 +1,7 @@
 #include "../includes/splendor.h"
 
-char boardState[TOK_COUNT + (ROW_COUNT * (MAX_ROWCARD * 2) * 2) + 2];
+#define MSG_LEN TOK_COUNT + (ROW_COUNT * (CARD_ID_LEN + 1) * MAX_ROWCARD) + 2
+char boardState[MSG_LEN];// +2 -> 'b' and '\0'
 
 // b[tok1, tok2, tok3, tok4, tok5]|[r0c0 ID] ||[r0c1 ID]| |[r0c2 ID] ...
 int sendBoardState(Context *ctx, int player)
@@ -9,22 +10,20 @@ int sendBoardState(Context *ctx, int player)
 
 	offset = 0;
 	boardState[0] = 'b';
-	boardState[TOK_COUNT + (ROW_COUNT * (MAX_ROWCARD * 2) * 2) + 2 - 1] = '\0';
+	boardState[TOK_COUNT + (ROW_COUNT * CARD_ID_LEN) + 1] = '\0';
 	for (int i = 0; i < TOK_COUNT; i++)
 		boardState[++offset] = ctx->board.tokens[i] + '0';
 	for (int i = 0; i < ROW_COUNT; i++)
 	{
 		for (int x = 0; x < MAX_ROWCARD; x++)
 		{
-			if (boardState[++offset] = (ctx->board.rows[i].revealed[x] != NULL) + '0')
+			// SDL_Log("CARD -> %d row, no %d -> id %d %p", i, x, ctx->board.rows[i].revealed[x]);
+			SDL_Log("CARD ID %s",  ctx->board.rows[i].revealed[x].id);
+			for (int s = 0; ctx->board.rows[i].revealed[x].id[s] != '\0'; s++)
 			{
-				char cardId[4];
-				SDL_itoa(ctx->board.rows[i].revealed[x]->id, cardId, 10);
-				for (int s = 0; cardId[s] != '\0'; s++)
-					boardState[++offset] = cardId[s];
+				// SDL_Log("Offset %d / %d -> board %s } %d/%d", offset,MSG_LEN, boardState, s,CARD_ID_LEN );
+				boardState[++offset] = ctx->board.rows[i].revealed[x].id[s];
 			}
-			else
-				boardState[++offset] = '0';
 			boardState[++offset] = '|';
 		}
 	}
@@ -45,9 +44,10 @@ int execMsg(Context *ctx, char *msg)
 	int playerID;
 	int cardId;
 	int amount;
-	uint8_t row;
-	uint8_t col;
 	int isReserved;
+	char *id;
+	Card *card;
+	SDL_Rect dst;
 
 	if (msg == NULL)
 		return 0;
@@ -57,25 +57,34 @@ int execMsg(Context *ctx, char *msg)
 	if (msg[0] == 'r')
 	{
 		msg++;
+		id = msg;
 		msg += extract_num(msg, &cardId);
-		findCard(ctx, cardId, &row, &col);
-		SDL_Log("Player %d , reserve card %d | r %d c %d", playerID, cardId, row, col);
+		if (!(card = findCard(ctx, id, cardId)))
+			SDL_Log("Couldn't find card %d", cardId);
+		SDL_Log("Player %d , reserve card %d", playerID, cardId);
+		dst = ctx->players[playerID].reserved[ctx->players[playerID].reserveCount].sprite._dst;
 		ctx->players[playerID].tokens[TOK_R]++;
-		ctx->players[playerID].reserved[ctx->players[playerID].reserveCount] = ctx->board.rows[row].revealed[col];
-		replaceCard(&ctx->board.rows[row], col);
-		if(ctx->players[playerID].reserveCount < MAX_RESERVE)
-			ctx->players[playerID].reserveCount++;
-		SDL_Log("Player %d ,reserve %d",playerID, ctx->players[playerID].reserveCount);
+		ctx->players[playerID].reserved[ctx->players[playerID].reserveCount] = *card;
+		ctx->players[playerID].reserved[ctx->players[playerID].reserveCount].sprite._dst = dst;
+		ctx->players[playerID].reserved[ctx->players[playerID].reserveCount].sprite.dst = &ctx->players[playerID].reserved[ctx->players[playerID].reserveCount].sprite._dst;
+		ctx->players[playerID].reserveCount++;
+		if (ctx->board.rows[id[0] - '0'].remainCount > 0)
+		{
+			generateCard(card, id[0] - '0');
+			ctx->board.rows[id[0] - '0'].remainCount--;
+		}
+		SDL_Log("Player %d ,reserve count %d",playerID, ctx->players[playerID].reserveCount);
 		return 1;
 	}
 	else if (msg[0] == 'p')
 	{
 		msg++;
+		id = msg;
 		msg += extract_num(msg, &cardId) + 1;
 		isReserved = msg[0] - '0';
 		msg++;
-		findCard(ctx, cardId, &row, &col);
-		SDL_Log("Player %d , Buys card %d from reserve? %d row %d col %d | msg %s", playerID, cardId, isReserved, row, col, msg);
+		// findCard(ctx, cardId, &row, &col);
+		SDL_Log("Player %d , Buys card %d from reserve? %d | msg %s", playerID, cardId, isReserved, msg);
 		for (int i = 0; i < TOK_COUNT; i++)
 		{
 			amount = msg[0] - '0';
@@ -84,15 +93,17 @@ int execMsg(Context *ctx, char *msg)
 			ctx->board.tokens[i] += amount;
 			SDL_Log("Token %d: %d", i, amount);
 		}
-		ctx->players[playerID].owned[ctx->board.rows[row].revealed[col]->type]++;
+		ctx->players[playerID].owned[id[1] - '0']++;
+		ctx->players[playerID].points += card->points;
 		if (isReserved)
 		{
-			payReserved(&ctx->players[playerID], cardId);
+			delReserved(&ctx->players[playerID], cardId);
 		}
 		else
 		{
-			findCard(ctx, cardId, &row, &col);
-			replaceCard(&ctx->board.rows[row], col);
+			card = findCard(ctx, id, cardId);
+			if (ctx->board.rows[id[0] - '0'].remainCount > 0)
+				generateCard(card, id[0] - '0');
 		}
 		return 1;
 	}

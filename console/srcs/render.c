@@ -37,13 +37,20 @@ void renderBoard(Context *ctx)
 	{
 		// SDL_RenderDrawRect(ctx->display->renderer, ctx->board.rows[i].rowIcon.dst);
 		SDLX_RenderQueuePush(&ctx->board.rows[i].rowIcon);
-		SDL_RenderDrawRect(ctx->display->renderer, ctx->board.rows[i].rowCard[0].dst);
-		SDL_RenderDrawRect(ctx->display->renderer, ctx->board.rows[i].rowCard[1].dst);
-		SDL_RenderDrawRect(ctx->display->renderer, ctx->board.rows[i].rowCard[2].dst);
-		SDL_RenderDrawRect(ctx->display->renderer, ctx->board.rows[i].rowCard[3].dst);
+		SDLX_RenderQueuePush(&ctx->board.rows[i].revealed[0].sprite);
+		SDLX_RenderQueuePush(&ctx->board.rows[i].revealed[1].sprite);
+		SDLX_RenderQueuePush(&ctx->board.rows[i].revealed[2].sprite);
+		SDLX_RenderQueuePush(&ctx->board.rows[i].revealed[3].sprite);
+		SDL_RenderDrawRect(ctx->display->renderer, ctx->board.rows[i].revealed[0].sprite.dst);
+		SDL_RenderDrawRect(ctx->display->renderer, ctx->board.rows[i].revealed[1].sprite.dst);
+		SDL_RenderDrawRect(ctx->display->renderer, ctx->board.rows[i].revealed[2].sprite.dst);
+		SDL_RenderDrawRect(ctx->display->renderer, ctx->board.rows[i].revealed[3].sprite.dst);
 	}
 	for (i = 0; i < TOK_COUNT; i++)
 	{
+		SDLX_RenderQueuePush(&ctx->board.tokenUI[i]);
+		// SDLX_SpritePrint(&ctx->board.tokenUI[i]);
+
 		SDL_RenderDrawRect(ctx->display->renderer,  ctx->board.tokenUI[i].dst);
 	}
 	for (i = 0; i < MAX_TITLES; i++)
@@ -74,7 +81,6 @@ void render_connect_screen(Context *ctx)
 		else if (ctx->players[i].status == CONNECTED)
 			SDL_SetRenderDrawColor(ctx->display->renderer, 0x0, 0x0, 255, 255);
 		SDL_RenderDrawRect(ctx->display->renderer, ctx->connectscreen.playerSprites[i].dst);
-		SDL_RenderDrawRect(ctx->display->renderer, ctx->connectscreen.statusSprites[i].dst);
 		rect.x += space + rect.w;
 	}
 	SDL_SetRenderDrawColor(ctx->display->renderer, 255, 0x0, 0x0,255);

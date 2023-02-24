@@ -29,6 +29,7 @@ void sendReserve(Context *ctx);
 void sendPay(Context *ctx);
 void sendTakeTokens(Context *ctx, uint8_t *taken);
 void parseMsg(Context *ctx, char *msg);
+void fillCard(Card *card, uint8_t _id, char *id);
 
 int extract_num(char *str, int *number);
 SDLX_RectContainer *parseUI(char *filename);

@@ -28,6 +28,7 @@ void init(Context *ctx)
 void core(void)
 {
 	SDLX_RenderReset(ctx.display);
+	SDLX_RenderQueueFlushAll();
 	window_events(&ctx);
 	SDLX_InputUpdate();
 	SDLX_ButtonUpdate();
@@ -37,6 +38,7 @@ void core(void)
 		parseMsg(&ctx, ctx.connection.message);
 	}
 	fnloops[ctx.state](&ctx);
+	SDLX_RenderAll(ctx.display);
 	SDL_RenderPresent(ctx.display->renderer);
 }
 

@@ -1,15 +1,20 @@
 #include "../includes/splendor.h"
 
-void findCard(Context *ctx, uint8_t id, uint8_t *row, uint8_t *col)
+Card *findCard(Context *ctx, char *id, int _id)
 {
-	for (*row = 0; *row < ROW_COUNT;*row += 1)
+	int level;
+	int i;
+
+	i = 0;
+	level = id[0] - '0';
+	SDL_Log("Finding %s (%d)", id, _id);
+	for (i = 0; i < MAX_ROWCARD; i++)
 	{
-		for (*col = 0; *col < MAX_ROWCARD; *col += 1)
-		{
-			if (ctx->board.rows[*row].revealed[*col] != NULL && ctx->board.rows[*row].revealed[*col]->id == id)
-				return ;
-		}
+		SDL_Log("Row %d n %d (%d) <-> (%d)", level, i, ctx->board.rows[level].revealed[i]._id , _id);
+		if (ctx->board.rows[level].revealed[i]._id == _id)
+			return &ctx->board.rows[level].revealed[i];
 	}
+	return NULL;
 }
 
 
@@ -23,11 +28,11 @@ int	extract_num(char *str, int *number)
 }
 
 
-void payReserved(Player *player, uint8_t cardId)
+void delReserved(Player *player, int cardId)
 {
 	for (int i = 0; i < MAX_RESERVE; i++)
 	{
-		if (player->reserved[i]->id == cardId)
+		if (player->reserved[i]._id == cardId)
 		{
 			player->reserved[i] = player->reserved[player->reserveCount - 1];
 			player->reserveCount--;
@@ -36,22 +41,53 @@ void payReserved(Player *player, uint8_t cardId)
 	}
 }
 
-int replaceCard(Row *row, int position)
-{
-	int random;
-	Card tmp;
 
-	if (row->remainCount <= 0)
+
+int generateCard(Card *card, int level)
+{
+	int type;
+	int variation;
+	int arr[TOK_COUNT - 1] = {0,1,2,3};
+	int singleMax = 3 + (2 * level);
+	int totalMax = 6 + (2 * level);
+	int length = TOK_COUNT - 1;
+	int cost;
+	int i;
+
+	type = rand() % CARD_TYPES;
+	variation = 0;
+	card->sprite._src.y = CARD_OFF_Y;
+	card->sprite._src.x = SEP_X + (CARD_W + SEP_X) * type;
+
+	while (totalMax > 0 && length > 0)
 	{
-		row->revealed[position] = NULL;
-		return 0;
+		i = rand() % length;
+		cost = rand() % MIN(singleMax, totalMax);
+		totalMax -= cost;
+		card->cost[arr[i]] = cost;
+		arr[i] = arr[length - 1];
+		length -= 1;
 	}
-	random = rand() % row->remainCount;
-	tmp = row->remaining[row->remainCount - 1];
-	row->remaining[row->remainCount - 1] = row->remaining[random];
-	row->remaining[random] = tmp;
-	row->revealed[position] = &row->remaining[row->remainCount - 1];
-	row->remainCount--;
+
+
+	card->id[0] = level + '0';
+	card->id[1] = type + '0';
+	card->id[2] = variation + '0';
+	card->id[3] =  card->cost[TOK_A] + '0';
+	card->id[4] =  card->cost[TOK_B] + '0';
+	card->id[5] =  card->cost[TOK_C] + '0';
+	card->id[6] =  card->cost[TOK_D] + '0';
+	card->id[7] = '\0';
+	extract_num(card->id, &card->_id);
+	SDL_Log("Generate %s  (%d)| Src (%d,%d) Cost: %d %d %d %d",
+		card->id,
+		card->_id,
+		card->sprite._src.x, card->sprite._src.y,
+		card->cost[0],
+		card->cost[1],
+		card->cost[2],
+		card->cost[3]
+	);
 
 	return 1;
 }
@@ -68,6 +104,5 @@ void cleanupUIConfig(SDLX_RectContainer *container)
 
 void cleanup(Context *ctx)
 {
-	SDL_free(ctx->cards);
 	SDL_free(ctx);
 }
