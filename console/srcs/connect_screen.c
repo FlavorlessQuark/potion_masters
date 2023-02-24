@@ -9,16 +9,18 @@ int sortHandles(const void *a, const void *b)
 	return SDL_strcmp(* (char * const *) a, * (char * const *) b);
 }
 
-void connect_handles(Context *ctx, char **handles, int len)
+int connect_handles(Context *ctx, char **handles, int len)
 {
 	int n;
+	int connections;
 	char msg[3];
 
 	n = 0;
+	connections = 0;
 	msg[0] = 'c';
 	for (int i = 0; i < MAX_PLAYERS && n < len; i++)
 	{
-		SDL_Log("Try connect Player id %d -> %d| handle %s =? %s", i, ctx->players[i].status,ctx->players[i].handle, handles[n]);
+		SDL_Log("Try connect Player id %d -> %d| handle %s =? %s", i, ctx->players[i].status, ctx->players[i].handle, handles[n]);
 		if (ctx->players[i].status == DISCONNECTED)
 		{
 			// ctx->players[i].handle = SDL_calloc(HANDLE_LEN, sizeof(char));
@@ -28,17 +30,18 @@ void connect_handles(Context *ctx, char **handles, int len)
 			SDL_strlcpy(ctx->players[i].handle, handles[n], HANDLE_LEN);
 			SDL_Log("Added player %d - %s", i, handles[n]);
 			send_to(handles[n], msg);
+			connections++;
 			n++;
 		}
 		else if (!SDL_strcmp(ctx->players[i].handle, handles[n]))// In case there's a double connect with same handle
 			n++;
 	}
+	return connections;
 }
 
-void disconnect_handles(Context *ctx, char **handles, int len)
+int disconnect_handles(Context *ctx, char **handles, int len)
 {
 	int n;
-
 	n = 0;
 	for (int i = 0; i < MAX_PLAYERS && n < len; i++)
 	{
@@ -51,6 +54,7 @@ void disconnect_handles(Context *ctx, char **handles, int len)
 			n++;
 		}
 	}
+	return n;
 }
 
 int handle_Connect(Context *ctx, c_string_vec *new)
@@ -137,10 +141,10 @@ int handle_Connect(Context *ctx, c_string_vec *new)
 	{
 		SDL_Log("CONNECT Handle %s", newHandles[i]);
 	}
-	disconnect_handles(ctx, discHandles, discLen);
-	connect_handles(ctx, newHandles, newLen);
+	ctx->playerCount -= disconnect_handles(ctx, discHandles, discLen);
+	ctx->playerCount += connect_handles(ctx, newHandles, newLen);
 
-	ctx->playerCount = new->len;
+	SDL_Log("COnnect %d players", ctx->playerCount);
 	for (int i = 0; i < ctx->playerCount; i++)
 	{
 		SDL_Log("PLayer %d| Status : %d | Handle %s", i, ctx->players[i].status, ctx->players[i].handle);
