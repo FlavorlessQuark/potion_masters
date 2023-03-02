@@ -42,8 +42,8 @@ Context *init()
 	ctx->Tbuttons = SDL_CreateTextureFromSurface(ctx->display->renderer, surf);
 	SDL_FreeSurface(surf);
 
-	root = initUI("assets/UIconfig");
-	initCards(ctx, &root->containers[UI_BOARD]);
+	root = loadConfig("assets/UIconfig");
+	initBoard (ctx, &root->containers[UI_BOARD]);
 	initPlayer(ctx, 0, &root->containers[UI_PLAYER_LEFT].containers[0]);
 	initPlayer(ctx, 1, &root->containers[UI_PLAYER_RIGHT].containers[0]);
 	initPlayer(ctx, 2, &root->containers[UI_PLAYER_LEFT].containers[1]);
@@ -124,9 +124,9 @@ void initPlayer(Context *ctx, uint8_t id, SDLX_RectContainer *root)
 	int i;
 
 	memset(ctx->players[id].owned, 0, 5 * sizeof(uint8_t));
-	memset(ctx->players[i].tokens, 0, 5 *sizeof(uint8_t));
-	ctx->players[i].status = DISCONNECTED;
-	ctx->players[i].reserveCount = 0;
+	memset(ctx->players[id].tokens, 0, 5 *sizeof(uint8_t));
+	ctx->players[id].status = DISCONNECTED;
+	ctx->players[id].reserveCount = 0;
 
 	ctx->players[id].nameTag = root->containers[0].elems[0]._boundingBox;
 	ctx->players[id].pointsTag = root->containers[0].elems[1]._boundingBox;
@@ -143,7 +143,7 @@ void initPlayer(Context *ctx, uint8_t id, SDLX_RectContainer *root)
 
 	for (i = 0; i < MAX_RESERVE; i++)
 	{
-		SDLX_SpriteCreate(&ctx->players[id].reserved[i], 1, ctx->Tcards);
+		SDLX_SpriteCreate(&ctx->players[id].reserved[i].sprite, 1, ctx->Tcards);
 		ctx->players[id].reserved[i].sprite._dst = root->containers[2].elems[i]._boundingBox;
 	}
 }
@@ -152,7 +152,7 @@ void init_connectScreen(Context *ctx)
 {
 	SDLX_RectContainer *root;
 
-	root = initUI("assets/startUI");
+	root = loadConfig("assets/startUI");
 
 	SDL_Log("Container %d", root->containerCount);
 	SDLX_SpriteCreate(&ctx->connectscreen.playerSprites[0], 1 , NULL);
