@@ -17,13 +17,9 @@ int sendBoardState(Context *ctx, int player)
 	{
 		for (int x = 0; x < MAX_ROWCARD; x++)
 		{
-			// SDL_Log("CARD -> %d row, no %d -> id %d %p", i, x, ctx->board.rows[i].revealed[x]);
 			SDL_Log("CARD ID %s",  ctx->board.rows[i].revealed[x].id);
 			for (int s = 0; ctx->board.rows[i].revealed[x].id[s] != '\0'; s++)
-			{
-				// SDL_Log("Offset %d / %d -> board %s } %d/%d", offset,MSG_LEN, boardState, s,CARD_ID_LEN );
 				boardState[++offset] = ctx->board.rows[i].revealed[x].id[s];
-			}
 			boardState[++offset] = '|';
 		}
 	}
@@ -51,74 +47,116 @@ int execMsg(Context *ctx, char *msg)
 
 	if (msg == NULL)
 		return 0;
-	SDL_Log("msg %s", msg);
 	playerID = msg[0] - '0';
-	msg++; // Assume player is a 1 digit number (as it should); TODO: Check that this is true
-	if (msg[0] == 'r')
-	{
-		msg++;
-		id = msg;
-		msg += extract_num(msg, &cardId);
-		if (!(card = findCard(ctx, id, cardId)))
-			SDL_Log("Couldn't find card %d", cardId);
-		SDL_Log("Player %d , reserve card %d", playerID, cardId);
-		dst = ctx->players[playerID].reserved[ctx->players[playerID].reserveCount].sprite._dst;
-		ctx->players[playerID].tokens[TOK_R]++;
-		ctx->players[playerID].reserved[ctx->players[playerID].reserveCount] = *card;
-		ctx->players[playerID].reserved[ctx->players[playerID].reserveCount].sprite._dst = dst;
-		ctx->players[playerID].reserved[ctx->players[playerID].reserveCount].sprite.dst = &ctx->players[playerID].reserved[ctx->players[playerID].reserveCount].sprite._dst;
-		ctx->players[playerID].reserveCount++;
-		if (ctx->board.rows[id[0] - '0'].remainCount > 0)
-		{
-			generateCard(card, id[0] - '0');
-			ctx->board.rows[id[0] - '0'].remainCount--;
-		}
-		SDL_Log("Player %d ,reserve count %d",playerID, ctx->players[playerID].reserveCount);
-		return 1;
-	}
+	msg++;
+
+	if 		(msg[0] == 'r')
+		return execReserve(ctx, playerID, msg);
 	else if (msg[0] == 'p')
+		return execBuy(ctx, playerID, msg);
+	else if (msg[0] == 't')
+		return execTake(ctx, playerID, msg);
+
+	return 0;
+}
+
+
+int execReserve(Context *ctx, uint8_t playerID, char *msg)
+{
+	char 	*id;
+	int		cardId;
+	Card	*card;
+
+	msg++;
+	id = msg;
+	msg += extract_num(msg, &cardId);
+
+	if (!(card = findCard(ctx, id, cardId)))
 	{
+		SDL_Log("Couldn't find card %d", cardId);
+		return 0;
+	}
+	SDL_Log("Player %d , reserve card %d", playerID, cardId);
+
+	memcpy(ctx->players[playerID].reserved[ctx->players[playerID].reserveCount].cost, 	card->cost, TOK_COUNT - 1);
+	memcpy(ctx->players[playerID].reserved[ctx->players[playerID].reserveCount].id, 	card->id, 	TOK_COUNT - 1);
+
+	ctx->players[playerID].reserved[ctx->players[playerID].reserveCount]._id 			= card->_id;
+	ctx->players[playerID].reserved[ctx->players[playerID].reserveCount].points 		= card->points;
+	ctx->players[playerID].reserved[ctx->players[playerID].reserveCount].sprite.texture = card->sprite.texture;
+	ctx->players[playerID].reserved[ctx->players[playerID].reserveCount].sprite._src 	= card->sprite._src;
+
+	ctx->players[playerID].tokens[TOK_R]++;
+	ctx->players[playerID].reserveCount++;
+
+	if (ctx->board.rows[id[0] - '0'].remainCount > 0)
+	{
+		generateCard(card, id[0] - '0');
+		ctx->board.rows[id[0] - '0'].remainCount--;
+	}
+	SDL_Log("Player %d ,reserve count %d",playerID, ctx->players[playerID].reserveCount);
+	return 1;
+}
+
+int execBuy(Context *ctx, uint8_t playerID, char *msg)
+{
+	char 	*id;
+	char	isReserved;
+	int		cardId;
+	int		amount;
+	Card	*card;
+
+
+	msg++;
+		isReserved = msg[0] - '0';
 		msg++;
 		id = msg;
 		msg += extract_num(msg, &cardId) + 1;
-		isReserved = msg[0] - '0';
-		msg++;
-		// findCard(ctx, cardId, &row, &col);
+
 		SDL_Log("Player %d , Buys card %d from reserve? %d | msg %s", playerID, cardId, isReserved, msg);
 		for (int i = 0; i < TOK_COUNT; i++)
 		{
 			amount = msg[0] - '0';
-			msg++;
 			ctx->players[playerID].tokens[i] -= amount;
 			ctx->board.tokens[i] += amount;
-			SDL_Log("Token %d: %d", i, amount);
+			msg++;
 		}
 		ctx->players[playerID].owned[id[1] - '0']++;
-		ctx->players[playerID].points += card->points;
+		ctx->players[playerID].points += id[CARD_ID_LEN - 2] - '0';
+
 		if (isReserved)
-		{
 			delReserved(&ctx->players[playerID], cardId);
-		}
 		else
 		{
 			card = findCard(ctx, id, cardId);
 			if (ctx->board.rows[id[0] - '0'].remainCount > 0)
 				generateCard(card, id[0] - '0');
 		}
+
+		SDL_Log("Player has %d %d %d %d %d -> %d points",
+			ctx->players[playerID].tokens[0],
+			ctx->players[playerID].tokens[1],
+			ctx->players[playerID].tokens[2],
+			ctx->players[playerID].tokens[3],
+			ctx->players[playerID].tokens[4],
+			ctx->players[playerID].points
+		);
 		return 1;
-	}
-	else if (msg[0] == 't') { // TODO: Fix redudant if statement
+}
+
+int execTake(Context *ctx, uint8_t playerID, char *msg)
+{
+	int amount;
+
+	msg++;
+	SDL_Log("Player %d , takes", playerID);
+	for (int i = 0; i < CARD_TYPES; i++)
+	{
+		amount = msg[0] - '0';
+		SDL_Log("Token %d: %d", i, amount);
+		ctx->players[playerID].tokens[i] += amount;
+		ctx->board.tokens[i] -= amount;
 		msg++;
-		SDL_Log("Player %d , takes", playerID);
-		for (int i = 0; i < CARD_TYPES; i++)
-		{
-			amount = msg[0] - '0';
-			SDL_Log("Token %d: %d", i, amount);
-			msg++;
-			ctx->players[playerID].tokens[i] += amount;
-			ctx->board.tokens[i] -= amount;
-		}
-		return 1;
 	}
-	return 0;
+	return 1;
 }

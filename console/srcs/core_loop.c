@@ -1,34 +1,23 @@
 #include "../includes/splendor.h"
 
-void nextTurn(Context *ctx)
+int core(void *arg, char *msg)
 {
-	int i;
+	Context *ctx;
+	ctx = (Context *)arg;
 
-	i = (ctx->turn + 1) % MAX_PLAYERS;
-	while (i != ctx->turn)
+	if (ctx->state == EXIT_GAME)
 	{
-		if (ctx->players[i].status == READY)
-		{
-			ctx->turn = i;
-			break ;
-		}
-		i = (i + 1) % MAX_PLAYERS;
+		cleanup(ctx);
+		exit(0);
 	}
-	sendBoardState(ctx, ctx->turn);
+	else if (ctx->state == CONNECT_SCREEN)
+		connect_screen(ctx);
+	else
+		main_game(ctx);
 }
 
-void startGame(Context *ctx)
-{
-	ctx->turn = 0;
-	for (int i = 0; i < MAX_PLAYERS; i++)
-	{
-		if (ctx->players[i].status == READY)
-			send_to(ctx->players[i].handle, "s");
-	}
-	sendBoardState(ctx, ctx->turn);
-}
 
-int mainGame(Context *ctx)
+int main_game(Context *ctx)
 {
 	int msgWasExec;
 	char *msg;
@@ -47,25 +36,41 @@ int mainGame(Context *ctx)
 		sendBoardState(ctx, ctx->turn);
 		SDL_Log("Now player %d turn", ctx->turn);
 	}
-	renderPlayer(&ctx->board.playerUI[0]);
-	renderPlayer(&ctx->board.playerUI[1]);
-	renderPlayer(&ctx->board.playerUI[2]);
-	renderPlayer(&ctx->board.playerUI[3]);
+	renderPlayer(&ctx->players[0]);
+	renderPlayer(&ctx->players[1]);
+	renderPlayer(&ctx->players[2]);
+	renderPlayer(&ctx->players[3]);
 	renderBoard(ctx);
 }
 
-int core(void *arg, char *msg)
+int connect_screen(Context *ctx)
 {
-	Context *ctx;
-	ctx = (Context *)arg;
+	c_string_vec *handles;
+	uint8_t ready;
+	char *msg;
 
-	if (ctx->state == EXIT_GAME)
-	{
-		cleanup(ctx);
-		exit(0);
-	}
-	else if (ctx->state == CONNECT_SCREEN)
-		connect_screen(ctx);
+	handles = get_connections();
+	if (handles)
+		handle_Connect(ctx, handles);
+
+	if (ctx->playerCount > 0)
+		ready = READY;
 	else
-		mainGame(ctx);
+		ready = 0;
+	for (int i = 0; i < ctx->playerCount; i++)
+	{
+		if (ctx->players[i].status != DISCONNECTED)
+		{
+			msg = recv_from(ctx->players[i].handle);
+			if (msg != NULL && msg[0] == 'r')
+				ctx->players[i].status = (msg[1] + 1) - '0';
+		}
+		ready &= ctx->players[i].status;
+	}
+	if (ready)
+	{
+		startGame(ctx);
+		ctx->state = PLAYING;
+	}
+	render_connect_screen(ctx);
 }
