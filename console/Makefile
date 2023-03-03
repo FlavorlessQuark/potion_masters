@@ -24,8 +24,7 @@ SDLX_NAMES = 			\
 SRCS_NAMES =								\
 	$(addprefix $(SDLX_DIR), $(SDLX_NAMES))	\
 	config_parser		\
-	connect_screen		\
-	connect				\
+	connection			\
 	core_loop			\
 	init				\
 	IO					\

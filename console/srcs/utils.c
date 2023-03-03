@@ -7,14 +7,40 @@ Card *findCard(Context *ctx, char *id, int _id)
 
 	i = 0;
 	level = id[0] - '0';
-	SDL_Log("Finding %s (%d)", id, _id);
 	for (i = 0; i < MAX_ROWCARD; i++)
 	{
-		SDL_Log("Row %d n %d (%d) <-> (%d)", level, i, ctx->board.rows[level].revealed[i]._id , _id);
 		if (ctx->board.rows[level].revealed[i]._id == _id)
 			return &ctx->board.rows[level].revealed[i];
 	}
 	return NULL;
+}
+
+void nextTurn(Context *ctx)
+{
+	int i;
+
+	i = (ctx->turn + 1) % MAX_PLAYERS;
+	while (i != ctx->turn)
+	{
+		if (ctx->players[i].status == READY)
+		{
+			ctx->turn = i;
+			break ;
+		}
+		i = (i + 1) % MAX_PLAYERS;
+	}
+	sendBoardState(ctx, ctx->turn);
+}
+
+void startGame(Context *ctx)
+{
+	ctx->turn = 0;
+	for (int i = 0; i < MAX_PLAYERS; i++)
+	{
+		if (ctx->players[i].status == READY)
+			send_to(ctx->players[i].handle, "s");
+	}
+	sendBoardState(ctx, ctx->turn);
 }
 
 
@@ -40,7 +66,6 @@ void delReserved(Player *player, int cardId)
 		}
 	}
 }
-
 
 
 int generateCard(Card *card, int level)
@@ -69,28 +94,64 @@ int generateCard(Card *card, int level)
 		length -= 1;
 	}
 
-
+	if (level == 0)
+		card->points = (rand() % 100) > 75;
+	else if (level == 1)
+		card->points = (rand() % 2);
+	else
+		card->points = (rand() % 4);
 	card->id[0] = level + '0';
 	card->id[1] = type + '0';
 	card->id[2] = variation + '0';
-	card->id[3] =  card->cost[TOK_A] + '0';
-	card->id[4] =  card->cost[TOK_B] + '0';
-	card->id[5] =  card->cost[TOK_C] + '0';
-	card->id[6] =  card->cost[TOK_D] + '0';
-	card->id[7] = '\0';
+	card->id[3] = card->cost[TOK_A] + '0';
+	card->id[4] = card->cost[TOK_B] + '0';
+	card->id[5] = card->cost[TOK_C] + '0';
+	card->id[6] = card->cost[TOK_D] + '0';
+	card->id[7] = card->points + '0';
+	card->id[8] = '\0';
+
 	extract_num(card->id, &card->_id);
-	SDL_Log("Generate %s  (%d)| Src (%d,%d) Cost: %d %d %d %d",
-		card->id,
-		card->_id,
-		card->sprite._src.x, card->sprite._src.y,
-		card->cost[0],
-		card->cost[1],
-		card->cost[2],
-		card->cost[3]
-	);
+	// SDL_Log("Generate %s  (%d) | Src (%d,%d) Cost: %d %d %d %d, points %d",
+	// 	card->id,
+	// 	card->_id,
+	// 	card->sprite._src.x, card->sprite._src.y,
+	// 	card->cost[0],
+	// 	card->cost[1],
+	// 	card->cost[2],
+	// 	card->cost[3],
+	// 	card->points
+	// );
 
 	return 1;
 }
+
+
+void print_config(Context *ctx, SDLX_RectContainer *root)
+{
+	SDL_SetRenderDrawColor(ctx->display->renderer, 255, 0,0,255);
+	SDL_RenderDrawRect(ctx->display->renderer, root->self.boundingBox);
+
+	for (int i = 0; i < root->containerCount; i++)
+		print_config(ctx, &root->containers[i]);
+
+	SDL_SetRenderDrawColor(ctx->display->renderer, 255, 255, 255,255);
+	for (int x = 0; x < root->elemCount; x++)
+	{
+		SDL_RenderDrawRect(ctx->display->renderer, root->elems[x].boundingBox);
+	}
+	SDL_SetRenderDrawColor(ctx->display->renderer, 0, 0,0,255);
+}
+
+SDLX_RectContainer *loadConfig(char *filename)
+{
+	SDLX_RectContainer *root;
+
+	root = parse_UIConfig(filename);
+	SDLX_ContainerUpdate(root, NULL);
+
+	return root;
+}
+
 
 void cleanupUIConfig(SDLX_RectContainer *container)
 {
@@ -106,3 +167,4 @@ void cleanup(Context *ctx)
 {
 	SDL_free(ctx);
 }
+

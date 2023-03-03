@@ -9,7 +9,7 @@
 # define MAX_ROWCARD (4)
 # define MAX_TITLES (4)
 
-# define CARD_ID_LEN (3 + CARD_TYPES + 1)
+# define CARD_ID_LEN (3 + CARD_TYPES + 2)
 
  #define SEP_Y (13)
  #define SEP_X (13)
@@ -59,39 +59,38 @@ typedef struct c_string_vec {
 typedef struct Card
 {
 	SDLX_Sprite sprite;
-	uint8_t cost[TOK_COUNT - 1];
-	uint8_t points;
-	uint8_t type;
+	uint8_t 	cost[TOK_COUNT - 1];
+	uint8_t 	points;
+	uint8_t		type;
+
 	char id[CARD_TYPES + 3 + 1];
 	int _id;
 }	Card;
 
 typedef struct Player
 {
-	Card reserved[MAX_RESERVE];
+	Card 	reserved[MAX_RESERVE];
 	uint8_t tokens[TOK_COUNT];
 	uint8_t owned[CARD_TYPES];
 	uint8_t reserveCount;
 	uint8_t status;
 	uint8_t points;
-	char handle[HANDLE_LEN];
-}	Player;
 
-typedef struct PlayerUI
-{
 	SDL_Rect nameTag;
 	SDL_Rect pointsTag;
+
 	SDLX_Sprite ressourceIcon[TOK_COUNT];
 	SDLX_Sprite permanentIcon[CARD_TYPES];
-	SDLX_Sprite reservedIcon[MAX_RESERVE];
-}			PlayerUI;
+
+	char handle[HANDLE_LEN];
+}	Player;
 
 typedef struct Row
 {
 	uint8_t remainCount;
 	uint8_t revealedCount;
 
-	Card	revealed[MAX_ROWCARD];
+	Card		revealed[MAX_ROWCARD];
 	SDLX_Sprite rowIcon;
 }	Row;
 
@@ -100,11 +99,11 @@ typedef struct Board
 	uint8_t tokens[TOK_COUNT];
 	uint8_t remainingTitles;
 
-	PlayerUI playerUI[MAX_PLAYERS];
-	Card	titles[MAX_TITLES];
+	Card		titles[MAX_TITLES];
+
 	SDLX_Sprite tokenUI[TOK_COUNT];
 	SDLX_Sprite titleUI[MAX_TITLES];
-	Row 	rows[ROW_COUNT];
+	Row 		rows[ROW_COUNT];
 }	Board;
 
 typedef struct ConnectScreen
@@ -116,12 +115,16 @@ typedef struct ConnectScreen
 typedef struct Context
 {
 	uint8_t playerCount;
-	uint8_t  turn;
+	uint8_t turn;
 	uint8_t state;
 
-	Board	board;
+	SDL_Texture 	*Tcards;
+	SDL_Texture 	*Tbuttons;
+	SDLX_Display 	*display;
+
 	ConnectScreen connectscreen;
+
+	Board	board;
 	Player players[MAX_PLAYERS];
-	SDLX_Display *display;
 }	Context;
 #endif
