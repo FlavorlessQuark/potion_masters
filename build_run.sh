@@ -16,7 +16,7 @@ fi
 
 
 cd $base/console
-make re
+make
 
 cp $c_cp/target/debug/libc_controlpads.a client/
 cd $base/client
@@ -36,4 +36,5 @@ node node/index.js &
 
 # run a controller
 google-chrome 127.0.0.1:3000 &
+google-chrome 127.0.0.1:3000?subid=1 &
 
