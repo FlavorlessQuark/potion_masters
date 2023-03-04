@@ -11,9 +11,18 @@ loop fnloops[3] ={main_screen, board_screen, buy_screen};
 void init(Context *ctx)
 {
 	SDLX_RectContainer *root;
+	SDL_Surface *surf;
+	SDL_Texture *tex;
+
 
 	SDLX_Init("Client", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 768, 1366, 0);
 	ctx->display = SDLX_DisplayGet();
+
+	surf = IMG_Load("assets/cardData/Cards.png");
+	tex = SDL_CreateTextureFromSurface(ctx->display->renderer, surf);
+	ctx->cardTex = tex;
+	SDL_FreeSurface(surf);
+
 	init_connect_screen(ctx);
 	init_main_screen(ctx);
 	init_board_screen(ctx);
