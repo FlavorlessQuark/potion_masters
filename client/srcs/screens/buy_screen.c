@@ -39,7 +39,7 @@ void render_buy_screen(Context *ctx)
 					255 * (ctx->buyscreen.reserveButton.state == SDLX_FOCUS_STAY),
 					255,
 					255);
-	if (ctx->buyscreen.cardOrigin == 0)
+	if (ctx->buyscreen.cardOrigin == 0 && ctx->player.reserveCount < MAX_RESERVE)
 		SDL_RenderDrawRect(ctx->display->renderer, ctx->buyscreen.reserveButton.boundingBox);
 
 	SDL_SetRenderDrawColor(ctx->display->renderer, 0, 0, 255, 255);

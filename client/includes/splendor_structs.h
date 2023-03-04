@@ -41,7 +41,7 @@
 #define CARD_OFF_Y CARD_H + (SEP_Y * 2)
 # define CARD_VARIATIONS 0
 
-# define CARD_ID_LEN (3 + CARD_TYPES + 1)
+# define CARD_ID_LEN (3 + CARD_TYPES + 2)
 # define MSG_LEN TOK_COUNT + (ROW_COUNT * (CARD_ID_LEN + 1) * MAX_ROWCARD) + 2
 
 
@@ -57,7 +57,7 @@ typedef struct Card
 	uint8_t cost[TOK_COUNT - 1];
 	uint8_t points;
 	uint8_t type;
-	uint8_t _id;
+	int _id;
 	char id[CARD_ID_LEN];
 }	Card;
 

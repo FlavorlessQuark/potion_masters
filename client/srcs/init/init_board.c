@@ -44,16 +44,11 @@ void init_board_screen(Context *ctx)
 	SDL_Texture *tex;
 
 	root = parseUI("assets/UI/boardUI");
-	surf = IMG_Load("assets/cardData/Cards.png");
-	tex = SDL_CreateTextureFromSurface(ctx->display->renderer, surf);
-	SDL_Log("SURF %p text %p",surf, tex);
-
-	SDL_FreeSurface(surf);
 
 	initTokens(&ctx->board, &root->containers[TOKENS]);
-	initRowCards(&ctx->board.rows[TOP_ROW], &root->containers[CARDS].containers[TOP_ROW], tex);
-	initRowCards(&ctx->board.rows[MID_ROW], &root->containers[CARDS].containers[MID_ROW], tex);
-	initRowCards(&ctx->board.rows[BOT_ROW], &root->containers[CARDS].containers[BOT_ROW], tex);
+	initRowCards(&ctx->board.rows[TOP_ROW], &root->containers[CARDS].containers[TOP_ROW], ctx->cardTex);
+	initRowCards(&ctx->board.rows[MID_ROW], &root->containers[CARDS].containers[MID_ROW], ctx->cardTex);
+	initRowCards(&ctx->board.rows[BOT_ROW], &root->containers[CARDS].containers[BOT_ROW], ctx->cardTex);
 	SDLX_ButtonCreate(&ctx->board.switchMode, NULL);
 	ctx->board.switchMode._boundingBox.x = root->containers[SWITCH].elems[0]._boundingBox.x;
 	ctx->board.switchMode._boundingBox.y = root->containers[SWITCH].elems[0]._boundingBox.y;

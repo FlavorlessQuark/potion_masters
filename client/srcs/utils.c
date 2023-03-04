@@ -12,12 +12,12 @@ SDLX_RectContainer *parseUI(char *filename)
 	return root;
 }
 
-void fillCard(Card *card, uint8_t _id, char *id)
+void fillCard(Card *card, int _id, char *id)
 {
 	int type;
 
 	type = id[1] - '0';
-	memcpy(card->id, id, CARD_ID_LEN);
+	memcpy(card->id, id, CARD_ID_LEN - 1);
 	card->_id = _id;
 	if (_id <= 0)
 		return ;

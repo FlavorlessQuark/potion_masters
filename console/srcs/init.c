@@ -34,7 +34,7 @@ Context *init()
 	ctx->state = CONNECT_SCREEN;
 	ctx->playerCount = 0;
 
-	surf = IMG_Load("assets/Cards.png");
+	surf = IMG_Load("assets/cards.png");
 	ctx->Tcards = SDL_CreateTextureFromSurface(ctx->display->renderer, surf);
 	SDL_FreeSurface(surf);
 
@@ -43,12 +43,12 @@ Context *init()
 	SDL_FreeSurface(surf);
 
 	root = loadConfig("assets/UIconfig");
+	init_connectScreen(ctx);
 	initBoard (ctx, &root->containers[UI_BOARD]);
 	initPlayer(ctx, 0, &root->containers[UI_PLAYER_LEFT].containers[0]);
 	initPlayer(ctx, 1, &root->containers[UI_PLAYER_RIGHT].containers[0]);
 	initPlayer(ctx, 2, &root->containers[UI_PLAYER_LEFT].containers[1]);
 	initPlayer(ctx, 3, &root->containers[UI_PLAYER_RIGHT].containers[1]);
-	init_connectScreen(ctx);
 
 	cleanupUIConfig(root);
 	SDL_free(root);
@@ -59,8 +59,6 @@ Context *init()
 void initBoard(Context *ctx, SDLX_RectContainer *root)
 {
 	Card *cards;
-	SDL_Surface *surf;
-	SDL_Texture *tex;
 
 	int yOff = 13;
 	int xOff = 13;
@@ -80,7 +78,7 @@ void initBoard(Context *ctx, SDLX_RectContainer *root)
 	{
 		SDLX_SpriteCreate(&ctx->board.tokenUI[i], 1, NULL);
 		ctx->board.tokenUI[i]._dst = root->containers[TOKEN_ROW].elems[i]._boundingBox;
-		ctx->board.tokenUI[i].texture = tex;
+		ctx->board.tokenUI[i].texture = ctx->Tcards;
 		ctx->board.tokenUI[i]._src.h = 53;
 		ctx->board.tokenUI[i]._src.w = CARD_W / 2;
 		ctx->board.tokenUI[i]._src.y = (CARD_H * 2) + SEP_Y * 3 + 35;
