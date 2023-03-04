@@ -35,6 +35,7 @@ void nextTurn(Context *ctx)
 void startGame(Context *ctx)
 {
 	ctx->turn = 0;
+	initNewGame(ctx);
 	for (int i = 0; i < MAX_PLAYERS; i++)
 	{
 		if (ctx->players[i].status == READY)
