@@ -195,11 +195,12 @@ int handle_Connect(Context *ctx, c_string_vec *new)
 	ctx->playerCount -= disconnect_handles(ctx, discHandles, discLen);
 	ctx->playerCount += connect_handles(ctx, newHandles, newLen);
 
-	SDL_Log("COnnect %d players", ctx->playerCount);
+	SDL_Log("Connect %d players", ctx->playerCount);
 	for (int i = 0; i < ctx->playerCount; i++)
 	{
-		SDL_Log("PLayer %d| Status : %d | Handle %s", i, ctx->players[i].status, ctx->players[i].handle);
+		SDL_Log("Player %d| Status : %d | Handle %s", i, ctx->players[i].status, ctx->players[i].handle);
 	}
+	SDL_Log("End connect");
 }
 
 
