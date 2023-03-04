@@ -74,3 +74,22 @@ void printRect(SDL_Rect *rect, char * msg)
 			rect->h
 		);
 }
+
+
+void delReserved(Context *ctx, int id)
+{
+	for (int i = 0; i < ctx->player.reserveCount; i++)
+	{
+		if (id == ctx->player.reserved[i]._id)
+		{
+			memcpy(ctx->player.reserved[i].id, ctx->player.reserved[ctx->player.reserveCount - 1].id, CARD_ID_LEN);
+			memcpy(ctx->player.reserved[i].cost, ctx->player.reserved[ctx->player.reserveCount - 1].cost, TOK_COUNT - 1);
+
+			ctx->player.reserved[i]._id = ctx->player.reserved[ctx->player.reserveCount - 1]._id;
+			ctx->player.reserved[i].points = ctx->player.reserved[ctx->player.reserveCount - 1].points;
+			ctx->player.reserved[i].type = ctx->player.reserved[ctx->player.reserveCount - 1].type;
+			ctx->player.reserved[i].sprite._dst = ctx->player.reserved[ctx->player.reserveCount - 1].sprite._dst;
+			ctx->player.reserved[i].sprite._src = ctx->player.reserved[ctx->player.reserveCount - 1].sprite._src;
+		}
+	}
+}

@@ -53,6 +53,9 @@ void sendPay(Context *ctx)
 		msg[n + i] = ctx->player.tokens[i] + '0';
 	msg[n + i] = ctx->buyscreen.selected->points + '0';
 	msg[n + i + 1] = '\0';
+
+	if (ctx->buyscreen.cardOrigin)
+		delReserved(ctx, ctx->buyscreen.selected->_id);
 	// SDL_Log("Sending %s -> %s", msg, ctx->buyscreen.selected->id);
 	sendMessage(msg);
 }
