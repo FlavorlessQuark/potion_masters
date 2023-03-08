@@ -14,10 +14,13 @@ void renderPlayer(Context *ctx, Player *player)
 
 	for (i = 0; i < CARD_TYPES; i++)
 	{
-		SDL_RenderDrawRect(display->renderer, player->ressources[i].dst);
-		SDL_RenderDrawRect(display->renderer, player->permanents[i].dst);
+		player->ressources[i].src->x = ctx->numbers.x + (player->tokens[i] * ctx->numbers.w);
+		player->permanents[i].src->x = ctx->numbers.x + (player->owned[i] * ctx->numbers.w);
+		SDLX_RenderQueuePush(&player->ressources[i]);
+		SDLX_RenderQueuePush(&player->permanents[i]);
 	}
-	SDL_RenderDrawRect(display->renderer, player->ressources[i].dst);
+	player->ressources[i].src->x = ctx->numbers.x + (player->tokens[i] * ctx->numbers.w);
+	SDLX_RenderQueuePush(&player->ressources[i]);
 
 	for (i = 0; i < player->reserveCount; i++)
 	{
@@ -73,14 +76,6 @@ void renderBoard(Context *ctx)
 
 void render_connect_screen(Context *ctx)
 {
-	int space;
-	SDL_Rect rect;
-
-	rect.h = ctx->display->win_h / 4;
-	rect.w = ctx->display->win_w / 7;
-	rect.y = ctx->display->win_h / 4;
-	rect.x = ctx->display->win_w / 10;
-	space = rect.x;
 
 	for (int i = 0; i < MAX_PLAYERS; i++)
 	{
@@ -91,7 +86,6 @@ void render_connect_screen(Context *ctx)
 		else if (ctx->players[i].status == CONNECTED)
 			SDL_SetRenderDrawColor(ctx->display->renderer, 0x0, 0x0, 255, 255);
 		SDL_RenderDrawRect(ctx->display->renderer, ctx->connectscreen.playerSprites[i].dst);
-		rect.x += space + rect.w;
 	}
 	SDL_SetRenderDrawColor(ctx->display->renderer, 255, 0x0, 0x0,255);
 	SDL_RenderDrawRect(ctx->display->renderer, &ctx->connectscreen.status);

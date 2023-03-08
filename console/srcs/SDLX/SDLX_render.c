@@ -72,6 +72,7 @@ void        SDLX_RenderReset(SDLX_Display *display)
 {
 	SDL_RenderClear(display->renderer);
 	SDL_SetRenderDrawColor(display->renderer, 0, 0, 0, 0);
+	SDL_SetRenderDrawBlendMode(display->renderer, SDL_BLENDMODE_BLEND);
 	if (display->background)
 		SDL_RenderCopy(display->renderer, display->background, NULL, NULL);
 }

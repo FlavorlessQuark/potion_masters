@@ -32,15 +32,16 @@ Context *init()
 	ctx->board.remainingTitles = MAX_TITLES;
 	ctx->state = CONNECT_SCREEN;
 	ctx->playerCount = 0;
-	ctx->display->defaultFont = TTF_OpenFont("assets/wizzta.ttf", 24);
+	ctx->display->defaultFont = TTF_OpenFont("assets/underwood.ttf", 40);
 	SDLX_TextSheet_Create(&ctx->textSheet, ctx->display->win_w, ctx->display->win_h);
-	ctx->numbers = SDLX_TextSheet_Add(&ctx->textSheet, "0.123456789", ctx->display->defaultFont, (SDL_Color){255, 255, 255, 255});
+	ctx->numbers = SDLX_TextSheet_Add(&ctx->textSheet, "0123456789", ctx->display->defaultFont, (SDL_Color){255, 255, 255, 255});
 
 	TTF_SizeText(ctx->display->defaultFont, "0", &ctx->numbers.w, &ctx->numbers.h);
 
 	surf = IMG_Load("assets/cards.png");
 	ctx->Tcards = SDL_CreateTextureFromSurface(ctx->display->renderer, surf);
 	SDL_FreeSurface(surf);
+
 
 	surf = IMG_Load("assets/buttons.png");
 	ctx->Tbuttons = SDL_CreateTextureFromSurface(ctx->display->renderer, surf);
@@ -68,6 +69,7 @@ void initNewGame(Context *ctx)
 	SDL_SetRenderTarget(ctx->display->renderer, ctx->display->background);
 	initBoard (ctx, &root->containers[UI_BOARD]);
 
+
 	if (ctx->players[0].status == READY)
 		initPlayer(ctx, 0, &root->containers[UI_PLAYER_LEFT].containers[0]);
 	if (ctx->players[1].status == READY)
@@ -78,6 +80,7 @@ void initNewGame(Context *ctx)
 		initPlayer(ctx, 3, &root->containers[UI_PLAYER_RIGHT].containers[1]);
 
 	SDL_SetRenderTarget(ctx->display->renderer, NULL);
+	SDL_SetRenderDrawBlendMode(ctx->display->renderer, SDL_BLENDMODE_BLEND);
 	cleanupUIConfig(root);
 	SDL_free(root);
 }
@@ -155,7 +158,7 @@ void initRowCards(Context *ctx, SDLX_RectContainer *container, int level)
 		for (int n = 0; n < CARD_TYPES; n++)
 		{
 			SDLX_SpriteCreate(&row->revealed[i].costSprite[n], 1, ctx->textSheet.tex);
-			row->revealed[i].costSprite[n].dst->x = row->revealed[i].sprite.dst->x;
+			row->revealed[i].costSprite[n].dst->x = row->revealed[i].sprite.dst->x + row->revealed[i].sprite.dst->w / 10;
 			row->revealed[i].costSprite[n].dst->y = row->revealed[i].sprite.dst->y + (row->revealed[i].sprite.dst->h / 4 * n);
 			row->revealed[i].costSprite[n].dst->w = row->revealed[i].sprite.dst->w / 10;
 			row->revealed[i].costSprite[n].dst->h = row->revealed[i].sprite.dst->h / 5;
@@ -169,7 +172,7 @@ void initRowCards(Context *ctx, SDLX_RectContainer *container, int level)
 void initPlayer(Context *ctx, uint8_t id, SDLX_RectContainer *root)
 {
 	int i;
-	char name[9] = {'P', 'L', 'A', 'Y', 'E', 'R', '_', (id + 1) + '0', '\0'};
+	char name[9] = {'P', 'L', 'A', 'Y', 'E', 'R', ' ', (id + 1) + '0', '\0'};
 	SDL_Rect src;
 
 	memset(ctx->players[id].owned, 0, 5 * sizeof(uint8_t));
@@ -182,21 +185,26 @@ void initPlayer(Context *ctx, uint8_t id, SDLX_RectContainer *root)
 	ctx->players[id].pointsTag = root->containers[0].elems[1]._boundingBox;
 	ctx->players[id].pointSprite._dst = root->containers[0].elems[1]._boundingBox;
 	ctx->players[id].pointSprite._dst.x += root->containers[0].elems[1]._boundingBox.w;
-	ctx->players[id].pointSprite._dst.w = ctx->numbers.w;
-	ctx->players[id].pointSprite._dst.h = ctx->numbers.h;
+	ctx->players[id].pointSprite._dst.w = ctx->players[id].pointSprite._dst.h;
+	// ctx->players[id].pointSprite._dst.h = ctx->numbers.h;
 	ctx->players[id].pointSprite._src = ctx->numbers;
 
-	TTF_SizeText(ctx->display->defaultFont, name, &root->containers[0].elems[0].boundingBox->w, &root->containers[0].elems[0].boundingBox->h);
-	TTF_SizeText(ctx->display->defaultFont, "POINTS : ", &root->containers[0].elems[1].boundingBox->w, &root->containers[0].elems[1].boundingBox->h);
+	// TTF_SizeText(ctx->display->defaultFont, name, &root->containers[0].elems[0].boundingBox->w, &root->containers[0].elems[0].boundingBox->h);
+	// TTF_SizeText(ctx->display->defaultFont, "POINTS : ", &root->containers[0].elems[1].boundingBox->w, &root->containers[0].elems[1].boundingBox->h);
 	SDLX_RenderMessage(ctx->display, root->containers[0].elems[0].boundingBox, (SDL_Color){255,255,255,255}, name);
 	SDLX_RenderMessage(ctx->display, root->containers[0].elems[1].boundingBox, (SDL_Color){255,255,255,255}, "POINTS : ");
 
 	for (i = 0; i < CARD_TYPES; i++)
 	{
-		SDLX_SpriteCreate(&ctx->players[id].ressources[i], 1,  ctx->Tcards);
-		SDLX_SpriteCreate(&ctx->players[id].permanents[i], 1,  ctx->Tcards);
+		ctx->players[id].owned[i] = 0;
+		ctx->players[id].tokens[i] = 0;
+
+		SDLX_SpriteCreate(&ctx->players[id].ressources[i], 1,  ctx->textSheet.tex);
+		SDLX_SpriteCreate(&ctx->players[id].permanents[i], 1,  ctx->textSheet.tex);
 		ctx->players[id].ressources[i]._dst = root->containers[1].containers[i].elems[0]._boundingBox;
 		ctx->players[id].permanents[i]._dst = root->containers[1].containers[i].elems[1]._boundingBox;
+		ctx->players[id].ressources[i]._src = ctx->numbers;
+		ctx->players[id].permanents[i]._src = ctx->numbers;
 		src = (SDL_Rect){.h = 53, .w = CARD_W / 2,
 						 .x = (SEP_X + 5) + (CARD_W / 2 + SEP_X) * i, .y =  (CARD_H * 2) + SEP_Y * 3 + 35};
 
@@ -205,8 +213,9 @@ void initPlayer(Context *ctx, uint8_t id, SDLX_RectContainer *root)
 	}
 	src = (SDL_Rect){.h = 53, .w = CARD_W / 2,
 						 .x = (SEP_X + 5) + (CARD_W / 2 + SEP_X) * i, .y =  (CARD_H * 2) + SEP_Y * 3 + 35};
-	SDLX_SpriteCreate(&ctx->players[id].ressources[i], 1, ctx->Tcards);
+	SDLX_SpriteCreate(&ctx->players[id].ressources[i], 1, ctx->textSheet.tex);
 	ctx->players[id].ressources[i]._dst = root->containers[1].containers[i].elems[0]._boundingBox;
+	ctx->players[id].ressources[i]._src = ctx->numbers;
 	SDL_RenderCopy(ctx->display->renderer, ctx->Tcards, &src,  root->containers[1].containers[i].elems[0].boundingBox);
 
 	for (i = 0; i < MAX_RESERVE; i++)
@@ -222,9 +231,12 @@ void init_connectScreen(Context *ctx)
 
 	root = loadConfig("assets/startUI");
 
+	// ctx->connectscreen.buttons = IMG_Load("assets/buttons.png");
 	SDL_Log("Container %d", root->containerCount);
+
 	SDLX_SpriteCreate(&ctx->connectscreen.playerSprites[0], 1 , NULL);
 	ctx->connectscreen.playerSprites[0]._dst = root->containers[0].elems[0]._boundingBox;
+	ctx->connectscreen.playerSprites[0]._src = (SDL_Rect){.x = 0, .y = 0, .w = 500, .h = 700};
 	SDLX_SpriteCreate(&ctx->connectscreen.playerSprites[1], 1 , NULL);
 	ctx->connectscreen.playerSprites[1]._dst = root->containers[0].elems[1]._boundingBox;
 	SDLX_SpriteCreate(&ctx->connectscreen.playerSprites[2], 1 , NULL);

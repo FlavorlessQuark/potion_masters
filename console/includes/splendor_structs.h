@@ -110,6 +110,7 @@ typedef struct Board
 typedef struct ConnectScreen
 {
 	SDL_Rect status;
+	SDL_Texture *buttons;
 	SDLX_Sprite playerSprites[MAX_PLAYERS];
 }	ConnectScreen;
 
