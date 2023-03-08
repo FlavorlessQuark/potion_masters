@@ -78,18 +78,31 @@ void printRect(SDL_Rect *rect, char * msg)
 
 void delReserved(Context *ctx, int id)
 {
+	Card tmp;
 	for (int i = 0; i < ctx->player.reserveCount; i++)
 	{
+		SDL_Log("COMPARING %d %d", id, ctx->player.reserved[i]._id );
 		if (id == ctx->player.reserved[i]._id)
 		{
+			SDL_Log("FOUND");
 			memcpy(ctx->player.reserved[i].id, ctx->player.reserved[ctx->player.reserveCount - 1].id, CARD_ID_LEN);
 			memcpy(ctx->player.reserved[i].cost, ctx->player.reserved[ctx->player.reserveCount - 1].cost, TOK_COUNT - 1);
+			memcpy(&tmp, &ctx->player.reserved[i], sizeof(Card));
 
 			ctx->player.reserved[i]._id = ctx->player.reserved[ctx->player.reserveCount - 1]._id;
 			ctx->player.reserved[i].points = ctx->player.reserved[ctx->player.reserveCount - 1].points;
 			ctx->player.reserved[i].type = ctx->player.reserved[ctx->player.reserveCount - 1].type;
 			ctx->player.reserved[i].sprite._dst = ctx->player.reserved[ctx->player.reserveCount - 1].sprite._dst;
 			ctx->player.reserved[i].sprite._src = ctx->player.reserved[ctx->player.reserveCount - 1].sprite._src;
+
+			memset(ctx->player.reserved[ctx->player.reserveCount - 1].id, '0', CARD_ID_LEN);
+			memset(ctx->player.reserved[ctx->player.reserveCount - 1].cost, -1, TOK_COUNT - 1);
+			ctx->player.reserved[ctx->player.reserveCount - 1]._id	 = -1;
+			ctx->player.reserved[ctx->player.reserveCount - 1].sprite._dst = tmp.sprite._dst;
+			ctx->player.reserved[ctx->player.reserveCount - 1].sprite._src = tmp.sprite._src;
+
+			ctx->player.reserveCount--;
+			return ;//return here because if two card have the same id , it will delete both
 		}
 	}
 }
