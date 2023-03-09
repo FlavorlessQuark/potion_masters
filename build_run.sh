@@ -1,9 +1,9 @@
 #!/bin/bash
 
 base=$(pwd)
-wscp="$base/../../LC/WSCPServ/"
-c_cp="$base/../../LC/c_controlpads"
-
+wscp="$base/../WSCPServ/"
+c_cp="$base/../c_controlpads"
+browser="firefox"
 
 # kill processes from last run
 grep_kill -f "target/.*/server"
@@ -16,7 +16,11 @@ fi
 
 
 cd $base/console
-make
+if [[ $1 == "--re" ]]; then
+    make re
+else
+    make
+fi
 
 cp $c_cp/target/debug/libc_controlpads.a client/
 cd $base/client
@@ -35,6 +39,6 @@ cd $base/client
 node node/index.js &
 
 # run a controller
-google-chrome 127.0.0.1:3000 &
-google-chrome 127.0.0.1:3000?subid=1 &
+$browser 127.0.0.1:3000 &
+$browser 127.0.0.1:3000?subid=1 &
 
