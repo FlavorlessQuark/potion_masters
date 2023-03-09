@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 base=$(pwd)
 wscp="$base/../WSCPServ/"
 c_cp="$base/../c_controlpads"
@@ -22,7 +24,7 @@ else
     make
 fi
 
-cp $c_cp/target/debug/libc_controlpads.a client/
+cp $c_cp/target/debug/libc_controlpads.a ../client/
 cd $base/client
 make html
 
