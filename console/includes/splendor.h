@@ -31,6 +31,7 @@ int		main_game(Context *ctx);
 
 Context *init();
 
+void initNewGame(Context *ctx);
 void initBoard	 (Context *ctx, SDLX_RectContainer *root);
 void initRowCards(Context *ctx, SDLX_RectContainer *container, int level);
 void initPlayer	 (Context *ctx, uint8_t id, SDLX_RectContainer *root);
@@ -46,7 +47,7 @@ int execTake	(Context *ctx, uint8_t playerID, char *msg);
 
 // ~-~-~-~-~-~-~- render.c ~-~-~-~-~-~-~-
 
-void renderPlayer(Player *player);
+void renderPlayer(Context *ctx, Player *player);
 void renderBoard (Context *ctx);
 
 

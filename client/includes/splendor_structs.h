@@ -41,7 +41,7 @@
 #define CARD_OFF_Y CARD_H + (SEP_Y * 2)
 # define CARD_VARIATIONS 0
 
-# define CARD_ID_LEN (3 + CARD_TYPES + 1)
+# define CARD_ID_LEN (3 + CARD_TYPES + 2)
 # define MSG_LEN TOK_COUNT + (ROW_COUNT * (CARD_ID_LEN + 1) * MAX_ROWCARD) + 2
 
 
@@ -54,10 +54,11 @@
 typedef struct Card
 {
 	SDLX_Sprite sprite;
+	SDLX_Sprite costSprite[TOK_COUNT - 1];
 	uint8_t cost[TOK_COUNT - 1];
 	uint8_t points;
 	uint8_t type;
-	uint8_t _id;
+	int _id;
 	char id[CARD_ID_LEN];
 }	Card;
 
@@ -85,8 +86,10 @@ typedef struct Board
 
 	Row 	rows[ROW_COUNT];
 	SDLX_Button tokenButton[TOK_COUNT + 2];
-	SDLX_Sprite tokenSprites[TOK_COUNT + 2];
+	SDLX_Sprite tokenCount[TOK_COUNT];
+	SDLX_Sprite tokenTaken[TOK_COUNT];
 	SDLX_Button switchMode;
+	SDL_Texture *bg;
 }	Board;
 
 typedef struct Connection
@@ -100,10 +103,14 @@ typedef struct Connection
 typedef struct BuyScreen
 {
 	SDLX_Sprite showSelected;
+	SDLX_Sprite reserveSprite;
+	SDLX_Sprite buySprite;
+	SDLX_Sprite costSprite[CARD_TYPES];
 	SDLX_Button buyButton;
 	SDLX_Button reserveButton;
 	SDLX_Button exit;
-	Card  *selected;
+	Card  		*selected;
+	SDL_Texture *bg;
 	uint8_t cardOrigin; // -1 = no card, 0 = board, 1 reserverd index
 }			BuyScreen;
 
@@ -117,7 +124,7 @@ typedef struct PlayerUI
 	SDLX_Sprite points;
 	SDLX_Sprite permanents[CARD_TYPES];
 	SDLX_Sprite tokens[TOK_COUNT];
-
+	SDL_Texture *bg;
 }		PlayerUI;
 
 typedef struct Context
@@ -128,7 +135,9 @@ typedef struct Context
 	int state;
 	PlayerUI UI;
 	BuyScreen buyscreen;
+	SDL_Rect nums;
 	SDLX_Display *display;
 	SDL_Texture *cardTex;
+	SDLX_TextSheet textSheet;
 }	Context;
 #endif

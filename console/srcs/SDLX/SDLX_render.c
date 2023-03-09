@@ -72,6 +72,7 @@ void        SDLX_RenderReset(SDLX_Display *display)
 {
 	SDL_RenderClear(display->renderer);
 	SDL_SetRenderDrawColor(display->renderer, 0, 0, 0, 0);
+	SDL_SetRenderDrawBlendMode(display->renderer, SDL_BLENDMODE_BLEND);
 	if (display->background)
 		SDL_RenderCopy(display->renderer, display->background, NULL, NULL);
 }
@@ -157,10 +158,11 @@ void SDLX_RenderMessageAligned(SDLX_Display *display, int x_align, int y_align, 
 void SDLX_RenderMessage(SDLX_Display *display, SDL_Rect *dst, SDL_Color color, char *text)
 {
 	SDL_Surface *surf;
+	SDL_Texture *tex;
 
 	surf = TTF_RenderText_Solid(display->defaultFont, text, color);
-
-	SDL_RenderCopy(display->renderer, SDL_CreateTextureFromSurface(display->renderer, surf),
-		NULL, dst);
+	tex =  SDL_CreateTextureFromSurface(display->renderer, surf);
+	SDL_RenderCopy(display->renderer, tex, NULL, dst);
 	SDL_FreeSurface(surf);
+	SDL_DestroyTexture(tex);
 }

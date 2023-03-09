@@ -19,6 +19,7 @@ SDLX_NAMES = 			\
 	SDLX_init			\
 	SDLX_input			\
 	SDLX_render			\
+	SDLX_text			\
 	SDLX_utils			\
 
 SRCS_NAMES =								\

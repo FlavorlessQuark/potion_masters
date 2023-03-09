@@ -59,6 +59,7 @@ typedef struct c_string_vec {
 typedef struct Card
 {
 	SDLX_Sprite sprite;
+	SDLX_Sprite costSprite[TOK_COUNT - 1];
 	uint8_t 	cost[TOK_COUNT - 1];
 	uint8_t 	points;
 	uint8_t		type;
@@ -76,11 +77,11 @@ typedef struct Player
 	uint8_t status;
 	uint8_t points;
 
-	SDL_Rect nameTag;
 	SDL_Rect pointsTag;
 
-	SDLX_Sprite ressourceIcon[TOK_COUNT];
-	SDLX_Sprite permanentIcon[CARD_TYPES];
+	SDLX_Sprite pointSprite;
+	SDLX_Sprite ressources[TOK_COUNT];
+	SDLX_Sprite permanents[CARD_TYPES];
 
 	char handle[HANDLE_LEN];
 }	Player;
@@ -109,6 +110,7 @@ typedef struct Board
 typedef struct ConnectScreen
 {
 	SDL_Rect status;
+	SDL_Texture *buttons;
 	SDLX_Sprite playerSprites[MAX_PLAYERS];
 }	ConnectScreen;
 
@@ -118,6 +120,7 @@ typedef struct Context
 	uint8_t turn;
 	uint8_t state;
 
+	SDL_Rect		numbers;
 	SDL_Texture 	*Tcards;
 	SDL_Texture 	*Tbuttons;
 	SDLX_Display 	*display;
@@ -126,5 +129,6 @@ typedef struct Context
 
 	Board	board;
 	Player players[MAX_PLAYERS];
+	SDLX_TextSheet textSheet;
 }	Context;
 #endif
