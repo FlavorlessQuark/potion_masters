@@ -3,6 +3,19 @@ import Module from './client.js'
 const wasmModule = Module({
         preRun: [],
         postRun: [],
+		arguments: [window.innerHeight.toString(), window.innerWidth.toString()]
+		// (function () {
+		// 	const w = window.innerWidth.toString();
+		// 	const h = window.innerHeight.toString();
+
+		// 	const wArr = _malloc(w.length);
+		// 	const hArr = _malloc(h.length);
+
+		// 	stringToUTF8(w, wArr, w.length);
+		// 	stringToUTF8(h, hArr, h.length);
+		// 	return [wArr, hArr];
+		// })
+		,
         canvas: (function() {
           var canvas = document.getElementById('canvas');
 
@@ -12,6 +25,14 @@ const wasmModule = Module({
           canvas.addEventListener("webglcontextlost", function(e) { alert('WebGL context lost. You will need to reload the page.'); e.preventDefault(); }, false);
 
           return canvas;
-        })(),}).then((res) => window.Module = res);
+        })(),}).then((res) =>
+		{
+			window.Module = res;
 
-// window.Module = wasmModule;
+			// const canvas = document.getElementById('canvas');
+			// canvas.width = window.innerWidth;
+			// canvas.height = window.innerHeight;
+			// Module.ccall('resizeWindow', null, ['number', 'number'], [canvas.width, canvas.height]);
+		});
+
+window.Module = wasmModule;

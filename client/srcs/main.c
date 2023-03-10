@@ -6,16 +6,16 @@ Context ctx;
 
 typedef void (*loop)(Context *);
 
-loop fnloops[3] ={main_screen, board_screen, buy_screen};
+loop fnloops[4] ={main_screen, board_screen, buy_screen, connect_screen};
 
-void init(Context *ctx)
+void init(Context *ctx, int width, int height)
 {
 	SDLX_RectContainer *root;
 	SDL_Surface *surf;
 	SDL_Texture *tex;
 
 
-	SDLX_Init("Client", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 768, 1366, 0);
+	SDLX_Init("Client", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, 0);
 	ctx->display = SDLX_DisplayGet();
 
 	ctx->display->defaultFont = TTF_OpenFont("assets/underwood.ttf", 40);
@@ -34,7 +34,7 @@ void init(Context *ctx)
 	init_buy_screen(ctx);
 	initConnection(ctx);
 	endTurn(ctx);
-	ctx->state = 0;
+	ctx->state = CONNECT;
 
 	// sendMessage("Test");
 }
@@ -56,9 +56,13 @@ void core(void)
 	SDL_RenderPresent(ctx.display->renderer);
 }
 
-int main()
+int main(int argc, char **argv)
 {
-	init(&ctx);
+	// printf("ARguemnts %d\n", argc);
+
+	// for (int i = 0; i < argc; i++)
+	// 	printf("Argument %d : %s\n", i, argv[i]);
+	init(&ctx, SDL_atoi(argv[1]), SDL_atoi(argv[2]));
 	#ifdef __EMSCRIPTEN__
 			emscripten_set_main_loop(core, 0, 1);
 	#endif

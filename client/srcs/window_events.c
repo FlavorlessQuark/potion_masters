@@ -18,3 +18,16 @@ void window_events(Context *ctx)
 
 	}
 }
+
+void resizeWindow(int width, int height)
+{
+	SDLX_Display *display;
+
+	SDL_Log("RESIZE EVENT %d %d -> %d %d", display->win_w, display->win_h,  width, height);
+
+	display = SDLX_DisplayGet();
+	display->win_w = width;
+	display->win_h = height;
+	SDL_SetWindowSize(display->window, width, height);
+	// initPositions();
+}
