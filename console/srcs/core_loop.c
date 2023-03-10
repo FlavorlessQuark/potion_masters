@@ -64,7 +64,10 @@ int connect_screen(Context *ctx)
 		{
 			msg = recv_from(ctx->players[i].handle);
 			if (msg != NULL && msg[0] == 'r')
+			{
+				send_to(ctx->players[i].handle, "r");
 				ctx->players[i].status = (msg[1] + 1) - '0';
+			}
 		}
 		ready &= ctx->players[i].status;
 	}
