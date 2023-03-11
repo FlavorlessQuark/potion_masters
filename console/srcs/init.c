@@ -29,6 +29,8 @@ Context *init()
 
 	ctx = SDL_calloc(1, sizeof(Context));
 	ctx->display = SDLX_DisplayGet();
+	SDL_SetWindowFullscreen(ctx->display->window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+	SDL_GetWindowSize(ctx->display->window, &ctx->display->win_w, &ctx->display->win_h);
 	ctx->board.remainingTitles = MAX_TITLES;
 	ctx->state = CONNECT_SCREEN;
 	ctx->playerCount = 0;
