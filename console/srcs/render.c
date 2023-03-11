@@ -19,8 +19,8 @@ void renderPlayer(Context *ctx, Player *player)
 		SDLX_RenderQueuePush(&player->ressources[i]);
 		SDLX_RenderQueuePush(&player->permanents[i]);
 	}
-	player->ressources[i].src->x = ctx->numbers.x + (player->tokens[i] * ctx->numbers.w);
-	SDLX_RenderQueuePush(&player->ressources[i]);
+	// player->ressources[i].src->x = ctx->numbers.x + (player->tokens[i] * ctx->numbers.w);
+	// SDLX_RenderQueuePush(&player->ressources[i]);
 
 	for (i = 0; i < player->reserveCount; i++)
 	{

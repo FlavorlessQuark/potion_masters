@@ -69,5 +69,6 @@ void cleanup		(Context *ctx);
 SDLX_RectContainer *loadConfig(char *filename);
 
 void startGame(Context *ctx);
+void get_img_src(SDL_Rect *dst, int imageType, int index);
 
 #endif

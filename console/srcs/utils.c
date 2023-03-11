@@ -82,8 +82,7 @@ int generateCard(Card *card, int level)
 
 	type = rand() % CARD_TYPES;
 	variation = 0;
-	card->sprite._src.y = CARD_OFF_Y;
-	card->sprite._src.x = SEP_X + (CARD_W + SEP_X) * type;
+	get_img_src(&card->sprite._src, CARD, type);
 
 	while (totalMax > 0 && length > 0)
 	{
@@ -112,16 +111,16 @@ int generateCard(Card *card, int level)
 	card->id[8] = '\0';
 
 	extract_num(card->id, &card->_id);
-	// SDL_Log("Generate %s  (%d) | Src (%d,%d) Cost: %d %d %d %d, points %d",
-	// 	card->id,
-	// 	card->_id,
-	// 	card->sprite._src.x, card->sprite._src.y,
-	// 	card->cost[0],
-	// 	card->cost[1],
-	// 	card->cost[2],
-	// 	card->cost[3],
-	// 	card->points
-	// );
+	SDL_Log("Generate %s  (%d) | Src (%d,%d) Cost: %d %d %d %d, points %d",
+		card->id,
+		card->_id,
+		card->sprite._src.x, card->sprite._src.y,
+		card->cost[0],
+		card->cost[1],
+		card->cost[2],
+		card->cost[3],
+		card->points
+	);
 
 	return 1;
 }
@@ -169,3 +168,36 @@ void cleanup(Context *ctx)
 	SDL_free(ctx);
 }
 
+void get_img_src(SDL_Rect *dst, int imageType, int index)
+{
+	if (index < 0 || index >= CARD_TYPES)
+		return ;
+	if (imageType == CARD_BACK)
+	{
+		dst->w = CARD_W;
+		dst->h = CARD_H;
+		dst->x = OFF_X + (index * (CARD_W + SEP_X));
+		dst->y = OFF_Y;
+	}
+	else if (imageType == CARD)
+	{
+		dst->w = CARD_W;
+		dst->h = CARD_H;
+		dst->x = OFF_X + (index * (CARD_W + SEP_X));
+		dst->y = OFF_Y + CARD_H + SEP_Y;
+	}
+	else if (imageType == TOK_HEX)
+	{
+		dst->w = TOK_W;
+		dst->h = TOK_H;
+		dst->x = OFF_X + (CARD_TYPES * (CARD_W + SEP_X)) - SEP_X + TOK_OFF_X;
+		dst->y = OFF_Y + (index * (TOK_H + TOK_OFF_Y));
+	}
+	else if (imageType == TOK_RECT)
+	{
+		dst->w = TOK_W;
+		dst->h = TOK_H;
+		dst->x = OFF_X + (CARD_TYPES * (CARD_W + SEP_X)) - SEP_X + TOK_W + (TOK_OFF_X * 2);
+		dst->y = OFF_Y + (index * (TOK_H + TOK_OFF_Y));
+	}
+}
