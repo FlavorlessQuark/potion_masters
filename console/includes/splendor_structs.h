@@ -48,6 +48,7 @@
 # define EXIT_GAME (-1)
 # define CONNECT_SCREEN (0)
 # define PLAYING (1)
+# define TITLE (2)
 
 # define HANDLE_LEN (21)
 
@@ -120,6 +121,7 @@ typedef struct Board
 
 typedef struct ConnectScreen
 {
+	int counter;
 	SDL_Rect status;
 	SDL_Texture *buttons;
 	SDLX_Sprite playerSprites[MAX_PLAYERS];

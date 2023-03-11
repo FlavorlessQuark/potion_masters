@@ -26,6 +26,7 @@ int handle_Connect		(Context *ctx, c_string_vec *new);
 int 	core(void *arg, char *msg);
 int 	connect_screen(Context *ctx);
 int		main_game(Context *ctx);
+int 	title_screen(Context *ctx);
 
 // ~-~-~-~-~-~-~- init.c ~-~-~-~-~-~-~
 

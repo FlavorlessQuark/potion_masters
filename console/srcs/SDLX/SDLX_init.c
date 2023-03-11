@@ -31,6 +31,7 @@ static void		SDLX_DisplaySet(char *name, int x, int y, int h, int w, int flags)
     display.renderer = SDL_CreateRenderer(display.window, -1, 0);
     display.win_w = w;
     display.win_h = h;
+	display.bgColor = (SDL_Color){0,0,0,255};
 }
 
 void SDLX_InitDefault()

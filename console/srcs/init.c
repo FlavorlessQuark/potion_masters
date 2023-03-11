@@ -31,8 +31,9 @@ Context *init()
 	ctx->display = SDLX_DisplayGet();
 	// SDL_SetWindowFullscreen(ctx->display->window, SDL_WINDOW_FULLSCREEN_DESKTOP);
 	// SDL_GetWindowSize(ctx->display->window, &ctx->display->win_w, &ctx->display->win_h);
+	init_connectScreen(ctx);
 	ctx->board.remainingTitles = MAX_TITLES;
-	ctx->state = CONNECT_SCREEN;
+	ctx->state = TITLE;
 	ctx->playerCount = 0;
 	ctx->display->defaultFont = TTF_OpenFont("assets/underwood.ttf", 40);
 	SDLX_TextSheet_Create(&ctx->textSheet, ctx->display->win_w, ctx->display->win_h);
@@ -48,10 +49,6 @@ Context *init()
 	surf = IMG_Load("assets/buttons.png");
 	ctx->Tbuttons = SDL_CreateTextureFromSurface(ctx->display->renderer, surf);
 	SDL_FreeSurface(surf);
-
-
-	init_connectScreen(ctx);
-
 	return ctx;
 }
 
@@ -68,7 +65,9 @@ void initNewGame(Context *ctx)
 			ctx->display->win_w, ctx->display->win_h
 			);
 
+	SDLX_RenderResetColour(ctx->display);
 	SDL_SetRenderTarget(ctx->display->renderer, ctx->display->background);
+	SDL_RenderCopy(ctx->display->renderer, NULL, NULL, NULL);
 	initBoard (ctx, &root->containers[UI_BOARD]);
 
 
@@ -91,13 +90,6 @@ void initBoard(Context *ctx, SDLX_RectContainer *root)
 {
 	Card *cards;
 	SDL_Rect src;
-	SDL_Color tokenColours[TOK_COUNT] = {
-		{255,0,0,255},
-		{0, 255, 0,255},
-		{0,0,255, 255},
-		{100,100,100,255},
-		// {0,100,100,255},
-	};
 
 	ctx->board.rows[TOP_ROW].remainCount = TOP_ROW_COUNT;
 	ctx->board.rows[MID_ROW].remainCount = MID_ROW_COUNT;
@@ -218,15 +210,21 @@ void initPlayer(Context *ctx, uint8_t id, SDLX_RectContainer *root)
 		ctx->players[id].reserved[i].sprite._dst = root->containers[2].elems[i]._boundingBox;
 	}
 }
-
+# define START 3000
 void init_connectScreen(Context *ctx)
 {
 	SDLX_RectContainer *root;
+	SDL_Surface *surf;
 
 	root = loadConfig("assets/startUI");
 
 	// ctx->connectscreen.buttons = IMG_Load("assets/buttons.png");
 	SDL_Log("Container %d", root->containerCount);
+	ctx->connectscreen.counter = START;
+	surf = IMG_Load("assets/PMTitle.png");
+	ctx->display->background = SDL_CreateTextureFromSurface(ctx->display->renderer, surf);
+	ctx->display->bgColor = (SDL_Color){54, 60, 66,255};
+	SDL_FreeSurface(surf);
 
 	SDLX_SpriteCreate(&ctx->connectscreen.playerSprites[0], 1 , NULL);
 	ctx->connectscreen.playerSprites[0]._dst = root->containers[0].elems[0]._boundingBox;

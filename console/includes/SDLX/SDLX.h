@@ -24,7 +24,7 @@ SDL_Texture		*SDLX_TextureLoad(char *path, SDLX_Display *display);
 void 		SDLX_RenderAll(SDLX_Display *display);
 void 		SDLX_RenderOne(uint32_t id);
 void        SDLX_RenderReset(SDLX_Display *display);
-
+void		SDLX_RenderResetColour(SDLX_Display *display);
 
 void 		SDLX_RenderQueuesCleanup(void);
 void 		SDLX_RenderQueuesInit();
