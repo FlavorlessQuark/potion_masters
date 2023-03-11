@@ -21,8 +21,7 @@ void fillCard(Card *card, int _id, char *id)
 	card->_id = _id;
 	if (_id <= 0)
 		return ;
-	card->sprite._src.y = CARD_OFF_Y;
-	card->sprite._src.x = SEP_X + (CARD_W + SEP_X) * type;
+	get_img_src(&card->sprite._src, CARD, type);
 	for (int i = 0; i < CARD_TYPES; i++)
 		card->cost[i] = id[3 + i] - '0';
 
@@ -104,5 +103,39 @@ void delReserved(Context *ctx, int id)
 			ctx->player.reserveCount--;
 			return ;//return here because if two card have the same id , it will delete both
 		}
+	}
+}
+
+void get_img_src(SDL_Rect *dst, int imageType, int index)
+{
+	if (index < 0 || index >= CARD_TYPES)
+		return ;
+	if (imageType == CARD_BACK)
+	{
+		dst->w = CARD_W;
+		dst->h = CARD_H;
+		dst->x = OFF_X + (index * (CARD_W + SEP_X));
+		dst->y = OFF_Y;
+	}
+	else if (imageType == CARD)
+	{
+		dst->w = CARD_W;
+		dst->h = CARD_H;
+		dst->x = OFF_X + (index * (CARD_W + SEP_X));
+		dst->y = OFF_Y + CARD_H + SEP_Y;
+	}
+	else if (imageType == TOK_HEX)
+	{
+		dst->w = TOK_W;
+		dst->h = TOK_H;
+		dst->x = OFF_X + (CARD_TYPES * (CARD_W + SEP_X)) - SEP_X + TOK_OFF_X;
+		dst->y = OFF_Y + (index * (TOK_H + TOK_OFF_Y));
+	}
+	else if (imageType == TOK_RECT)
+	{
+		dst->w = TOK_W;
+		dst->h = TOK_H;
+		dst->x = OFF_X + (CARD_TYPES * (CARD_W + SEP_X)) - SEP_X + TOK_W + (TOK_OFF_X * 2);
+		dst->y = OFF_Y + (index * (TOK_H + TOK_OFF_Y));
 	}
 }

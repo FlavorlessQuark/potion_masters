@@ -23,11 +23,12 @@ void init(Context *ctx, int width, int height)
 	ctx->nums = SDLX_TextSheet_Add(&ctx->textSheet ,"0123456789", ctx->display->defaultFont, (SDL_Color){255,255,255,255});
 	TTF_SizeText(ctx->display->defaultFont, "0", &ctx->nums.w, &ctx->nums.h);
 
-	surf = IMG_Load("assets/Cards.png");
+	surf = IMG_Load("assets/cards.png");
 	tex = SDL_CreateTextureFromSurface(ctx->display->renderer, surf);
 	SDL_FreeSurface(surf);
 	ctx->cardTex = tex;
 
+	SDLX_Sprite costSprite[CARD_TYPES];
 	init_connect_screen(ctx);
 	init_main_screen(ctx);
 	init_board_screen(ctx);

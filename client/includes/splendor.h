@@ -40,5 +40,6 @@ void endTurn(Context *ctx);
 
 void printRect(SDL_Rect *rect, char * msg);
 void sendMessage(char *message);
+void get_img_src(SDL_Rect *dst, int imageType, int index);
 
 #endif

@@ -53,7 +53,6 @@
 			ws.addEventListener('message', (event) => {
 				console.log("Received ", event.data);
 				sendToWasm(event.data);
-				document.getElementById("statusText").innerHTML = event.data;
 			});
 			console.log('Module',Module, window.Module);
 		}

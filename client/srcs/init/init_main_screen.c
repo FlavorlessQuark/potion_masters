@@ -28,9 +28,9 @@ void init_token_bar(Context *ctx, SDLX_RectContainer *root)
 		ctx->UI.permanents[i]._src = ctx->nums;
 		ctx->UI.tokens[i]._src = ctx->nums;
 
-		src = (SDL_Rect){.h = 53, .w = CARD_W / 2,
-						 .x = (SEP_X + 5) + (CARD_W / 2 + SEP_X) * i, .y =  (CARD_H * 2) + SEP_Y * 3 + 35};
+		get_img_src(&src, TOK_HEX, i);
 		SDL_RenderCopy(ctx->display->renderer, ctx->cardTex, &src, &root->containers[i].elems[0]._boundingBox);
+		get_img_src(&src, TOK_RECT, i);
 		SDL_RenderCopy(ctx->display->renderer, ctx->cardTex, &src, &root->containers[i].elems[1]._boundingBox);
 	}
 	src = (SDL_Rect){.h = 53, .w = CARD_W / 2,
