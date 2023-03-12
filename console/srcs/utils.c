@@ -7,8 +7,10 @@ Card *findCard(Context *ctx, char *id, int _id)
 
 	i = 0;
 	level = id[0] - '0';
+	SDL_Log("Try find %d", _id);
 	for (i = 0; i < MAX_ROWCARD; i++)
 	{
+		SDL_Log("CMP [%d] %d %d", ctx->board.rows[level].revealed[i]._id, _id);
 		if (ctx->board.rows[level].revealed[i]._id == _id)
 			return &ctx->board.rows[level].revealed[i];
 	}
