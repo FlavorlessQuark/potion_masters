@@ -59,8 +59,10 @@ Card *findCard		(Context *ctx, char *id, int _id);
 void nextTurn		(Context *ctx);
 void startGame		(Context *ctx);
 
+SDL_Rect scaleAndCenter(double scalar, SDL_Rect parent, SDL_Rect this);
+
 int	extract_num		(char *str, int *number);
-int generateCard	(Card *card, int level);
+int generateCard	(SDL_Texture *base, Card *card, int level);
 
 void delReserved 	(Player *player, int cardId);
 void print_config	(Context *ctx, SDLX_RectContainer *root);

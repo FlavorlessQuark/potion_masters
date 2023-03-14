@@ -71,7 +71,6 @@ typedef struct c_string_vec {
 typedef struct Card
 {
 	SDLX_Sprite sprite;
-	SDLX_Sprite costSprite[TOK_COUNT - 1];
 	uint8_t 	cost[TOK_COUNT - 1];
 	uint8_t 	points;
 	uint8_t		type;

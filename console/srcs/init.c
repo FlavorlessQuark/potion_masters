@@ -29,8 +29,6 @@ Context *init()
 
 	ctx = SDL_calloc(1, sizeof(Context));
 	ctx->display = SDLX_DisplayGet();
-	// SDL_SetWindowFullscreen(ctx->display->window, SDL_WINDOW_FULLSCREEN_DESKTOP);
-	// SDL_GetWindowSize(ctx->display->window, &ctx->display->win_w, &ctx->display->win_h);
 	init_connectScreen(ctx);
 	ctx->board.remainingTitles = MAX_TITLES;
 	ctx->state = TITLE;
@@ -70,7 +68,7 @@ void initNewGame(Context *ctx)
 	SDL_RenderCopy(ctx->display->renderer, NULL, NULL, NULL);
 	initBoard (ctx, &root->containers[UI_BOARD]);
 
-
+	SDL_Log("Board was init");
 	if (ctx->players[0].status == READY)
 		initPlayer(ctx, 0, &root->containers[UI_PLAYER_LEFT].containers[0]);
 	if (ctx->players[1].status == READY)
@@ -141,17 +139,19 @@ void initRowCards(Context *ctx, SDLX_RectContainer *container, int level)
 	{
 		SDLX_SpriteCreate(&row->revealed[i].sprite, 1, NULL);
 		row->revealed[i].sprite._dst = container->elems[i + 1]._boundingBox;
-		row->revealed[i].sprite.texture = ctx->Tcards;
-		generateCard(&row->revealed[i], level);
-		for (int n = 0; n < CARD_TYPES; n++)
-		{
-			SDLX_SpriteCreate(&row->revealed[i].costSprite[n], 1, ctx->textSheet.tex);
-			row->revealed[i].costSprite[n].dst->x = row->revealed[i].sprite.dst->x + row->revealed[i].sprite.dst->w / 10;
-			row->revealed[i].costSprite[n].dst->y = row->revealed[i].sprite.dst->y + (row->revealed[i].sprite.dst->h / 4 * n);
-			row->revealed[i].costSprite[n].dst->w = row->revealed[i].sprite.dst->w / 10;
-			row->revealed[i].costSprite[n].dst->h = row->revealed[i].sprite.dst->h / 5;
-			row->revealed[i].costSprite[n]._src = ctx->numbers;
-		}
+		row->revealed[i].sprite.src = NULL;
+		row->revealed[i].sprite.texture = SDL_CreateTexture(ctx->display->renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, row->revealed[i].sprite._dst.w, row->revealed[i].sprite._dst.h);
+		SDL_SetTextureBlendMode(row->revealed[i].sprite.texture , SDL_BLENDMODE_BLEND);
+		generateCard(ctx->Tcards, &row->revealed[i], level);
+		// for (int n = 0; n < CARD_TYPES; n++)
+		// {
+		// 	SDLX_SpriteCreate(&row->revealed[i].costSprite[n], 1, ctx->textSheet.tex);
+		// 	row->revealed[i].costSprite[n].dst->x = row->revealed[i].sprite.dst->x + row->revealed[i].sprite.dst->w / 10;
+		// 	row->revealed[i].costSprite[n].dst->y = row->revealed[i].sprite.dst->y + (row->revealed[i].sprite.dst->h / 4 * n);
+		// 	row->revealed[i].costSprite[n].dst->w = row->revealed[i].sprite.dst->w / 10;
+		// 	row->revealed[i].costSprite[n].dst->h = row->revealed[i].sprite.dst->h / 5;
+		// 	row->revealed[i].costSprite[n]._src = ctx->numbers;
+		// }
 	}
 
 }

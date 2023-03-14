@@ -56,6 +56,17 @@ int	extract_num(char *str, int *number)
 	return spn + strspn(str + spn, NUMS);
 }
 
+SDL_Rect scaleAndCenter(double scalar, SDL_Rect parent, SDL_Rect this)
+{
+	SDL_Rect result;
+
+	result.w = this.w * scalar;
+	result.h = this.h * scalar;
+	result.x = parent.x + ((parent.w / 2) - (result.w / 2));
+	result.y = parent.y + ((parent.h / 2) - (result.h / 2));
+
+	return result;
+}
 
 void delReserved(Player *player, int cardId)
 {
@@ -70,9 +81,55 @@ void delReserved(Player *player, int cardId)
 	}
 }
 
-
-int generateCard(Card *card, int level)
+void generateCardTexture(SDL_Texture *base, Card *card, int type)
 {
+	SDL_Rect src;
+	SDL_Rect dst;
+	SDL_Rect centereDst;
+	SDL_Renderer *renderer;
+	char text[2] = {'0', '\0'};
+
+	renderer = SDLX_DisplayGet()->renderer;
+	get_img_src(&src, CARD, type);
+
+	dst.h = card->sprite.dst->h / 7;
+	dst.w = dst.h;
+	// dst.w = card->sprite.dst->w / 10;
+	// dst.h = card->sprite.dst->h / 5;
+	dst.x = card->sprite.dst->w / 10;
+	dst.y = card->sprite.dst->h / 10;
+	SDL_SetRenderTarget(renderer, card->sprite.texture);
+	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+	SDL_SetRenderDrawColor(renderer, 0, 0, 255, 0);
+	SDL_RenderFillRect(renderer, NULL);
+	SDL_RenderCopy(renderer, base, &src, NULL);
+	for (int i = 0; i < CARD_TYPES; i++)
+	{
+		if (card->cost[i] > 0)
+		{
+			get_img_src(&src, TOK_HEX, i);
+			text[0] = card->id[i];
+			centereDst = scaleAndCenter(0.5, dst, dst);
+			SDL_Log("Centered from : %d %d | %d %d -> %d %d | %d %d",
+				dst.x, dst.y, dst.w, dst.h,
+				centereDst.x, centereDst.y, centereDst.w, centereDst.h
+			);
+			SDL_RenderCopy(renderer, base, &src, &dst);
+			// SDLX_RenderMessage(SDLX_DisplayGet(), &dst,(SDL_Color){255,255,255,255}, text);
+			SDLX_RenderMessage(SDLX_DisplayGet(), &centereDst,(SDL_Color){255,255,255,255}, text);
+			dst.y += card->sprite.dst->h / 5;
+		}
+	}
+	dst.x = card->sprite._dst.w * 0.70;
+	dst.y = dst.y = card->sprite.dst->h / 10;
+	text[0] = card->points + '0';
+	SDLX_RenderMessage(SDLX_DisplayGet(), &dst,(SDL_Color){255,255,255,255}, text);
+	SDL_SetRenderTarget(renderer, NULL);
+}
+
+int generateCard(SDL_Texture *base, Card *card, int level)
+{
+
 	int type;
 	int variation;
 	int arr[TOK_COUNT - 1] = {0,1,2,3};
@@ -84,7 +141,7 @@ int generateCard(Card *card, int level)
 
 	type = rand() % CARD_TYPES;
 	variation = 0;
-	get_img_src(&card->sprite._src, CARD, type);
+
 
 	while (totalMax > 0 && length > 0)
 	{
@@ -113,16 +170,17 @@ int generateCard(Card *card, int level)
 	card->id[8] = '\0';
 
 	extract_num(card->id, &card->_id);
-	SDL_Log("Generate %s  (%d) | Src (%d,%d) Cost: %d %d %d %d, points %d",
-		card->id,
-		card->_id,
-		card->sprite._src.x, card->sprite._src.y,
-		card->cost[0],
-		card->cost[1],
-		card->cost[2],
-		card->cost[3],
-		card->points
-	);
+	generateCardTexture(base, card, type);
+	// SDL_Log("Generate %s  (%d) | Src (%d,%d) Cost: %d %d %d %d, points %d",
+	// 	card->id,
+	// 	card->_id,
+	// 	card->sprite._src.x, card->sprite._src.y,
+	// 	card->cost[0],
+	// 	card->cost[1],
+	// 	card->cost[2],
+	// 	card->cost[3],
+	// 	card->points
+	// );
 
 	return 1;
 }
