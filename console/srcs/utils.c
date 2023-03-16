@@ -10,7 +10,9 @@ Card *findCard(Context *ctx, char *id, int _id)
 	SDL_Log("Try find %d", _id);
 	for (i = 0; i < MAX_ROWCARD; i++)
 	{
-		SDL_Log("CMP [%d] %d %d", ctx->board.rows[level].revealed[i]._id, _id);
+		SDL_Log("CMP %s[%d] -> %s[%d]",
+		ctx->board.rows[level].revealed[i].id, ctx->board.rows[level].revealed[i]._id,
+		id, _id);
 		if (ctx->board.rows[level].revealed[i]._id == _id)
 			return &ctx->board.rows[level].revealed[i];
 	}
@@ -31,7 +33,7 @@ void nextTurn(Context *ctx)
 		}
 		i = (i + 1) % MAX_PLAYERS;
 	}
-	sendBoardState(ctx, ctx->turn);
+	send_game_state(ctx, ctx->turn);
 }
 
 void startGame(Context *ctx)
@@ -43,7 +45,7 @@ void startGame(Context *ctx)
 		if (ctx->players[i].status == READY)
 			send_to(ctx->players[i].handle, "s");
 	}
-	sendBoardState(ctx, ctx->turn);
+	send_game_state(ctx, ctx->turn);
 }
 
 
@@ -87,15 +89,15 @@ void generateCardTexture(SDL_Texture *base, Card *card, int type)
 	SDL_Rect dst;
 	SDL_Rect centereDst;
 	SDL_Renderer *renderer;
-	char text[2] = {'0', '\0'};
+	char text[2];
+	int remainder;
 
+	text[1] = '\0';
 	renderer = SDLX_DisplayGet()->renderer;
 	get_img_src(&src, CARD, type);
 
 	dst.h = card->sprite.dst->h / 7;
 	dst.w = dst.h;
-	// dst.w = card->sprite.dst->w / 10;
-	// dst.h = card->sprite.dst->h / 5;
 	dst.x = card->sprite.dst->w / 10;
 	dst.y = card->sprite.dst->h / 10;
 	SDL_SetRenderTarget(renderer, card->sprite.texture);
@@ -103,22 +105,32 @@ void generateCardTexture(SDL_Texture *base, Card *card, int type)
 	SDL_SetRenderDrawColor(renderer, 0, 0, 255, 0);
 	SDL_RenderFillRect(renderer, NULL);
 	SDL_RenderCopy(renderer, base, &src, NULL);
+	SDL_Log("Texture fro card %s", card->id);
 	for (int i = 0; i < CARD_TYPES; i++)
 	{
 		if (card->cost[i] > 0)
 		{
 			get_img_src(&src, TOK_HEX, i);
-			text[0] = card->id[i];
+
 			centereDst = scaleAndCenter(0.5, dst, dst);
-			SDL_Log("Centered from : %d %d | %d %d -> %d %d | %d %d",
-				dst.x, dst.y, dst.w, dst.h,
-				centereDst.x, centereDst.y, centereDst.w, centereDst.h
-			);
+			// SDL_Log("Token %d x%d  (%s)", i, card->);
 			SDL_RenderCopy(renderer, base, &src, &dst);
-			// SDLX_RenderMessage(SDLX_DisplayGet(), &dst,(SDL_Color){255,255,255,255}, text);
-			SDLX_RenderMessage(SDLX_DisplayGet(), &centereDst,(SDL_Color){255,255,255,255}, text);
+			remainder = card->cost[i];
+			if (remainder >= 5)
+			{
+				remainder -= 5;
+				SDLX_RenderMessage(SDLX_DisplayGet(), &centereDst,(SDL_Color){0,0,0,0}, "5");
+				dst.x += dst.w / 5;
+			}
+			for (int x = 0; x < remainder; x++)
+			{
+				SDL_RenderCopy(renderer, base, &src, &dst);
+				dst.x += dst.w / 5;
+			}
+			// SDLX_RenderMessage(SDLX_DisplayGet(), &centereDst,(SDL_Color){255,255,255,255}, text);
 			dst.y += card->sprite.dst->h / 5;
 		}
+		dst.x = card->sprite.dst->w / 10;
 	}
 	dst.x = card->sprite._dst.w * 0.70;
 	dst.y = dst.y = card->sprite.dst->h / 10;
@@ -171,16 +183,20 @@ int generateCard(SDL_Texture *base, Card *card, int level)
 
 	extract_num(card->id, &card->_id);
 	generateCardTexture(base, card, type);
-	// SDL_Log("Generate %s  (%d) | Src (%d,%d) Cost: %d %d %d %d, points %d",
+	// SDL_Log("Generate %s  (%d)",
 	// 	card->id,
-	// 	card->_id,
-	// 	card->sprite._src.x, card->sprite._src.y,
-	// 	card->cost[0],
-	// 	card->cost[1],
-	// 	card->cost[2],
-	// 	card->cost[3],
-	// 	card->points
+	// 	card->_id
 	// );
+	SDL_Log("Generate %s  (%d) | Src (%d,%d) Cost: %d %d %d %d, points %d",
+		card->id,
+		card->_id,
+		card->sprite._src.x, card->sprite._src.y,
+		card->cost[0],
+		card->cost[1],
+		card->cost[2],
+		card->cost[3],
+		card->points
+	);
 
 	return 1;
 }

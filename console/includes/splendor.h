@@ -40,7 +40,7 @@ void initPlayer	 (Context *ctx, uint8_t id, SDLX_RectContainer *root);
 void init_connectScreen(Context *ctx);
 
 // ~-~-~-~-~-~-~- IO.c ~-~-~-~-~-~-~-
-int	sendBoardState(Context *ctx, int player);
+int	send_game_state(Context *ctx, int player);
 int execMsg		(Context *ctx, char *msg);
 int execReserve (Context *ctx, uint8_t playerID, char *msg);
 int execBuy		(Context *ctx, uint8_t playerID, char *msg);

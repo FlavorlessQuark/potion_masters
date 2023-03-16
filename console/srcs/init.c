@@ -134,7 +134,6 @@ void initRowCards(Context *ctx, SDLX_RectContainer *container, int level)
 	row->rowIcon.texture = ctx->Tcards;
 	row->revealedCount = MAX_ROWCARD;
 	get_img_src(&row->rowIcon._src, CARD_BACK, level);
-	// SDL_SpritePrint(&row->rowIcon);
 	for (int i = 0; i < MAX_ROWCARD; i++)
 	{
 		SDLX_SpriteCreate(&row->revealed[i].sprite, 1, NULL);
@@ -143,15 +142,6 @@ void initRowCards(Context *ctx, SDLX_RectContainer *container, int level)
 		row->revealed[i].sprite.texture = SDL_CreateTexture(ctx->display->renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, row->revealed[i].sprite._dst.w, row->revealed[i].sprite._dst.h);
 		SDL_SetTextureBlendMode(row->revealed[i].sprite.texture , SDL_BLENDMODE_BLEND);
 		generateCard(ctx->Tcards, &row->revealed[i], level);
-		// for (int n = 0; n < CARD_TYPES; n++)
-		// {
-		// 	SDLX_SpriteCreate(&row->revealed[i].costSprite[n], 1, ctx->textSheet.tex);
-		// 	row->revealed[i].costSprite[n].dst->x = row->revealed[i].sprite.dst->x + row->revealed[i].sprite.dst->w / 10;
-		// 	row->revealed[i].costSprite[n].dst->y = row->revealed[i].sprite.dst->y + (row->revealed[i].sprite.dst->h / 4 * n);
-		// 	row->revealed[i].costSprite[n].dst->w = row->revealed[i].sprite.dst->w / 10;
-		// 	row->revealed[i].costSprite[n].dst->h = row->revealed[i].sprite.dst->h / 5;
-		// 	row->revealed[i].costSprite[n]._src = ctx->numbers;
-		// }
 	}
 
 }

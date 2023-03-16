@@ -1,12 +1,11 @@
 #include "../includes/splendor.h"
 
-/
-#define MSG_LEN \
-(TOK_COUNT * 3)  \ /// Board tokens + player permanent & tokens
-+ (ROW_COUNT * (CARD_ID_LEN + 1) * MAX_ROWCARD) \ // Board card Ids (+1 for separator)
-+ (MAX_RESERVE * CARD_ID_LEN + 1) \ // Player Reserved card iDs (+1 for separator)
-+  1 \ // Player points
-+ 3 \ // Null terminator, type prefix and player ID
+#define MSG_LEN (TOK_COUNT * 3) + (ROW_COUNT * (CARD_ID_LEN + 1) * MAX_ROWCARD) + (MAX_RESERVE * CARD_ID_LEN + 1) + 1 + 3
+// (TOK_COUNT * 3)  \ /// Board tokens + player permanent & tokens
+// + (ROW_COUNT * (CARD_ID_LEN + 1) * MAX_ROWCARD) \ // Board card Ids (+1 for separator)
+// + (MAX_RESERVE * CARD_ID_LEN + 1) \ // Player Reserved card iDs (+1 for separator)
+// +  1 \ // Player points
+// + 3 \ // Null terminator, type prefix and player ID
 char boardState[MSG_LEN];
 
 // b[boardTokens]|[playerTokens][playerPoints][r0c0 ID] ||[r0c1 ID]| |[r0c2 ID] ...|[reservedIDs]
@@ -29,7 +28,7 @@ int send_game_state(Context *ctx, int player)
 			// SDL_Log("CARD ID %s", ctx->board.rows[i].revealed[x].id);
 			for (int s = 0; ctx->board.rows[i].revealed[x].id[s] != '\0'; s++)
 				boardState[++offset] = ctx->board.rows[i].revealed[x].id[s];
-			boardState[++offset] = '|';
+			// boardState[++offset] = '|';
 		}
 	}
 	for (int x = 0; x < ctx->players[ctx->turn].reserveCount; x++)
@@ -123,26 +122,10 @@ int execBuy(Context *ctx, uint8_t playerID, char *msg)
 	isReserved = msg[0] - '0';
 	msg++;
 	id = msg;
-	msg += extract_num(msg, &cardId) + 1;
+	extract_num(msg, &cardId) + 1;
 
 	SDL_Log("Player %d , Buys card %d from reserve? %d | msg %s", playerID, cardId, isReserved, msg);
-	for (int i = 0; i < TOK_COUNT; i++)
-	{
-		amount = msg[0] - '0';
-		amount = MAX(amount, ctx->players[playerID].owned[i]);
-		if (ctx->players[playerID].tokens[i] < amount)
-		{
-			ctx->players[playerID].tokens[CARD_TYPES] -= amount - ctx->players[playerID].tokens[i];
-			ctx->board.tokens[CARD_TYPES] += amount - ctx->players[playerID].tokens[i];
-			amount -= (amount - ctx->players[playerID].tokens[i]);
-		}
-		ctx->players[playerID].tokens[i] -= amount;
-		ctx->board.tokens[i] += amount;
-		msg++;
-	}
-	ctx->players[playerID].owned[id[1] - '0']++;
-	ctx->players[playerID].points += id[CARD_ID_LEN - 2] - '0';
-
+	SDL_Log("CArd %s points %c", msg, msg[CARD_ID_LEN - 1]);;
 	if (isReserved)
 		delReserved(&ctx->players[playerID], cardId);
 	else
