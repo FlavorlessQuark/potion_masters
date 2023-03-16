@@ -12,28 +12,96 @@ SDLX_RectContainer *parseUI(char *filename)
 	return root;
 }
 
-void fillCard(Card *card, int _id, char *id)
+SDL_Rect scaleAndCenter(double scalar, SDL_Rect parent, SDL_Rect this)
 {
-	int type;
+	SDL_Rect result;
 
-	type = id[1] - '0';
-	memcpy(card->id, id, CARD_ID_LEN - 1);
-	card->_id = _id;
-	if (_id <= 0)
+	result.w = this.w * scalar;
+	result.h = this.h * scalar;
+	result.x = parent.x + ((parent.w / 2) - (result.w / 2));
+	result.y = parent.y + ((parent.h / 2) - (result.h / 2));
+
+	return result;
+}
+
+void generateCardTexture(SDL_Texture *base, Card *card, int type)
+{
+	SDL_Rect src;
+	SDL_Rect dst;
+	SDL_Rect centereDst;
+	SDL_Renderer *renderer;
+	char text[2];
+	int remainder;
+
+	text[1] = '\0';
+	renderer = SDLX_DisplayGet()->renderer;
+	get_img_src(&src, CARD, type);
+
+	dst.h = card->sprite.dst->h / 7;
+	dst.w = dst.h;
+	dst.x = card->sprite.dst->w / 10;
+	dst.y = card->sprite.dst->h / 10;
+	SDL_SetRenderTarget(renderer, card->sprite.texture);
+	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+	SDL_SetRenderDrawColor(renderer, 0, 0, 255, 0);
+	SDL_RenderFillRect(renderer, NULL);
+	SDL_RenderCopy(renderer, base, &src, NULL);
+	for (int i = 0; i < CARD_TYPES; i++)
+	{
+		if (card->cost[i] > 0)
+		{
+			get_img_src(&src, TOK_HEX, i);
+
+			centereDst = scaleAndCenter(0.5, dst, dst);
+			// SDL_Log("Token %d x%d  (%s)", i, card->);
+			SDL_RenderCopy(renderer, base, &src, &dst);
+			remainder = card->cost[i];
+			if (remainder >= 5)
+			{
+				remainder -= 5;
+				SDLX_RenderMessage(SDLX_DisplayGet(), &centereDst,(SDL_Color){0,0,0,0}, "5");
+				dst.x += dst.w / 5;
+			}
+			for (int x = 0; x < remainder; x++)
+			{
+				SDL_RenderCopy(renderer, base, &src, &dst);
+				dst.x += dst.w / 5;
+			}
+			dst.y += card->sprite.dst->h / 5;
+		}
+		dst.x = card->sprite.dst->w / 10;
+	}
+	dst.x = card->sprite._dst.w * 0.70;
+	dst.y = dst.y = card->sprite.dst->h / 10;
+	text[0] = card->points + '0';
+	SDLX_RenderMessage(SDLX_DisplayGet(), &dst,(SDL_Color){255,255,255,255}, text);
+	SDL_SetRenderTarget(renderer, NULL);
+}
+
+void fillCard(Card *card)
+{
+	char *str;
+	int type;
+	int i;
+
+	type = card->id[1] - '0';
+	extract_num(card->id, &card->_id);
+	if (card->_id <= 0)
 		return ;
 	get_img_src(&card->sprite._src, CARD, type);
-	for (int i = 0; i < CARD_TYPES; i++)
-		card->cost[i] = id[3 + i] - '0';
+	str = card->id + 3;
+	for (i = 0; i < CARD_TYPES + 1; i++)
+		card->cost[i] = str[i] - '0';
 
-
-	SDL_Log("Generate %s (%d) | Src (%d,%d) Cost: %d %d %d %d",
-		card->id, _id,
-		card->sprite._src.x, card->sprite._src.y,
-		card->cost[0],
-		card->cost[1],
-		card->cost[2],
-		card->cost[3]
-	);
+	card->points = str[i] - '0';
+	// SDL_Log("Generate %s (%d) | Src (%d,%d) Cost: %d %d %d %d",
+	// 	card->id, card->_id,
+	// 	card->sprite._src.x, card->sprite._src.y,
+	// 	card->cost[0],
+	// 	card->cost[1],
+	// 	card->cost[2],
+	// 	card->cost[3]
+	// );
 }
 
 int	extract_num(char *str, int *number)
@@ -80,10 +148,8 @@ void delReserved(Context *ctx, int id)
 	Card tmp;
 	for (int i = 0; i < ctx->player.reserveCount; i++)
 	{
-		SDL_Log("COMPARING %d %d", id, ctx->player.reserved[i]._id );
 		if (id == ctx->player.reserved[i]._id)
 		{
-			SDL_Log("FOUND");
 			memcpy(&ctx->player.reserved[i],  &ctx->player.reserved[ctx->player.reserveCount - 1], sizeof(Card));
 
 			ctx->player.reserved[i].sprite.dst = &ctx->player.reserved[i].sprite._dst;

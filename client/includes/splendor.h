@@ -29,7 +29,7 @@ void sendReserve(Context *ctx);
 void sendPay(Context *ctx);
 void sendTakeTokens(Context *ctx, uint8_t *taken);
 void parseMsg(Context *ctx, char *msg);
-void fillCard(Card *card, int _id, char *id);
+void fillCard(Card *card);
 
 int extract_num(char *str, int *number);
 SDLX_RectContainer *parseUI(char *filename);
@@ -41,5 +41,7 @@ void endTurn(Context *ctx);
 void printRect(SDL_Rect *rect, char * msg);
 void sendMessage(char *message);
 void get_img_src(SDL_Rect *dst, int imageType, int index);
+
+void generateCardTexture(SDL_Texture *base, Card *card, int type);
 
 #endif

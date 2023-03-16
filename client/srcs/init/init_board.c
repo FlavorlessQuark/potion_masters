@@ -53,18 +53,9 @@ void initRowCards(Context *ctx, Row *row, SDLX_RectContainer *root)
 		SDLX_SpriteCreate(&row->revealed[i].sprite, 1, ctx->cardTex);
 		row->cardButton[i]._boundingBox = root->elems[i + 1]._boundingBox;
 		row->revealed[i].sprite._dst = root->elems[i + 1]._boundingBox;
-		row->revealed[i].sprite._src.h = CARD_H;
-		row->revealed[i].sprite._src.w = CARD_W;
-		for (int n = 0; n < CARD_TYPES; n++)
-		{
-			SDLX_SpriteCreate(&row->revealed[i].costSprite[n], 1, ctx->textSheet.tex);
-			row->revealed[i].costSprite[n].dst->x = row->revealed[i].sprite.dst->x + row->revealed[i].sprite.dst->w / 10;
-			row->revealed[i].costSprite[n].dst->y = row->revealed[i].sprite.dst->y + (row->revealed[i].sprite.dst->h / 4 * n);
-			row->revealed[i].costSprite[n].dst->w = row->revealed[i].sprite.dst->w / 10;
-			row->revealed[i].costSprite[n].dst->h = row->revealed[i].sprite.dst->h / 5;
-			row->revealed[i].costSprite[n]._src = ctx->nums;
-
-		}
+		row->revealed[i].sprite.src = NULL;
+		row->revealed[i].sprite.texture = SDL_CreateTexture(ctx->display->renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, row->revealed[i].sprite._dst.w, row->revealed[i].sprite._dst.h);
+		SDL_SetTextureBlendMode(row->revealed[i].sprite.texture , SDL_BLENDMODE_BLEND);
 	}
 
 }

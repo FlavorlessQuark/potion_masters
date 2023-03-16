@@ -84,14 +84,14 @@ void render_board_screen(Context *ctx)
 			if (ctx->board.rows[x].revealed[i].id > 0)
 			{
 				SDLX_RenderQueuePush(&ctx->board.rows[x].revealed[i].sprite);
-				ctx->board.rows[x].revealed[i].costSprite[0]._src.x = ctx->nums.x + (ctx->board.rows[x].revealed[i].cost[0] * ctx->nums.w);
-				ctx->board.rows[x].revealed[i].costSprite[1]._src.x = ctx->nums.x + (ctx->board.rows[x].revealed[i].cost[1] * ctx->nums.w);
-				ctx->board.rows[x].revealed[i].costSprite[2]._src.x = ctx->nums.x + (ctx->board.rows[x].revealed[i].cost[2] * ctx->nums.w);
-				ctx->board.rows[x].revealed[i].costSprite[3]._src.x = ctx->nums.x + (ctx->board.rows[x].revealed[i].cost[3] * ctx->nums.w);
-				SDLX_RenderQueuePush(&ctx->board.rows[x].revealed[i].costSprite[0]);
-				SDLX_RenderQueuePush(&ctx->board.rows[x].revealed[i].costSprite[1]);
-				SDLX_RenderQueuePush(&ctx->board.rows[x].revealed[i].costSprite[2]);
-				SDLX_RenderQueuePush(&ctx->board.rows[x].revealed[i].costSprite[3]);
+				// ctx->board.rows[x].revealed[i].costSprite[0]._src.x = ctx->nums.x + (ctx->board.rows[x].revealed[i].cost[0] * ctx->nums.w);
+				// ctx->board.rows[x].revealed[i].costSprite[1]._src.x = ctx->nums.x + (ctx->board.rows[x].revealed[i].cost[1] * ctx->nums.w);
+				// ctx->board.rows[x].revealed[i].costSprite[2]._src.x = ctx->nums.x + (ctx->board.rows[x].revealed[i].cost[2] * ctx->nums.w);
+				// ctx->board.rows[x].revealed[i].costSprite[3]._src.x = ctx->nums.x + (ctx->board.rows[x].revealed[i].cost[3] * ctx->nums.w);
+				// SDLX_RenderQueuePush(&ctx->board.rows[x].revealed[i].costSprite[0]);
+				// SDLX_RenderQueuePush(&ctx->board.rows[x].revealed[i].costSprite[1]);
+				// SDLX_RenderQueuePush(&ctx->board.rows[x].revealed[i].costSprite[2]);
+				// SDLX_RenderQueuePush(&ctx->board.rows[x].revealed[i].costSprite[3]);
 			}
 		}
 	}
