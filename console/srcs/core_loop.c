@@ -36,10 +36,11 @@ int main_game(Context *ctx)
 		sendBoardState(ctx, ctx->turn);
 		SDL_Log("Now player %d turn", ctx->turn);
 	}
-	renderPlayer(&ctx->players[0]);
-	renderPlayer(&ctx->players[1]);
-	renderPlayer(&ctx->players[2]);
-	renderPlayer(&ctx->players[3]);
+	for (int i = 0; i < ctx->playerCount; i++)
+		renderPlayer(ctx, &ctx->players[i]);
+	// renderPlayer(ctx, &ctx->players[1]);
+	// renderPlayer(ctx, &ctx->players[2]);
+	// renderPlayer(ctx, &ctx->players[3]);
 	renderBoard(ctx);
 }
 

@@ -33,6 +33,7 @@ void fillCard(Card *card, int _id, char *id);
 
 int extract_num(char *str, int *number);
 SDLX_RectContainer *parseUI(char *filename);
+void delReserved(Context *ctx, int id);
 
 void startTurn(Context *ctx);
 void endTurn(Context *ctx);

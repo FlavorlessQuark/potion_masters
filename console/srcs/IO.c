@@ -117,6 +117,13 @@ int execBuy(Context *ctx, uint8_t playerID, char *msg)
 		for (int i = 0; i < TOK_COUNT; i++)
 		{
 			amount = msg[0] - '0';
+			amount = MAX(amount, ctx->players[playerID].owned[i]);
+			if (ctx->players[playerID].tokens[i] < amount)
+			{
+				ctx->players[playerID].tokens[CARD_TYPES] -= amount - ctx->players[playerID].tokens[i];
+				ctx->board.tokens[CARD_TYPES] += amount - ctx->players[playerID].tokens[i];
+				amount -= (amount - ctx->players[playerID].tokens[i]);
+			}
 			ctx->players[playerID].tokens[i] -= amount;
 			ctx->board.tokens[i] += amount;
 			msg++;

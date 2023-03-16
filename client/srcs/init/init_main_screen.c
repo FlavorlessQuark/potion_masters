@@ -2,25 +2,43 @@
 
 void init_status_bar(Context *ctx, SDLX_RectContainer *root)
 {
+	SDL_Color color = {255,255,255,255};
+
 	SDLX_SpriteCreate(&ctx->UI.name, 1, NULL);
 	SDLX_SpriteCreate(&ctx->UI.points, 1, NULL);
 	ctx->UI.name._dst = root->elems[0]._boundingBox;
 	ctx->UI.points._dst = root->elems[0]._boundingBox;
+
+	root->elems[0]._boundingBox.h /= 2;
+	SDLX_RenderMessage(ctx->display, &root->elems[0]._boundingBox, color, "POINTS :");
 	// ctx.UI.name._dst = root->elems[0]._boundingBox;
 }
 void init_token_bar(Context *ctx, SDLX_RectContainer *root)
 {
 	SDLX_RectContainer container;
+	SDL_Rect src;
+	int i;
 
-	for (int i = 0; i < CARD_TYPES; i++)
+	for (i = 0; i < CARD_TYPES; i++)
 	{
-		SDLX_SpriteCreate(&ctx->UI.permanents[i], 1, ctx->cardTex);
-		SDLX_SpriteCreate(&ctx->UI.tokens[i], 1, ctx->cardTex);
+		SDLX_SpriteCreate(&ctx->UI.permanents[i], 1, ctx->textSheet.tex);
+		SDLX_SpriteCreate(&ctx->UI.tokens[i], 1, ctx->textSheet.tex);
 		ctx->UI.permanents[i]._dst = root->containers[i].elems[0]._boundingBox;
 		ctx->UI.tokens[i]._dst = root->containers[i].elems[1]._boundingBox;
-	}
-	ctx->UI.tokens[TOK_COUNT - 1]._dst = root->containers[TOK_COUNT - 1].elems[0]._boundingBox;
+		ctx->UI.permanents[i]._src = ctx->nums;
+		ctx->UI.tokens[i]._src = ctx->nums;
 
+		src = (SDL_Rect){.h = 53, .w = CARD_W / 2,
+						 .x = (SEP_X + 5) + (CARD_W / 2 + SEP_X) * i, .y =  (CARD_H * 2) + SEP_Y * 3 + 35};
+		SDL_RenderCopy(ctx->display->renderer, ctx->cardTex, &src, &root->containers[i].elems[0]._boundingBox);
+		SDL_RenderCopy(ctx->display->renderer, ctx->cardTex, &src, &root->containers[i].elems[1]._boundingBox);
+	}
+	src = (SDL_Rect){.h = 53, .w = CARD_W / 2,
+						 .x = (SEP_X + 5) + (CARD_W / 2 + SEP_X) * i, .y =  (CARD_H * 2) + SEP_Y * 3 + 35};
+	SDL_RenderCopy(ctx->display->renderer, ctx->cardTex, &src, &root->containers[i].elems[0]._boundingBox);
+	SDLX_SpriteCreate(&ctx->UI.tokens[i], 1, ctx->textSheet.tex);
+	ctx->UI.tokens[i]._dst = root->containers[i].elems[0]._boundingBox;
+	ctx->UI.tokens[i]._src = ctx->nums;
 	// for (int i = 0; i < root->containerCount; i++)
 	// {
 	// 	container = root->containers[i];
@@ -73,12 +91,21 @@ void init_main_screen(Context *ctx)
 
 	root = parseUI("assets/UI/mainUI");
 
+	ctx->UI.bg = SDL_CreateTexture(ctx->display->renderer,
+		SDL_PIXELFORMAT_RGBA8888,
+		SDL_TEXTUREACCESS_TARGET,
+		ctx->display->win_w, ctx->display->win_h
+		);
+
+	SDL_SetRenderTarget(ctx->display->renderer, ctx->UI.bg);
+
 	init_status_bar(ctx, &root->containers[0]);
-	SDL_Log("LOAD STATUS SCREEN %d, ", root->containers[1].containerCount);
+	// SDL_Log("LOAD STATUS SCREEN %d, ", root->containers[1].containerCount);
 	init_token_bar(ctx, &root->containers[1].containers[0]);
-	SDL_Log("LOAD TOKEN SCREEN");
+	// SDL_Log("LOAD TOKEN SCREEN");
 	init_reserved_cards(ctx, &root->containers[1].containers[1]);
 	init_button(ctx, &root->containers[1].containers[2]);
+	SDL_SetRenderTarget(ctx->display->renderer, NULL);
 	endTurn(ctx);
 }
 

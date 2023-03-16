@@ -28,9 +28,7 @@ void sendReserve(Context *ctx)
 	ctx->player.reserved[ctx->player.reserveCount].sprite._src =  ctx->buyscreen.selected->sprite._src;
 	ctx->player.reserved[ctx->player.reserveCount].sprite.src =  &ctx->player.reserved[ctx->player.reserveCount].sprite._src;
 	ctx->player.reserveCount++;
-
-	SDLX_SpritePrint(&ctx->player.reserved[ctx->player.reserveCount].sprite);
-	SDLX_SpritePrint(&ctx->buyscreen.selected->sprite);
+	ctx->player.tokens[CARD_TYPES]++;
 
 	sendMessage(msg);
 }
@@ -50,9 +48,14 @@ void sendPay(Context *ctx)
 		msg[3 + i - 1] = '|';
 	n = 3 + i;
 	for (i = 0; i < TOK_COUNT; i++)
+	{
 		msg[n + i] = ctx->player.tokens[i] + '0';
+	}
 	msg[n + i] = ctx->buyscreen.selected->points + '0';
 	msg[n + i + 1] = '\0';
+
+	if (ctx->buyscreen.cardOrigin)
+		delReserved(ctx, ctx->buyscreen.selected->_id);
 	// SDL_Log("Sending %s -> %s", msg, ctx->buyscreen.selected->id);
 	sendMessage(msg);
 }

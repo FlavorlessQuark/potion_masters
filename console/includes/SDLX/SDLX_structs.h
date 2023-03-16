@@ -125,4 +125,11 @@ typedef struct SDLX_Circle
     int         radius;
 }   SDLX_Circle;
 
+typedef struct SDLX_TextSheet
+{
+	SDL_Texture *tex;
+	SDL_Rect next;
+	int maxW, maxH;
+}				SDLX_TextSheet;
+
 #endif
