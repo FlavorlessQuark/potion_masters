@@ -14,6 +14,7 @@ void recvMessage(char *msg)
 void setConnectionStatus(int status)
 {
 	ctx->connection.status = status;
+	SDL_Log("Set status to %d", status);
 }
 
 void initConnection(Context *context)
@@ -21,6 +22,7 @@ void initConnection(Context *context)
 	ctx = context;
 	context->state = CONNECT;
 	EM_ASM({start_connect()});
+	// ctx->connection.status == CONNECTED;
 	// sendMessage("Test");
 }
 

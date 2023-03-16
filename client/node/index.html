@@ -9,10 +9,7 @@
     </style>
   </head>
   <body>
-    <p id="statusText"></p>
-    <button onclick="handleConnect()">Connect</button>
-    <button onclick="handleDisconnect()">Discoonnect</button>
-	<canvas id="canvas" width="1366" height="768" style="width: 1366px; height:768px"> </canvas>
+	<canvas id="canvas" width="100%" height="100%"> </canvas>
 
  <script type="module" src="wasm.module.js"></script>
 <script>
@@ -21,6 +18,24 @@
   const subid = url_params.get('subid');
   const box_ip = window.location.href.split('/')[2].split(':')[0];
   let ws;
+
+	const canvas = document.getElementById('canvas');
+	const context = canvas.getContext('2d');
+
+
+	function resizeCanvas() {
+		canvas.width = window.innerWidth;
+		canvas.height = window.innerHeight;
+		console.log("resize");
+		Module.ccall('resizeWindow', null, ['number', 'number'], [canvas.width, canvas.height]);
+	}
+
+	window.addEventListener('resize', resizeCanvas, true);
+	// 	window.addEventListener('resize', function(event){
+	// 	console.log("resize")
+	// }, true);
+	resizeCanvas();
+
 
 	async function start_connect()
 	{
@@ -33,12 +48,11 @@
 			byte_array[0] = subid;
 			ws.send(byte_array.buffer);
 			// console.log("Connection data ",byte_array.buffer, byte_array);
-			Module.ccall('setConnectionStatus', null, ['number'], [1]);
+			// Module.ccall('setConnectionStatus', null, ['number'], [1]);
 			// Message from console
 			ws.addEventListener('message', (event) => {
 				console.log("Received ", event.data);
 				sendToWasm(event.data);
-				document.getElementById("statusText").innerHTML = event.data;
 			});
 			console.log('Module',Module, window.Module);
 		}

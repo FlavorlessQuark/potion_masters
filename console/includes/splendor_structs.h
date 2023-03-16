@@ -11,15 +11,26 @@
 
 # define CARD_ID_LEN (3 + CARD_TYPES + 2)
 
- #define SEP_Y (13)
- #define SEP_X (13)
- #define CARD_H (233)
- #define CARD_W (136)
- #define CARD_OFF_X (CARD_W + SEP_X)
- #define CARD_OFF_Y (CARD_H + (SEP_Y * 2))
+# define CARD_BACK 0
+# define CARD 1
+# define TOK_RECT 2
+# define TOK_HEX 3
+
+#define OFF_X (198)
+#define OFF_Y (225)
+#define SEP_Y (133)
+#define SEP_X (128)
+#define TOK_OFF_X (187)
+#define TOK_OFF_Y (150)
+#define TOK_W (804)
+#define TOK_H (958)
+#define CARD_H (2342)
+#define CARD_W (1570)
+#define CARD_OFF_X (CARD_W + SEP_X)
+#define CARD_OFF_Y (CARD_H + (SEP_Y * 2))
 # define CARD_VARIATIONS 0
 
-# define CARD_TYPES (4)
+# define CARD_TYPES (3)
 
 # define ROW_COUNT (3)
 # define TOK_COUNT (5)
@@ -37,6 +48,7 @@
 # define EXIT_GAME (-1)
 # define CONNECT_SCREEN (0)
 # define PLAYING (1)
+# define TITLE (2)
 
 # define HANDLE_LEN (21)
 
@@ -109,6 +121,7 @@ typedef struct Board
 
 typedef struct ConnectScreen
 {
+	int counter;
 	SDL_Rect status;
 	SDL_Texture *buttons;
 	SDLX_Sprite playerSprites[MAX_PLAYERS];

@@ -63,7 +63,8 @@ html:
         -s MODULARIZE=1 \
         -s ENVIRONMENT=web \
         -s ALLOW_MEMORY_GROWTH=1 \
-        -s EXPORTED_FUNCTIONS=_main,_recvMessage,_setConnectionStatus,_malloc \
+#        -s EXPORTED_FUNCTIONS=_main,_recvMessage,_setConnectionStatus,_malloc 
+        -s EXPORTED_FUNCTIONS=_main,_recvMessage,_setConnectionStatus,_resizeWindow \
 		-s EXPORTED_RUNTIME_METHODS=ccall,stringToUTF8,lengthBytesUTF8,UTF8ToString \
         --preload-file srcs/SDLX/default.ttf \
 		--preload-file assets/ \

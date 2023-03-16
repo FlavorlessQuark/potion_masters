@@ -6,7 +6,6 @@ void renderPlayer(Context *ctx, Player *player)
 	SDLX_Display *display;
 
 	display = SDLX_DisplayGet();
-	SDL_SetRenderDrawColor(display->renderer, 255, 0,0,255);
 
 	player->pointSprite.src->x = ctx->numbers.x + (player->points * ctx->numbers.w);
 
@@ -19,16 +18,13 @@ void renderPlayer(Context *ctx, Player *player)
 		SDLX_RenderQueuePush(&player->ressources[i]);
 		SDLX_RenderQueuePush(&player->permanents[i]);
 	}
-	player->ressources[i].src->x = ctx->numbers.x + (player->tokens[i] * ctx->numbers.w);
-	SDLX_RenderQueuePush(&player->ressources[i]);
+	// player->ressources[i].src->x = ctx->numbers.x + (player->tokens[i] * ctx->numbers.w);
+	// SDLX_RenderQueuePush(&player->ressources[i]);
 
 	for (i = 0; i < player->reserveCount; i++)
 	{
 		SDLX_RenderQueuePush(&player->reserved[i].sprite);
 	}
-
-	SDL_SetRenderDrawColor(display->renderer, 0, 0,0,255);
-
 }
 
 void renderBoard(Context *ctx)
@@ -67,11 +63,11 @@ void renderBoard(Context *ctx)
 	if (count == 100)
 		count = 0;
 	count++;
-	for (i = 0; i < MAX_TITLES; i++)
-	{
-		SDL_RenderDrawRect(ctx->display->renderer,  ctx->board.titleUI[i].dst);
-	}
-	SDL_SetRenderDrawColor(ctx->display->renderer, 0, 0,0,255);
+	// for (i = 0; i < MAX_TITLES; i++)
+	// {
+	// 	SDL_RenderDrawRect(ctx->display->renderer,  ctx->board.titleUI[i].dst);
+	// }
+	SDLX_RenderResetColour(ctx->display);
 }
 
 void render_connect_screen(Context *ctx)
@@ -89,5 +85,5 @@ void render_connect_screen(Context *ctx)
 	}
 	SDL_SetRenderDrawColor(ctx->display->renderer, 255, 0x0, 0x0,255);
 	SDL_RenderDrawRect(ctx->display->renderer, &ctx->connectscreen.status);
-	SDL_SetRenderDrawColor(ctx->display->renderer, 0x0, 0x0, 0x0, 255);
+	SDLX_RenderResetColour(ctx->display);
 }

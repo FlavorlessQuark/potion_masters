@@ -12,6 +12,8 @@ int core(void *arg, char *msg)
 	}
 	else if (ctx->state == CONNECT_SCREEN)
 		connect_screen(ctx);
+	else if (ctx->state == TITLE)
+		SDLX_TimedLoop(title_screen, ctx);
 	else
 		main_game(ctx);
 }
@@ -44,6 +46,26 @@ int main_game(Context *ctx)
 	renderBoard(ctx);
 }
 
+#define MULT 4
+int title_screen(Context *ctx)
+{
+	if (ctx->connectscreen.counter >= 0)
+	{
+		if (ctx->connectscreen.counter / MULT <= 255)
+		{
+			SDL_SetTextureAlphaMod(ctx->display->background, ctx->connectscreen.counter / MULT);
+		}
+		ctx->connectscreen.counter--;
+		// SDL_RenderCopy(ctx->display->renderer, ctx->di)
+	}
+	else
+	{
+		SDL_DestroyTexture(ctx->display->background);
+		ctx->display->background = NULL;
+		ctx->state = CONNECT_SCREEN;
+	}
+}
+
 int connect_screen(Context *ctx)
 {
 	c_string_vec *handles;
@@ -64,7 +86,10 @@ int connect_screen(Context *ctx)
 		{
 			msg = recv_from(ctx->players[i].handle);
 			if (msg != NULL && msg[0] == 'r')
+			{
+				send_to(ctx->players[i].handle, "r");
 				ctx->players[i].status = (msg[1] + 1) - '0';
+			}
 		}
 		ready &= ctx->players[i].status;
 	}

@@ -71,8 +71,8 @@ void 		SDLX_RenderOne(uint32_t id);
 void        SDLX_RenderReset(SDLX_Display *display)
 {
 	SDL_RenderClear(display->renderer);
-	SDL_SetRenderDrawColor(display->renderer, 0, 0, 0, 0);
-	SDL_SetRenderDrawBlendMode(display->renderer, SDL_BLENDMODE_BLEND);
+	SDL_SetRenderDrawColor(display->renderer, display->bgColor.r, display->bgColor.g, display->bgColor.b, display->bgColor.a);
+	// SDL_SetRenderDrawBlendMode(display->renderer, SDL_BLENDMODE_BLEND);
 	if (display->background)
 		SDL_RenderCopy(display->renderer, display->background, NULL, NULL);
 }
@@ -165,4 +165,9 @@ void SDLX_RenderMessage(SDLX_Display *display, SDL_Rect *dst, SDL_Color color, c
 	SDL_RenderCopy(display->renderer, tex, NULL, dst);
 	SDL_FreeSurface(surf);
 	SDL_DestroyTexture(tex);
+}
+
+void SDLX_RenderResetColour(SDLX_Display *display)
+{
+	SDL_SetRenderDrawColor(display->renderer, display->bgColor.r, display->bgColor.g, display->bgColor.b, display->bgColor.a);
 }

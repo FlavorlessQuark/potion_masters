@@ -2,7 +2,7 @@
 # define SPLENDOR_H
 # include "splendor_structs.h"
 
-void init(Context *ctx);
+void init(Context *ctx, int width, int height);
 char *input(Context *ctx);
 
 void window_events(Context *ctx);
@@ -16,7 +16,7 @@ void initConnection(Context *context);
 
 void board_screen(Context *ctx);
 void buy_screen(Context *ctx);
-void ConnectScreen(Context *ctx);
+void connect_screen(Context *ctx);
 void main_screen(Context *ctx);
 
 void render_board_screen(Context *ctx);
@@ -40,5 +40,6 @@ void endTurn(Context *ctx);
 
 void printRect(SDL_Rect *rect, char * msg);
 void sendMessage(char *message);
+void get_img_src(SDL_Rect *dst, int imageType, int index);
 
 #endif

@@ -18,6 +18,7 @@
     SDL_Window      *window;
     SDL_Renderer    *renderer;
     SDL_Texture     *background;
+	SDL_Color		bgColor;
 
     TTF_Font        *defaultFont;
 

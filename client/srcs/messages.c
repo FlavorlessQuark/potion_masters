@@ -82,8 +82,12 @@ void parseMsg(Context *ctx, char *input)
 	if (input[0] == 'c')
 	{
 		ctx->player.id = input[1] -'0';
-		ctx->connection.status = CONNECTEDCONSOLE;
+		ctx->connection.status = CONNECTED;
 		SDL_Log("Connected as Player %d", ctx->player.id);
+	}
+	else if (input[0] == 'r')
+	{
+		ctx->connection.status = CONNECTEDCONSOLE;
 	}
 	else if (input[0] == 'd')
 	{
@@ -110,6 +114,7 @@ void parseMsg(Context *ctx, char *input)
 		char *id;
 
 		// SDL_Log("Received board state %s | It's my turn!", input);
+		ctx->state = 0;
 		ctx->board.tokens[0] = input[1] - '0';
 		ctx->board.tokens[1] = input[2] - '0';
 		ctx->board.tokens[2] = input[3] - '0';

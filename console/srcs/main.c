@@ -13,6 +13,7 @@ int main()
 		SDLX_RenderQueueFlushAll();
 		SDLX_InputLoop();
 		core(ctx, msg);
+		SDLX_RenderResetColour(ctx->display);
 		SDLX_RenderAll(ctx->display);
 		SDL_RenderPresent(ctx->display->renderer);
 	}

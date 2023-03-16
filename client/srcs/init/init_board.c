@@ -22,9 +22,7 @@ void initTokens(Context *ctx, SDLX_RectContainer *root)
 		ctx->board.tokenCount[i]._src = ctx->nums;
 		ctx->board.tokenTaken[i]._src = ctx->nums;
 		root->elems[i]._boundingBox.w = root->elems[i]._boundingBox.h;
-
-		src = (SDL_Rect){.h = 53, .w = CARD_W / 2,
-						 .x = (SEP_X + 5) + (CARD_W / 2 + SEP_X) * i, .y =  (CARD_H * 2) + SEP_Y * 3 + 35};
+		get_img_src(&src, TOK_HEX, i);
 		SDL_RenderCopy(ctx->display->renderer, ctx->cardTex, &src, &root->elems[i]._boundingBox);
 
 		ctx->board.tokenCount[i]._dst = root->elems[i]._boundingBox;
@@ -47,10 +45,7 @@ void initRowCards(Context *ctx, Row *row, SDLX_RectContainer *root)
 	//Parse texture data here
 	SDLX_SpriteCreate(&row->rowIcon, 1, NULL);
 	row->rowIcon.texture = ctx->cardTex;
-	row->rowIcon.src->x = SEP_X;
-	row->rowIcon.src->y = SEP_Y;
-	row->rowIcon.src->h = CARD_H;
-	row->rowIcon.src->w = CARD_W;
+	get_img_src(&row->rowIcon._src, CARD_BACK, 0);
 	row->rowIcon._dst = root->elems[0]._boundingBox;
 	for (int i = 0; i < ROW_CARD_COUNT; i++)
 	{

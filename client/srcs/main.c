@@ -6,16 +6,16 @@ Context ctx;
 
 typedef void (*loop)(Context *);
 
-loop fnloops[3] ={main_screen, board_screen, buy_screen};
+loop fnloops[4] ={main_screen, board_screen, buy_screen, connect_screen};
 
-void init(Context *ctx)
+void init(Context *ctx, int width, int height)
 {
 	SDLX_RectContainer *root;
 	SDL_Surface *surf;
 	SDL_Texture *tex;
 
 
-	SDLX_Init("Client", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 768, 1366, 0);
+	SDLX_Init("Client", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, 0);
 	ctx->display = SDLX_DisplayGet();
 
 	ctx->display->defaultFont = TTF_OpenFont("assets/underwood.ttf", 40);
@@ -23,18 +23,19 @@ void init(Context *ctx)
 	ctx->nums = SDLX_TextSheet_Add(&ctx->textSheet ,"0123456789", ctx->display->defaultFont, (SDL_Color){255,255,255,255});
 	TTF_SizeText(ctx->display->defaultFont, "0", &ctx->nums.w, &ctx->nums.h);
 
-	surf = IMG_Load("assets/Cards.png");
+	surf = IMG_Load("assets/cards.png");
 	tex = SDL_CreateTextureFromSurface(ctx->display->renderer, surf);
 	SDL_FreeSurface(surf);
 	ctx->cardTex = tex;
 
+	SDLX_Sprite costSprite[CARD_TYPES];
 	init_connect_screen(ctx);
 	init_main_screen(ctx);
 	init_board_screen(ctx);
 	init_buy_screen(ctx);
 	initConnection(ctx);
 	endTurn(ctx);
-	ctx->state = 0;
+	ctx->state = CONNECT;
 
 	// sendMessage("Test");
 }
@@ -56,9 +57,13 @@ void core(void)
 	SDL_RenderPresent(ctx.display->renderer);
 }
 
-int main()
+int main(int argc, char **argv)
 {
-	init(&ctx);
+	// printf("ARguemnts %d\n", argc);
+
+	// for (int i = 0; i < argc; i++)
+	// 	printf("Argument %d : %s\n", i, argv[i]);
+	init(&ctx, SDL_atoi(argv[1]), SDL_atoi(argv[2]));
 	#ifdef __EMSCRIPTEN__
 			emscripten_set_main_loop(core, 0, 1);
 	#endif

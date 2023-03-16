@@ -26,6 +26,7 @@ int handle_Connect		(Context *ctx, c_string_vec *new);
 int 	core(void *arg, char *msg);
 int 	connect_screen(Context *ctx);
 int		main_game(Context *ctx);
+int 	title_screen(Context *ctx);
 
 // ~-~-~-~-~-~-~- init.c ~-~-~-~-~-~-~
 
@@ -69,5 +70,6 @@ void cleanup		(Context *ctx);
 SDLX_RectContainer *loadConfig(char *filename);
 
 void startGame(Context *ctx);
+void get_img_src(SDL_Rect *dst, int imageType, int index);
 
 #endif

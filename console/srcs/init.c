@@ -29,8 +29,11 @@ Context *init()
 
 	ctx = SDL_calloc(1, sizeof(Context));
 	ctx->display = SDLX_DisplayGet();
+	// SDL_SetWindowFullscreen(ctx->display->window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+	// SDL_GetWindowSize(ctx->display->window, &ctx->display->win_w, &ctx->display->win_h);
+	init_connectScreen(ctx);
 	ctx->board.remainingTitles = MAX_TITLES;
-	ctx->state = CONNECT_SCREEN;
+	ctx->state = TITLE;
 	ctx->playerCount = 0;
 	ctx->display->defaultFont = TTF_OpenFont("assets/underwood.ttf", 40);
 	SDLX_TextSheet_Create(&ctx->textSheet, ctx->display->win_w, ctx->display->win_h);
@@ -46,10 +49,6 @@ Context *init()
 	surf = IMG_Load("assets/buttons.png");
 	ctx->Tbuttons = SDL_CreateTextureFromSurface(ctx->display->renderer, surf);
 	SDL_FreeSurface(surf);
-
-
-	init_connectScreen(ctx);
-
 	return ctx;
 }
 
@@ -66,7 +65,9 @@ void initNewGame(Context *ctx)
 			ctx->display->win_w, ctx->display->win_h
 			);
 
+	SDLX_RenderResetColour(ctx->display);
 	SDL_SetRenderTarget(ctx->display->renderer, ctx->display->background);
+	SDL_RenderCopy(ctx->display->renderer, NULL, NULL, NULL);
 	initBoard (ctx, &root->containers[UI_BOARD]);
 
 
@@ -89,13 +90,6 @@ void initBoard(Context *ctx, SDLX_RectContainer *root)
 {
 	Card *cards;
 	SDL_Rect src;
-	SDL_Color tokenColours[TOK_COUNT] = {
-		{255,0,0,255},
-		{0, 255, 0,255},
-		{0,0,255, 255},
-		{100,100,100,255},
-		{0,100,100,255},
-	};
 
 	ctx->board.rows[TOP_ROW].remainCount = TOP_ROW_COUNT;
 	ctx->board.rows[MID_ROW].remainCount = MID_ROW_COUNT;
@@ -112,8 +106,7 @@ void initBoard(Context *ctx, SDLX_RectContainer *root)
 		SDLX_SpriteCreate(&ctx->board.tokenUI[i], 1, NULL);
 		ctx->board.tokenUI[i]._dst = root->containers[TOKEN_ROW].elems[i]._boundingBox;
 		ctx->board.tokenUI[i].texture = ctx->Tcards;
-		src = (SDL_Rect){.h = 53, .w = CARD_W / 2,
-						 .x = (SEP_X + 5) + (CARD_W / 2 + SEP_X) * i, .y =  (CARD_H * 2) + SEP_Y * 3 + 35};
+		get_img_src(&src, TOK_HEX, i);
 		SDL_RenderCopy(ctx->display->renderer, ctx->Tcards, &src, root->containers[TOKEN_ROW].elems[i].boundingBox);
 
 		ctx->board.tokenUI[i]._src = ctx->numbers;
@@ -141,19 +134,14 @@ void initRowCards(Context *ctx, SDLX_RectContainer *container, int level)
 	SDLX_SpriteCreate(&row->rowIcon, 1, NULL);
 	row->rowIcon._dst = container->elems[0]._boundingBox;
 	row->rowIcon.texture = ctx->Tcards;
-	row->rowIcon.src->x = SEP_X;
-	row->rowIcon.src->y = SEP_Y;
-	row->rowIcon.src->h = CARD_H;
-	row->rowIcon.src->w = CARD_W;
 	row->revealedCount = MAX_ROWCARD;
-
+	get_img_src(&row->rowIcon._src, CARD_BACK, level);
+	// SDL_SpritePrint(&row->rowIcon);
 	for (int i = 0; i < MAX_ROWCARD; i++)
 	{
 		SDLX_SpriteCreate(&row->revealed[i].sprite, 1, NULL);
 		row->revealed[i].sprite._dst = container->elems[i + 1]._boundingBox;
 		row->revealed[i].sprite.texture = ctx->Tcards;
-		row->revealed[i].sprite._src.h = CARD_H;
-		row->revealed[i].sprite._src.w = CARD_W;
 		generateCard(&row->revealed[i], level);
 		for (int n = 0; n < CARD_TYPES; n++)
 		{
@@ -162,7 +150,6 @@ void initRowCards(Context *ctx, SDLX_RectContainer *container, int level)
 			row->revealed[i].costSprite[n].dst->y = row->revealed[i].sprite.dst->y + (row->revealed[i].sprite.dst->h / 4 * n);
 			row->revealed[i].costSprite[n].dst->w = row->revealed[i].sprite.dst->w / 10;
 			row->revealed[i].costSprite[n].dst->h = row->revealed[i].sprite.dst->h / 5;
-
 			row->revealed[i].costSprite[n]._src = ctx->numbers;
 		}
 	}
@@ -205,18 +192,17 @@ void initPlayer(Context *ctx, uint8_t id, SDLX_RectContainer *root)
 		ctx->players[id].permanents[i]._dst = root->containers[1].containers[i].elems[1]._boundingBox;
 		ctx->players[id].ressources[i]._src = ctx->numbers;
 		ctx->players[id].permanents[i]._src = ctx->numbers;
-		src = (SDL_Rect){.h = 53, .w = CARD_W / 2,
-						 .x = (SEP_X + 5) + (CARD_W / 2 + SEP_X) * i, .y =  (CARD_H * 2) + SEP_Y * 3 + 35};
-
+		get_img_src(&src, TOK_RECT, i);
 		SDL_RenderCopy(ctx->display->renderer, ctx->Tcards, &src,  root->containers[1].containers[i].elems[0].boundingBox);
+		get_img_src(&src, TOK_HEX, i);
 		SDL_RenderCopy(ctx->display->renderer, ctx->Tcards, &src,  root->containers[1].containers[i].elems[1].boundingBox);
 	}
-	src = (SDL_Rect){.h = 53, .w = CARD_W / 2,
-						 .x = (SEP_X + 5) + (CARD_W / 2 + SEP_X) * i, .y =  (CARD_H * 2) + SEP_Y * 3 + 35};
-	SDLX_SpriteCreate(&ctx->players[id].ressources[i], 1, ctx->textSheet.tex);
-	ctx->players[id].ressources[i]._dst = root->containers[1].containers[i].elems[0]._boundingBox;
-	ctx->players[id].ressources[i]._src = ctx->numbers;
-	SDL_RenderCopy(ctx->display->renderer, ctx->Tcards, &src,  root->containers[1].containers[i].elems[0].boundingBox);
+	// src = (SDL_Rect){.h = 53, .w = CARD_W / 2,
+	// 					 .x = (SEP_X + 5) + (CARD_W / 2 + SEP_X) * i, .y =  (CARD_H * 2) + SEP_Y * 3 + 35};
+	// SDLX_SpriteCreate(&ctx->players[id].ressources[i], 1, ctx->textSheet.tex);
+	// ctx->players[id].ressources[i]._dst = root->containers[1].containers[i].elems[0]._boundingBox;
+	// ctx->players[id].ressources[i]._src = ctx->numbers;
+	// SDL_RenderCopy(ctx->display->renderer, ctx->Tcards, &src,  root->containers[1].containers[i].elems[0].boundingBox);
 
 	for (i = 0; i < MAX_RESERVE; i++)
 	{
@@ -224,15 +210,21 @@ void initPlayer(Context *ctx, uint8_t id, SDLX_RectContainer *root)
 		ctx->players[id].reserved[i].sprite._dst = root->containers[2].elems[i]._boundingBox;
 	}
 }
-
+# define START 3000
 void init_connectScreen(Context *ctx)
 {
 	SDLX_RectContainer *root;
+	SDL_Surface *surf;
 
 	root = loadConfig("assets/startUI");
 
 	// ctx->connectscreen.buttons = IMG_Load("assets/buttons.png");
 	SDL_Log("Container %d", root->containerCount);
+	ctx->connectscreen.counter = START;
+	surf = IMG_Load("assets/PMTitle.png");
+	ctx->display->background = SDL_CreateTextureFromSurface(ctx->display->renderer, surf);
+	ctx->display->bgColor = (SDL_Color){54, 60, 66,255};
+	SDL_FreeSurface(surf);
 
 	SDLX_SpriteCreate(&ctx->connectscreen.playerSprites[0], 1 , NULL);
 	ctx->connectscreen.playerSprites[0]._dst = root->containers[0].elems[0]._boundingBox;
