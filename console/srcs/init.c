@@ -65,6 +65,7 @@ void initNewGame(Context *ctx)
 
 	SDLX_RenderResetColour(ctx->display);
 	SDL_SetRenderTarget(ctx->display->renderer, ctx->display->background);
+	SDL_SetTextureBlendMode(ctx->display->background , SDL_BLENDMODE_BLEND);
 	SDL_RenderCopy(ctx->display->renderer, NULL, NULL, NULL);
 	initBoard (ctx, &root->containers[UI_BOARD]);
 
@@ -187,6 +188,7 @@ void initPlayer(Context *ctx, uint8_t id, SDLX_RectContainer *root)
 		get_img_src(&src, TOK_HEX, i);
 		SDL_RenderCopy(ctx->display->renderer, ctx->Tcards, &src,  root->containers[1].containers[i].elems[1].boundingBox);
 	}
+
 	// src = (SDL_Rect){.h = 53, .w = CARD_W / 2,
 	// 					 .x = (SEP_X + 5) + (CARD_W / 2 + SEP_X) * i, .y =  (CARD_H * 2) + SEP_Y * 3 + 35};
 	// SDLX_SpriteCreate(&ctx->players[id].ressources[i], 1, ctx->textSheet.tex);
@@ -198,6 +200,9 @@ void initPlayer(Context *ctx, uint8_t id, SDLX_RectContainer *root)
 	{
 		SDLX_SpriteCreate(&ctx->players[id].reserved[i].sprite, 1, ctx->Tcards);
 		ctx->players[id].reserved[i].sprite._dst = root->containers[2].elems[i]._boundingBox;
+		ctx->players[id].reserved[i].sprite.src = NULL;
+		ctx->players[id].reserved[i].sprite.texture = SDL_CreateTexture(ctx->display->renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, ctx->board.rows[0].revealed[0].sprite._dst.w, ctx->board.rows[0].revealed[0].sprite._dst.h);
+		SDL_SetTextureBlendMode(ctx->players[id].reserved[i].sprite.texture , SDL_BLENDMODE_BLEND);
 	}
 }
 # define START 3000

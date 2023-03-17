@@ -20,7 +20,9 @@ void renderPlayer(Context *ctx, Player *player)
 	}
 
 	for (i = 0; i < player->reserveCount; i++)
+	{
 		SDLX_RenderQueuePush(&player->reserved[i].sprite);
+	}
 }
 
 void renderBoard(Context *ctx)

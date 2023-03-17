@@ -89,17 +89,29 @@ void generateCardTexture(SDL_Texture *base, Card *card, int type)
 	SDL_Rect dst;
 	SDL_Rect centereDst;
 	SDL_Renderer *renderer;
+	SDL_Texture *target;
 	char text[2];
 	int remainder;
 
 	text[1] = '\0';
 	renderer = SDLX_DisplayGet()->renderer;
+	target = SDL_GetRenderTarget(renderer);
 	get_img_src(&src, CARD, type);
 
 	dst.h = card->sprite.dst->h / 7;
 	dst.w = dst.h;
 	dst.x = card->sprite.dst->w / 10;
 	dst.y = card->sprite.dst->h / 10;
+
+
+	if (card->sprite.texture == NULL)
+	{
+		SDL_Log(" !! New card (%d) has no texture", card->_id);
+		card->sprite.texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, card->sprite._dst.w, card->sprite._dst.h);
+		SDL_SetTextureBlendMode(card->sprite.texture , SDL_BLENDMODE_BLEND);
+	}
+
+
 	SDL_SetRenderTarget(renderer, card->sprite.texture);
 	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 	SDL_SetRenderDrawColor(renderer, 0, 0, 255, 0);
@@ -136,7 +148,7 @@ void generateCardTexture(SDL_Texture *base, Card *card, int type)
 	dst.y = dst.y = card->sprite.dst->h / 10;
 	text[0] = card->points + '0';
 	SDLX_RenderMessage(SDLX_DisplayGet(), &dst,(SDL_Color){255,255,255,255}, text);
-	SDL_SetRenderTarget(renderer, NULL);
+	SDL_SetRenderTarget(renderer, target);
 }
 
 int generateCard(SDL_Texture *base, Card *card, int level)
@@ -180,6 +192,8 @@ int generateCard(SDL_Texture *base, Card *card, int level)
 	card->id[6] = card->cost[TOK_D] + '0';
 	card->id[7] = card->points + '0';
 	card->id[8] = '\0';
+
+
 
 	extract_num(card->id, &card->_id);
 	generateCardTexture(base, card, type);

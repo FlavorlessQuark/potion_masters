@@ -35,7 +35,7 @@ int send_game_state(Context *ctx, int player)
 		{
 			for (int s = 0; ctx->players[ctx->turn].reserved[x].id[s] != '\0'; s++)
 				boardState[++offset] = ctx->players[ctx->turn].reserved[x].id[s];
-			boardState[++offset] = '|';
+			// boardState[++offset] = '|';
 		}
 	boardState[offset] = '\0';
 	SDL_Log("Send State %s  to %d", boardState, player);
@@ -78,6 +78,7 @@ int execReserve(Context *ctx, uint8_t playerID, char *msg)
 	char *id;
 	int cardId;
 	Card *card;
+	SDL_Texture *tmp;
 
 	msg++;
 	id = msg;
@@ -93,17 +94,19 @@ int execReserve(Context *ctx, uint8_t playerID, char *msg)
 	memcpy(ctx->players[playerID].reserved[ctx->players[playerID].reserveCount].cost, card->cost, TOK_COUNT - 1);
 	memcpy(ctx->players[playerID].reserved[ctx->players[playerID].reserveCount].id, card->id, TOK_COUNT - 1);
 
+	tmp = ctx->players[playerID].reserved[ctx->players[playerID].reserveCount].sprite.texture ;
 	ctx->players[playerID].reserved[ctx->players[playerID].reserveCount]._id = card->_id;
 	ctx->players[playerID].reserved[ctx->players[playerID].reserveCount].points = card->points;
 	ctx->players[playerID].reserved[ctx->players[playerID].reserveCount].sprite.texture = card->sprite.texture;
-	ctx->players[playerID].reserved[ctx->players[playerID].reserveCount].sprite._src = card->sprite._src;
+	card->sprite.texture = tmp;
 
 	ctx->players[playerID].tokens[TOK_R]++;
 	ctx->players[playerID].reserveCount++;
 
 	if (ctx->board.rows[id[0] - '0'].remainCount > 0)
 	{
-		generateCard(ctx->Tcards, card, id[0] - '0');
+		generateCard(ctx->Tcards, card, id[1] - '0');
+		SDLX_SpritePrint(&card->sprite);
 		ctx->board.rows[id[0] - '0'].remainCount--;
 	}
 	SDL_Log("Player %d ,reserve count %d", playerID, ctx->players[playerID].reserveCount);
@@ -125,7 +128,31 @@ int execBuy(Context *ctx, uint8_t playerID, char *msg)
 	extract_num(msg, &cardId) + 1;
 
 	SDL_Log("Player %d , Buys card %d from reserve? %d | msg %s", playerID, cardId, isReserved, msg);
-	SDL_Log("CArd %s points %c", msg, msg[CARD_ID_LEN - 1]);;
+	SDL_Log("CArd %s points %c", msg, msg[CARD_ID_LEN - 1]);
+	id += 3;
+	for (int i = 0; i < CARD_TYPES; i++)
+	{
+		SDL_Log("Paying token %d (%d) my tokens %d Owned %d",
+			i, id[i] - '0',
+			ctx->players[playerID].tokens[i],
+			ctx->players[playerID].owned[i]
+		);
+		amount = (id[i] - '0' );
+		if (amount > 0)
+		{
+			amount -= ctx->players[playerID].owned[i];
+			// SDL_
+			// if (amount > ctx->players[playerID].tokens[i])
+			// {
+			// 	ctx->players[playerID].tokens[TOK_R] -= amount - ctx->players[playerID].tokens[i];
+			// 	ctx->board.tokens[TOK_R] += amount - ctx->players[playerID].tokens[i];
+			// 	amount -= (amount - ctx->players[playerID].tokens[i] );
+			// }
+			ctx->players[playerID].tokens[i] -= amount;
+			ctx->board.tokens[i] += amount;
+		}
+	}
+
 	if (isReserved)
 		delReserved(&ctx->players[playerID], cardId);
 	else
