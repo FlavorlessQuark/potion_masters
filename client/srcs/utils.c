@@ -94,14 +94,14 @@ void fillCard(Card *card)
 		card->cost[i] = str[i] - '0';
 
 	card->points = str[i] - '0';
-	// SDL_Log("Generate %s (%d) | Src (%d,%d) Cost: %d %d %d %d",
-	// 	card->id, card->_id,
-	// 	card->sprite._src.x, card->sprite._src.y,
-	// 	card->cost[0],
-	// 	card->cost[1],
-	// 	card->cost[2],
-	// 	card->cost[3]
-	// );
+	SDL_Log("Generate %s (%d) | Src (%d,%d) Cost: %d %d %d %d",
+		card->id, card->_id,
+		card->sprite._src.x, card->sprite._src.y,
+		card->cost[0],
+		card->cost[1],
+		card->cost[2],
+		card->cost[3]
+	);
 }
 
 int	extract_num(char *str, int *number)

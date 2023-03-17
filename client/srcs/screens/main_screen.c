@@ -29,15 +29,15 @@ void render_main_screen(Context *ctx)
 {
 	SDL_RenderCopy(ctx->display->renderer, ctx->UI.bg, NULL, NULL);
 	SDL_SetRenderDrawColor(ctx->display->renderer, 255,0,0,255);
-	// for (int i = 0; i < CARD_TYPES; i++)
-	// {
-	// 	// SDLX_RenderQueuePush(&ctx->player.reserved[i]);
-	// 	ctx->UI.tokens[i]._src.x = ctx->nums.x + (ctx->player.tokens[i] * ctx->nums.w);
-	// 	ctx->UI.permanents[i]._src.x = ctx->nums.x + (ctx->player.owned[i] * ctx->nums.w);
-	// 	SDLX_RenderQueuePush(&ctx->UI.tokens[i]);
-	// 	SDLX_RenderQueuePush(&ctx->UI.permanents[i]);
-	// }
-	// ctx->UI.tokens[CARD_TYPES]._src.x = ctx->nums.x + (ctx->player.tokens[CARD_TYPES] * ctx->nums.w);
+	for (int i = 0; i < CARD_TYPES; i++)
+	{
+		// SDLX_RenderQueuePush(&ctx->player.reserved[i]);
+		ctx->UI.tokens[i]._src.x = ctx->nums.x + (ctx->player.tokens[i] * ctx->nums.w);
+		ctx->UI.permanents[i]._src.x = ctx->nums.x + (ctx->player.owned[i] * ctx->nums.w);
+		SDLX_RenderQueuePush(&ctx->UI.tokens[i]);
+		SDLX_RenderQueuePush(&ctx->UI.permanents[i]);
+	}
+	ctx->UI.tokens[CARD_TYPES]._src.x = ctx->nums.x + (ctx->player.tokens[CARD_TYPES] * ctx->nums.w);
 	SDLX_RenderQueuePush(&ctx->UI.tokens[CARD_TYPES]);
 	SDL_RenderDrawRect(ctx->display->renderer, ctx->UI.tokens[TOK_COUNT - 1].dst);
 	if (ctx->UI.switchMode.enabled)
