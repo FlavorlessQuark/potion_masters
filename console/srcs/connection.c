@@ -28,6 +28,9 @@ c_string_vec *get_connections(void)
 	if (did_change) {
 		free_strvec(handles);
 		CP_CHECK(get_client_handles(&handles));
+                for (int i = 0; i < handles.len; i++) {
+                    printf("  %s\n", handles.ptr[i]);
+                }
 	}
 	else
 		return NULL;

@@ -3,9 +3,9 @@
 set -e
 
 base=$(pwd)
-wscp="$base/../WSCPServ/"
-c_cp="$base/../c_controlpads"
-browser="firefox"
+wscp="$base/../../LC/WSCPServ/"
+c_cp="$base/../../LC/c_controlpads"
+browser="google-chrome"
 
 # kill processes from last run
 grep_kill -f "target/.*/server"
@@ -17,6 +17,9 @@ if [[ $1 == "-x" ]]; then
 fi
 
 
+cp $c_cp/target/debug/libc_controlpads.a client/
+cp $c_cp/target/debug/libc_controlpads.a console/
+
 cd $base/console
 if [[ $1 == "--re" ]]; then
     make re
@@ -24,7 +27,6 @@ else
     make
 fi
 
-cp $c_cp/target/debug/libc_controlpads.a ../client/
 cd $base/client
 make html
 
@@ -39,6 +41,8 @@ cargo run &
 # run node server
 cd $base/client
 node node/index.js &
+
+sleep 1
 
 # run a controller
 $browser 127.0.0.1:3000 &
