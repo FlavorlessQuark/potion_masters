@@ -62,6 +62,12 @@ void init_reserved_cards(Context *ctx, SDLX_RectContainer *root)
 		SDLX_ButtonCreate(&ctx->UI.reserved[i * 2 + 1], ctx->player.reserved[i * 2 + 1].sprite.dst);
 		ctx->player.reserved[i * 2 + 0].sprite._dst = root->containers[i].elems[0]._boundingBox;
 		ctx->player.reserved[i * 2 + 1].sprite._dst = root->containers[i].elems[1]._boundingBox;
+		ctx->player.reserved[i * 2 + 0].sprite.texture = SDL_CreateTexture(ctx->display->renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, ctx->player.reserved[i * 2 + 0].sprite._dst.w, ctx->player.reserved[i * 2 + 0].sprite._dst.h);
+		ctx->player.reserved[i * 2 + 1].sprite.texture = SDL_CreateTexture(ctx->display->renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, ctx->player.reserved[i * 2 + 1].sprite._dst.w, ctx->player.reserved[i * 2 + 1].sprite._dst.h);
+		SDL_SetTextureBlendMode(ctx->player.reserved[i * 2 + 0].sprite.texture , SDL_BLENDMODE_BLEND);
+		SDL_SetTextureBlendMode(ctx->player.reserved[i * 2 + 1].sprite.texture , SDL_BLENDMODE_BLEND);
+		ctx->player.reserved[i * 2 + 0].sprite.src = NULL;
+		ctx->player.reserved[i * 2 + 1].sprite.src = NULL;
 		// ctx->mainscreen->UI[*offset]._dst = root->containers[i].elems[0]._boundingBox;
 		// *offset+= 1;
 		// ctx->mainscreen->UI[*offset]._dst = root->containers[i].elems[1]._boundingBox;

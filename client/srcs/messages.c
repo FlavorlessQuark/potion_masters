@@ -12,6 +12,7 @@ void sendReserve(Context *ctx)
 {
 	int i;
 	SDL_Rect dst;
+	SDL_Texture *tmp;
 
 	SDL_memset(msg, 0, MSG_LEN);
 
@@ -23,12 +24,13 @@ void sendReserve(Context *ctx)
 	msg[2 + i] = '\0';
 	memcpy(ctx->player.reserved[ctx->player.reserveCount].id, ctx->buyscreen.selected->id, CARD_ID_LEN);
 	memcpy(ctx->player.reserved[ctx->player.reserveCount].cost, ctx->buyscreen.selected->cost, TOK_COUNT - 1);
-
+	tmp = ctx->player.reserved[ctx->player.reserveCount].sprite.texture;
+	ctx->player.reserved[ctx->player.reserveCount].sprite.texture = ctx->buyscreen.selected->sprite.texture;
+	ctx->buyscreen.selected->sprite.texture = tmp;
 	// ctx->player.reserved[ctx->player.reserveCount].sprite.texture =
-	ctx->player.reserved[ctx->player.reserveCount].sprite._src =  ctx->buyscreen.selected->sprite._src;
-	ctx->player.reserved[ctx->player.reserveCount].sprite.src =  &ctx->player.reserved[ctx->player.reserveCount].sprite._src;
+
 	ctx->player.reserveCount++;
-	ctx->player.tokens[CARD_TYPES]++;
+	ctx->player.tokens[TOK_COUNT - 1]++;
 
 	sendMessage(msg);
 }
@@ -135,18 +137,6 @@ void parseMsg(Context *ctx, char *input)
 				input += CARD_ID_LEN;
 			}
 		}
-		// for (int r = 0; r < ROW_COUNT; r++)
-		// {
-		// 	id = input;
-		// 	memcpy(&ctx->board.rows[r].revealed[c].id, input, CARD_ID_LEN);
-		// 	extract_num(ctx->board.rows[r].revealed[c].id, &_id);
-		// 	if (ctx->board.rows[r].revealed[c]._id != _id)
-		// 	{
-		// 		fillCard(&ctx->board.rows[r].revealed[c]);
-		// 		generateCardTexture(ctx->cardTex, &ctx->board.rows[r].revealed[c], ctx->board.rows[r].revealed[c].id[1] - '0');
-		// 	}
-		// 	input += CARD_ID_LEN;
-		// }
 		startTurn(ctx);
 	}
 	ctx->connection.hasMessage = SDL_FALSE;

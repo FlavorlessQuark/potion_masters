@@ -145,15 +145,15 @@ void printRect(SDL_Rect *rect, char * msg)
 
 void delReserved(Context *ctx, int id)
 {
-	Card tmp;
+	SDL_Texture *tmp;
 	for (int i = 0; i < ctx->player.reserveCount; i++)
 	{
 		if (id == ctx->player.reserved[i]._id)
 		{
-			memcpy(&ctx->player.reserved[i],  &ctx->player.reserved[ctx->player.reserveCount - 1], sizeof(Card));
+
+			memcpy(&ctx->player.reserved[i], &ctx->player.reserved[ctx->player.reserveCount - 1], sizeof(Card));
 
 			ctx->player.reserved[i].sprite.dst = &ctx->player.reserved[i].sprite._dst;
-			ctx->player.reserved[i].sprite.src = &ctx->player.reserved[i].sprite._src;
 
 			memset(ctx->player.reserved[ctx->player.reserveCount - 1].id, '0', CARD_ID_LEN);
 			memset(ctx->player.reserved[ctx->player.reserveCount - 1].cost, -1, TOK_COUNT - 1);

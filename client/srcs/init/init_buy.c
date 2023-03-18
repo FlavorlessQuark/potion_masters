@@ -36,6 +36,7 @@ void init_buy_screen(Context *ctx)
 	ctx->buyscreen.reserveSprite._dst = root->containers[1].elems[1]._boundingBox;
 	ctx->buyscreen.exit._boundingBox = exit;
 
+	ctx->buyscreen.showSelected.src = NULL;
 	SDLX_RenderMessage(ctx->display, &ctx->buyscreen.exit._boundingBox, (SDL_Color){255, 0, 0, 255}, "X");
 	for (int n = 0; n < CARD_TYPES; n++)
 	{

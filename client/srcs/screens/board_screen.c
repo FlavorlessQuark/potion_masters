@@ -63,7 +63,7 @@ void board_screen(Context *ctx)
 				ctx->state = 2;
 				ctx->buyscreen.cardOrigin = 0;
 				ctx->buyscreen.selected = &ctx->board.rows[x].revealed[i];
-				ctx->buyscreen.showSelected.src = ctx->buyscreen.selected->sprite.src;
+				// ctx->buyscreen.showSelected.src = ctx->buyscreen.selected->sprite.src;
 				ctx->buyscreen.showSelected.texture = ctx->buyscreen.selected->sprite.texture;
 			}
 		}
