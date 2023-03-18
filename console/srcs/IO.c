@@ -105,7 +105,7 @@ int execReserve(Context *ctx, uint8_t playerID, char *msg)
 
 	if (ctx->board.rows[id[0] - '0'].remainCount > 0)
 	{
-		generateCard(ctx->Tcards, card, id[1] - '0');
+		generateCard(ctx->Tcards, card, id[0] - '0');
 		SDLX_SpritePrint(&card->sprite);
 		ctx->board.rows[id[0] - '0'].remainCount--;
 	}
@@ -119,6 +119,7 @@ int execBuy(Context *ctx, uint8_t playerID, char *msg)
 	char isReserved;
 	int cardId;
 	int amount;
+	int tmp;
 	Card *card;
 
 	msg++;
@@ -129,27 +130,30 @@ int execBuy(Context *ctx, uint8_t playerID, char *msg)
 
 	SDL_Log("Player %d , Buys card %d from reserve? %d | msg %s", playerID, cardId, isReserved, msg);
 	SDL_Log("CArd %s points %c", msg, msg[CARD_ID_LEN - 1]);
-	id += 3;
 	for (int i = 0; i < CARD_TYPES; i++)
 	{
 		SDL_Log("Paying token %d (%d) my tokens %d Owned %d",
-			i, id[i] - '0',
+			i, id[i + 3] - '0',
 			ctx->players[playerID].tokens[i],
 			ctx->players[playerID].owned[i]
 		);
-		amount = (id[i] - '0' );
+		amount = (id[i + 3] - '0' );
+		amount = amount - ctx->players[playerID].owned[i];
 		if (amount > 0)
 		{
-			amount -= ctx->players[playerID].owned[i];
 			// SDL_
-			// if (amount > ctx->players[playerID].tokens[i])
-			// {
-			// 	ctx->players[playerID].tokens[TOK_R] -= amount - ctx->players[playerID].tokens[i];
-			// 	ctx->board.tokens[TOK_R] += amount - ctx->players[playerID].tokens[i];
-			// 	amount -= (amount - ctx->players[playerID].tokens[i] );
-			// }
-			ctx->players[playerID].tokens[i] -= amount;
-			ctx->board.tokens[i] += amount;
+			if (amount > ctx->players[playerID].tokens[i])
+			{
+				ctx->board.tokens[i] += ctx->players[playerID].tokens[i];
+				amount -= ctx->players[playerID].tokens[i];
+				ctx->players[playerID].tokens[i] = 0;
+				ctx->players[playerID].tokens[TOK_R] -= amount;
+				ctx->board.tokens[TOK_R] += amount;
+			}
+			else{
+				ctx->players[playerID].tokens[i] -= amount;
+				ctx->board.tokens[i] += amount;
+			}
 		}
 	}
 
@@ -169,6 +173,8 @@ int execBuy(Context *ctx, uint8_t playerID, char *msg)
 			ctx->players[playerID].tokens[3],
 			ctx->players[playerID].tokens[4],
 			ctx->players[playerID].points);
+	SDL_Log("Card type %d", id[1] - '0');
+	ctx->players[playerID].owned[id[1] - '0']++;
 	return 1;
 }
 
@@ -181,7 +187,6 @@ int execTake(Context *ctx, uint8_t playerID, char *msg)
 	for (int i = 0; i < CARD_TYPES; i++)
 	{
 		amount = msg[0] - '0';
-		SDL_Log("Token %d: %d", i, amount);
 		ctx->players[playerID].tokens[i] += amount;
 		ctx->board.tokens[i] -= amount;
 		msg++;
