@@ -18,7 +18,6 @@ int canBuy(Context *ctx)
 
 void buy_screen(Context *ctx)
 {
-	SDL_Log("??? %d %d %d | %d", ctx->buyscreen.cardOrigin == 1, ctx->player.reserveCount < MAX_RESERVE, ctx->board.tokens[CARD_TYPES] > 0, ctx->buyscreen.cardOrigin == 1 && ctx->player.reserveCount < MAX_RESERVE && ctx->board.tokens[CARD_TYPES] > 0);
 	if (ctx->buyscreen.cardOrigin == 0 && ctx->player.reserveCount < MAX_RESERVE && ctx->board.tokens[CARD_TYPES] > 0)
 		ctx->buyscreen.reserveButton.enabled = SDL_TRUE;
 	else

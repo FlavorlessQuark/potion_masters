@@ -53,6 +53,8 @@ Context *init()
 void initNewGame(Context *ctx)
 {
 	SDLX_RectContainer *root;
+	SDL_Surface *surf;
+	SDL_Texture *tex;
 
 	root = loadConfig("assets/UIconfig");
 
@@ -65,11 +67,15 @@ void initNewGame(Context *ctx)
 
 	SDLX_RenderResetColour(ctx->display);
 	SDL_SetRenderTarget(ctx->display->renderer, ctx->display->background);
+	surf = IMG_Load("assets/wood.placeholder.png");
+	tex = SDL_CreateTextureFromSurface(ctx->display->renderer, surf);
+
+
 	SDL_SetTextureBlendMode(ctx->display->background , SDL_BLENDMODE_BLEND);
-	SDL_RenderCopy(ctx->display->renderer, NULL, NULL, NULL);
+	SDL_RenderCopy(ctx->display->renderer, tex, NULL, NULL);
+	SDL_DestroyTexture(tex);
 	initBoard (ctx, &root->containers[UI_BOARD]);
 
-	SDL_Log("Board was init");
 	if (ctx->players[0].status == READY)
 		initPlayer(ctx, 0, &root->containers[UI_PLAYER_LEFT].containers[0]);
 	if (ctx->players[1].status == READY)

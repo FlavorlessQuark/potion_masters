@@ -50,12 +50,9 @@ void initRowCards(Context *ctx, Row *row, SDLX_RectContainer *root)
 	for (int i = 0; i < ROW_CARD_COUNT; i++)
 	{
 		SDLX_ButtonCreate(&row->cardButton[i], NULL);
+		create_target_sprite(&row->revealed[i].sprite, root->elems[i + 1]._boundingBox, root->elems[i + 1]._boundingBox.w, root->elems[i + 1]._boundingBox.h);
 		SDLX_SpriteCreate(&row->revealed[i].sprite, 1, ctx->cardTex);
 		row->cardButton[i]._boundingBox = root->elems[i + 1]._boundingBox;
-		row->revealed[i].sprite._dst = root->elems[i + 1]._boundingBox;
-		row->revealed[i].sprite.src = NULL;
-		row->revealed[i].sprite.texture = SDL_CreateTexture(ctx->display->renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, row->revealed[i].sprite._dst.w, row->revealed[i].sprite._dst.h);
-		SDL_SetTextureBlendMode(row->revealed[i].sprite.texture , SDL_BLENDMODE_BLEND);
 	}
 
 }

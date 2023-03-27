@@ -43,5 +43,7 @@ void sendMessage(char *message);
 void get_img_src(SDL_Rect *dst, int imageType, int index);
 
 void generateCardTexture(SDL_Texture *base, Card *card, int type);
+void  create_target_sprite(SDLX_Sprite *result, SDL_Rect dst, int texW, int texH);
+
 
 #endif

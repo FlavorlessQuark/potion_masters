@@ -198,3 +198,13 @@ void get_img_src(SDL_Rect *dst, int imageType, int index)
 		dst->y = OFF_Y + (index * (TOK_H + TOK_OFF_Y));
 	}
 }
+
+
+void  create_target_sprite(SDLX_Sprite *result, SDL_Rect dst, int texW, int texH)
+{
+	SDLX_SpriteCreate(result, 1, NULL);
+	result->_dst = dst;
+	result->src = NULL;
+	result->texture = SDL_CreateTexture(SDLX_DisplayGet()->renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, texW, texH);
+	SDL_SetTextureBlendMode(result->texture , SDL_BLENDMODE_BLEND);
+}
