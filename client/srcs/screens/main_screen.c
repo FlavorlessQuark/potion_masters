@@ -29,6 +29,8 @@ void render_main_screen(Context *ctx)
 {
 	SDL_RenderCopy(ctx->display->renderer, ctx->UI.bg, NULL, NULL);
 	SDL_SetRenderDrawColor(ctx->display->renderer, 255,0,0,255);
+	// ctx->UI.points._src.x = ctx->nums.x + (ctx->player.points * ctx->nums.w);
+	SDLX_RenderQueuePush(&ctx->UI.points);
 	for (int i = 0; i < CARD_TYPES; i++)
 	{
 		// SDLX_RenderQueuePush(&ctx->player.reserved[i]);

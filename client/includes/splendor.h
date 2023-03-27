@@ -42,6 +42,7 @@ void printRect(SDL_Rect *rect, char * msg);
 void sendMessage(char *message);
 void get_img_src(SDL_Rect *dst, int imageType, int index);
 
+SDL_Rect scaleAndCenter(double scalar, SDL_Rect parent, SDL_Rect this);
 void generateCardTexture(SDL_Texture *base, Card *card, int type);
 
 #endif

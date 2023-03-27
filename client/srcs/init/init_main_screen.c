@@ -6,11 +6,15 @@ void init_status_bar(Context *ctx, SDLX_RectContainer *root)
 
 	SDLX_SpriteCreate(&ctx->UI.name, 1, NULL);
 	SDLX_SpriteCreate(&ctx->UI.points, 1, NULL);
+	root->elems[0]._boundingBox.h /= 2;
 	ctx->UI.name._dst = root->elems[0]._boundingBox;
 	ctx->UI.points._dst = root->elems[0]._boundingBox;
-
-	root->elems[0]._boundingBox.h /= 2;
+	ctx->UI.points._src = ctx->nums;
+	ctx->UI.points.texture = ctx->textSheet.tex;
 	SDLX_RenderMessage(ctx->display, &root->elems[0]._boundingBox, color, "POINTS :");
+	ctx->UI.points._dst.x += ctx->UI.points._dst.w;
+	ctx->UI.points._dst.w = ctx->UI.points._dst.h;
+	ctx->player.points = 0;
 	// ctx.UI.name._dst = root->elems[0]._boundingBox;
 }
 void init_token_bar(Context *ctx, SDLX_RectContainer *root)
@@ -23,8 +27,8 @@ void init_token_bar(Context *ctx, SDLX_RectContainer *root)
 	{
 		SDLX_SpriteCreate(&ctx->UI.permanents[i], 1, ctx->textSheet.tex);
 		SDLX_SpriteCreate(&ctx->UI.tokens[i], 1, ctx->textSheet.tex);
-		ctx->UI.permanents[i]._dst = root->containers[i].elems[0]._boundingBox;
-		ctx->UI.tokens[i]._dst = root->containers[i].elems[1]._boundingBox;
+		ctx->UI.permanents[i]._dst = scaleAndCenter(0.5,root->containers[i].elems[0]._boundingBox, root->containers[i].elems[0]._boundingBox);
+		ctx->UI.tokens[i]._dst = scaleAndCenter(0.5,root->containers[i].elems[1]._boundingBox, root->containers[i].elems[1]._boundingBox);
 		ctx->UI.permanents[i]._src = ctx->nums;
 		ctx->UI.tokens[i]._src = ctx->nums;
 
@@ -39,15 +43,6 @@ void init_token_bar(Context *ctx, SDLX_RectContainer *root)
 	SDLX_SpriteCreate(&ctx->UI.tokens[i], 1, ctx->textSheet.tex);
 	ctx->UI.tokens[i]._dst = root->containers[i].elems[0]._boundingBox;
 	ctx->UI.tokens[i]._src = ctx->nums;
-	// for (int i = 0; i < root->containerCount; i++)
-	// {
-	// 	container = root->containers[i];
-	// 	for(int x = 0; x < container.elemCount; x++)
-	// 	{
-	// 		ctx->mainscreen->UI[*offset]._dst = container.elems[x]._boundingBox;
-	// 		*offset+= 1;
-	// 	}
-	// }
 }
 
 void init_reserved_cards(Context *ctx, SDLX_RectContainer *root)
