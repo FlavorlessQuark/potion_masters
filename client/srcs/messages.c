@@ -120,7 +120,7 @@ void parseMsg(Context *ctx, char *input)
 			ctx->player.tokens[i] = input[i] - '0';
 		}
 		input += i;
-		ctx->player.points = input[0] + '\0';
+		ctx->player.points = input[0] - '0';
 		input += 1;
 		for (int r = 0; r < ROW_COUNT; r++)
 		{
