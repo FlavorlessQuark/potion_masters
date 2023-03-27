@@ -2,6 +2,7 @@
 
 # define MAX_TAKE 3
 
+
 typedef struct tokens {
 	uint8_t taken[CARD_TYPES];
 	uint8_t count;
@@ -9,6 +10,7 @@ typedef struct tokens {
 	uint8_t max;
 }	tokens;
 
+static tokens toks = {.max = MAX_TAKE, .lock = -1};
 
 
 void reset_tokens()
@@ -39,7 +41,7 @@ void try_take_token(Context *ctx, tokens *toks)
 
 void board_screen(Context *ctx)
 {
-	static tokens toks = {.max = MAX_TAKE, .lock = -1};
+
 	int total;
 
 	if (ctx->board.switchMode.triggered == SDLX_KEYDOWN)
@@ -92,14 +94,6 @@ void render_board_screen(Context *ctx)
 			if (ctx->board.rows[x].revealed[i].id > 0)
 			{
 				SDLX_RenderQueuePush(&ctx->board.rows[x].revealed[i].sprite);
-				// ctx->board.rows[x].revealed[i].costSprite[0]._src.x = ctx->nums.x + (ctx->board.rows[x].revealed[i].cost[0] * ctx->nums.w);
-				// ctx->board.rows[x].revealed[i].costSprite[1]._src.x = ctx->nums.x + (ctx->board.rows[x].revealed[i].cost[1] * ctx->nums.w);
-				// ctx->board.rows[x].revealed[i].costSprite[2]._src.x = ctx->nums.x + (ctx->board.rows[x].revealed[i].cost[2] * ctx->nums.w);
-				// ctx->board.rows[x].revealed[i].costSprite[3]._src.x = ctx->nums.x + (ctx->board.rows[x].revealed[i].cost[3] * ctx->nums.w);
-				// SDLX_RenderQueuePush(&ctx->board.rows[x].revealed[i].costSprite[0]);
-				// SDLX_RenderQueuePush(&ctx->board.rows[x].revealed[i].costSprite[1]);
-				// SDLX_RenderQueuePush(&ctx->board.rows[x].revealed[i].costSprite[2]);
-				// SDLX_RenderQueuePush(&ctx->board.rows[x].revealed[i].costSprite[3]);
 			}
 		}
 	}
@@ -114,8 +108,8 @@ void render_board_screen(Context *ctx)
 		SDL_RenderDrawRect(ctx->display->renderer, ctx->board.tokenButton[i].boundingBox);
 		SDL_RenderDrawRect(ctx->display->renderer, ctx->board.tokenCount[i].dst);
 		SDL_RenderDrawRect(ctx->display->renderer, ctx->board.tokenTaken[i].dst);
-		ctx->board.tokenCount[i]._src.x = ctx->nums.x + (ctx->nums.w * (ctx->board.tokens[i] - taken[i]));
-		ctx->board.tokenTaken[i]._src.x = ctx->nums.x + (ctx->nums.w * taken[i]);
+		ctx->board.tokenCount[i]._src.x = ctx->nums.x + (ctx->nums.w * (ctx->board.tokens[i] - toks.taken[i]));
+		ctx->board.tokenTaken[i]._src.x = ctx->nums.x + (ctx->nums.w * toks.taken[i]);
 		SDLX_RenderQueuePush(&ctx->board.tokenTaken[i]);
 		SDLX_RenderQueuePush(&ctx->board.tokenCount[i]);
 	}
