@@ -18,9 +18,8 @@ void main_screen(Context *ctx)
 			ctx->buyscreen.showSelected.src = ctx->player.reserved[i].sprite.src;
 			ctx->buyscreen.showSelected.texture = ctx->player.reserved[i].sprite.texture;
 		}
+
 		SDLX_RenderQueuePush(&ctx->player.reserved[i].sprite);
-		// SDL_SetRenderDrawColor(ctx->display->renderer, 0,255,0,255);
-		// SDL_RenderDrawRect(ctx->display->renderer, ctx->player.reserved[i].sprite.dst);
 	}
 	render_main_screen(ctx);
 }

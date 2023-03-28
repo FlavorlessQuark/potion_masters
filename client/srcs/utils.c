@@ -12,6 +12,54 @@ SDLX_RectContainer *parseUI(char *filename)
 	return root;
 }
 
+void draw_dotted_line(SDL_Point start, int orientation, int dash_size, int len)
+{
+	int ystep;
+	int xstep;
+	SDL_Rect dash;
+	SDL_Point end;
+
+	dash.x = start.x;
+	dash.y = start.y;
+	dash.w = dash_size;
+	dash.h = dash_size;
+	if (orientation == SDLX_ALIGN_VERTICAL)
+		dash.w /= 2;
+	else
+		dash.h /= 2;
+	while (len > 0)
+	{
+		SDL_RenderFillRect(SDLX_DisplayGet()->renderer, &dash);
+		if (orientation == SDLX_ALIGN_VERTICAL)
+		{
+			dash.y +=  dash.h * 2;
+			len -= dash.h * 2;
+			dash.h = MIN(len, dash_size);
+		}
+		else
+		{
+			len -= dash_size * 2;
+			dash.x += dash_size * 2;
+			dash.w = MIN(len, dash_size);
+		}
+
+	}
+}
+
+void draw_dotted_rect(SDL_Point start, int w, int h, int size)
+{
+	int x;
+
+	x = start.x;
+	draw_dotted_line(start, SDLX_ALIGN_HORIZONTAL, size, w);
+	draw_dotted_line(start, SDLX_ALIGN_VERTICAL, size, h);
+	start.x += w  - ( size / 2);
+	draw_dotted_line(start, SDLX_ALIGN_VERTICAL, size, h);
+	start.x = x;
+	start.y += h  - ( size / 2);
+	draw_dotted_line(start, SDLX_ALIGN_HORIZONTAL, size, w);
+}
+
 SDL_Rect scaleAndCenter(double scalar, SDL_Rect parent, SDL_Rect this)
 {
 	SDL_Rect result;

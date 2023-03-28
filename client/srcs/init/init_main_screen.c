@@ -1,5 +1,8 @@
 #include "../includes/splendor.h"
 
+# define SPRITE_TOP (i * 2 + 0)
+# define SPRITE_BOT (i * 2 + 1)
+
 void init_status_bar(Context *ctx, SDLX_RectContainer *root)
 {
 	SDL_Color color = {255,255,255,255};
@@ -48,26 +51,36 @@ void init_token_bar(Context *ctx, SDLX_RectContainer *root)
 void init_reserved_cards(Context *ctx, SDLX_RectContainer *root)
 {
 	uint8_t buttonOffset;
+	SDL_Point start;
 
+	SDL_SetRenderDrawColor(ctx->display->renderer, 255,255,0,255);
 	for (int i = 0; i < root->containerCount; i++)
 	{
-		SDLX_SpriteCreate(&ctx->player.reserved[i * 2 + 0].sprite, 1, ctx->cardTex);
-		SDLX_SpriteCreate(&ctx->player.reserved[i * 2 + 1].sprite, 1, ctx->cardTex);
-		SDLX_ButtonCreate(&ctx->UI.reserved[i * 2 + 0], ctx->player.reserved[i * 2 + 0].sprite.dst);
-		SDLX_ButtonCreate(&ctx->UI.reserved[i * 2 + 1], ctx->player.reserved[i * 2 + 1].sprite.dst);
-		ctx->player.reserved[i * 2 + 0].sprite._dst = root->containers[i].elems[0]._boundingBox;
-		ctx->player.reserved[i * 2 + 1].sprite._dst = root->containers[i].elems[1]._boundingBox;
-		ctx->player.reserved[i * 2 + 0].sprite.texture = SDL_CreateTexture(ctx->display->renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, ctx->player.reserved[i * 2 + 0].sprite._dst.w, ctx->player.reserved[i * 2 + 0].sprite._dst.h);
-		ctx->player.reserved[i * 2 + 1].sprite.texture = SDL_CreateTexture(ctx->display->renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, ctx->player.reserved[i * 2 + 1].sprite._dst.w, ctx->player.reserved[i * 2 + 1].sprite._dst.h);
-		SDL_SetTextureBlendMode(ctx->player.reserved[i * 2 + 0].sprite.texture , SDL_BLENDMODE_BLEND);
-		SDL_SetTextureBlendMode(ctx->player.reserved[i * 2 + 1].sprite.texture , SDL_BLENDMODE_BLEND);
-		ctx->player.reserved[i * 2 + 0].sprite.src = NULL;
-		ctx->player.reserved[i * 2 + 1].sprite.src = NULL;
+		SDLX_SpriteCreate(&ctx->player.reserved[SPRITE_TOP].sprite, 1, ctx->cardTex);
+		SDLX_SpriteCreate(&ctx->player.reserved[SPRITE_BOT].sprite, 1, ctx->cardTex);
+		SDLX_ButtonCreate(&ctx->UI.reserved[SPRITE_TOP], ctx->player.reserved[SPRITE_TOP].sprite.dst);
+		SDLX_ButtonCreate(&ctx->UI.reserved[SPRITE_BOT], ctx->player.reserved[SPRITE_BOT].sprite.dst);
+		ctx->player.reserved[SPRITE_TOP].sprite._dst = root->containers[i].elems[0]._boundingBox;
+		ctx->player.reserved[SPRITE_BOT].sprite._dst = root->containers[i].elems[1]._boundingBox;
+		ctx->player.reserved[SPRITE_TOP].sprite.texture = SDL_CreateTexture(ctx->display->renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, ctx->player.reserved[SPRITE_TOP].sprite._dst.w, ctx->player.reserved[SPRITE_TOP].sprite._dst.h);
+		ctx->player.reserved[SPRITE_BOT].sprite.texture = SDL_CreateTexture(ctx->display->renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, ctx->player.reserved[SPRITE_BOT].sprite._dst.w, ctx->player.reserved[SPRITE_BOT].sprite._dst.h);
+		SDL_SetTextureBlendMode(ctx->player.reserved[SPRITE_TOP].sprite.texture , SDL_BLENDMODE_BLEND);
+		SDL_SetTextureBlendMode(ctx->player.reserved[SPRITE_BOT].sprite.texture , SDL_BLENDMODE_BLEND);
+		ctx->player.reserved[SPRITE_TOP].sprite.src = NULL;
+		ctx->player.reserved[SPRITE_BOT].sprite.src = NULL;
+		start.x = ctx->player.reserved[SPRITE_TOP].sprite._dst.x;
+		start.y = ctx->player.reserved[SPRITE_TOP].sprite._dst.y;
+		draw_dotted_rect(start,ctx->player.reserved[SPRITE_TOP].sprite._dst.w, ctx->player.reserved[SPRITE_TOP].sprite._dst.h, ctx->player.reserved[SPRITE_TOP].sprite._dst.w / 20);
+
+		start.x = ctx->player.reserved[SPRITE_BOT].sprite._dst.x;
+		start.y = ctx->player.reserved[SPRITE_BOT].sprite._dst.y;
+		draw_dotted_rect(start,ctx->player.reserved[SPRITE_BOT].sprite._dst.w, ctx->player.reserved[SPRITE_BOT].sprite._dst.h, ctx->player.reserved[SPRITE_BOT].sprite._dst.w / 20);
 		// ctx->mainscreen->UI[*offset]._dst = root->containers[i].elems[0]._boundingBox;
 		// *offset+= 1;
 		// ctx->mainscreen->UI[*offset]._dst = root->containers[i].elems[1]._boundingBox;
 		// *offset+= 1;
 	}
+	SDL_SetRenderDrawColor(ctx->display->renderer, 0,0,0,255);
 }
 
 // TODO Bye bye magic numbers
