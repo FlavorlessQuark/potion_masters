@@ -68,6 +68,9 @@ void sendTakeTokens(Context *ctx, uint8_t *taken)
 	sendMessage(msg);
 }
 
+void parse_board_state(Context *ctx, char *input);
+void parse_player_state(Context *ctx, char *input);
+
 // b[tok1, tok2, tok3, tok4, tok5]|[r0c0 ID] ||[r0c1 ID]| |[r0c2 ID] ...
 void parseMsg(Context *ctx, char *input)
 {
@@ -97,48 +100,62 @@ void parseMsg(Context *ctx, char *input)
 	}
 	else if (input[0] == 'e')
 	{
-		SDL_Log("Turn ending");
-		endTurn(ctx);
+		parse_player_state(ctx, input + 1);
 	}
 	else if (input[0] == 'b')
 	{
-		uint8_t offset;
-		int _id;
-		int i;
-		char *id;
-
-		SDL_Log("Received board state %s | It's my turn!", input);
-		ctx->state = 0;
-		input++;
-		for (i = 0; i < TOK_COUNT; i++)
-		{
-			ctx->board.tokens[i] = input[i] - '0';
-		}
-		input += i;
-		for (i = 0; i < TOK_COUNT; i++)
-		{
-			ctx->player.tokens[i] = input[i] - '0';
-		}
-		input += i;
-		ctx->player.points = input[0] - '0';
-		input += 1;
-		for (int r = 0; r < ROW_COUNT; r++)
-		{
-			for (int c = 0; c < MAX_ROWCARD; c++)
-			{
-				id = input;
-				memcpy(&ctx->board.rows[r].revealed[c].id, input, CARD_ID_LEN);
-				extract_num(ctx->board.rows[r].revealed[c].id, &_id);
-				if (ctx->board.rows[r].revealed[c]._id != _id)
-				{
-					fillCard(&ctx->board.rows[r].revealed[c]);
-					generateCardTexture(ctx->cardTex, &ctx->board.rows[r].revealed[c], ctx->board.rows[r].revealed[c].id[1] - '0');
-				}
-				input += CARD_ID_LEN;
-			}
-		}
-		startTurn(ctx);
+		parse_board_state(ctx, input + 1);
 	}
 	ctx->connection.hasMessage = SDL_FALSE;
 
+}
+
+
+void parse_board_state(Context *ctx, char *input)
+{
+	uint8_t offset;
+	int _id;
+	int i;
+
+	SDL_Log("Received board state %s", input);
+	ctx->state = PLAYERSTATUS;
+	for (i = 0; i < TOK_COUNT; i++)
+		ctx->board.tokens[i] = input[i] - '0';
+	input += i;
+	for (int r = 0; r < ROW_COUNT; r++)
+	{
+		for (int c = 0; c < MAX_ROWCARD; c++)
+		{
+			// memcpy(&ctx->board.rows[r].revealed[c].id, input, CARD_ID_LEN);
+			extract_card_from_input(ctx, &ctx->board.rows[r].revealed[c], input);
+			// extract_num(ctx->board.rows[r].revealed[c].id, &_id);
+			// if (ctx->board.rows[r].revealed[c]._id != _id)
+			// {
+			// 	fillCard(&ctx->board.rows[r].revealed[c]);
+			// 	generateCardTexture(ctx->cardTex, &ctx->board.rows[r].revealed[c], ctx->board.rows[r].revealed[c].id[1] - '0');
+			// }
+			input += CARD_ID_LEN;
+		}
+	}
+	startTurn(ctx);
+}
+
+void parse_player_state(Context *ctx, char *input)
+{
+	int i;
+	int reserveCount;
+
+	SDL_Log("Received player status %s", input);
+	// input++;
+	// ctx->state = PLAYERSTATUS;
+	// for (i = 0; i < TOK_COUNT; i++)
+	// 	ctx->player.tokens[i] = input[i] - '0';
+	// input += i;
+	// reserveCount =  *input - '0';
+	// for (i = 0; i < reserveCount; i++)
+	// {
+	// 	memcpy(&ctx->board.rows[r].revealed[c].id, input, CARD_ID_LEN);
+	// 	extract_num(ctx->board.rows[r].revealed[c].id, &_id);
+	// }
+	endTurn(ctx);
 }

@@ -213,6 +213,22 @@ void delReserved(Context *ctx, int id)
 	}
 }
 
+int extract_card_from_input(Context *ctx, Card *dst, char *input)
+{
+	int _id;
+
+	memcpy(dst->id, input, CARD_ID_LEN);
+	extract_num(dst->id, &_id);
+	if (dst->_id != _id)
+	{
+		fillCard(dst);
+		generateCardTexture(ctx->cardTex, dst, dst->id[1] - '0');
+	}
+	else
+		return 0;
+	return 1;
+}
+
 void get_img_src(SDL_Rect *dst, int imageType, int index)
 {
 	if (index < 0 || index >= CARD_TYPES)
