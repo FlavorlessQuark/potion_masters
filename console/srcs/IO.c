@@ -6,7 +6,7 @@
 // + (MAX_RESERVE * CARD_ID_LEN + 1) \ // Player Reserved card iDs (+1 for separator)
 // +  1 \ // Player points
 // + 3 \ // Null terminator, type prefix and player ID
-char boardState[MSG_LEN];
+char message[MSG_LEN];
 
 // b[boardTokens]|[playerTokens][playerPoints][r0c0 ID] ||[r0c1 ID]| |[r0c2 ID] ...|[reservedIDs]
 int send_game_state(Context *ctx, int player)
@@ -14,31 +14,40 @@ int send_game_state(Context *ctx, int player)
 	int offset;
 
 	offset = 0;
-	boardState[0] = 'b';
+	message[0] = 'b';
 	for (int i = 0; i < TOK_COUNT; i++)
-		boardState[++offset] = ctx->board.tokens[i] + '0';
-	// for (int i = 0; i < TOK_COUNT; i++)
-	// 	boardState[++offset] = ctx->players[ctx->turn].tokens[i] + '0';
-	// boardState[++offset] = ctx->players[ctx->turn].points + '0';
+		message[++offset] = ctx->board.tokens[i] + '0';
+	offset++;
 	for (int i = 0; i < ROW_COUNT; i++)
 	{
 		for (int x = 0; x < MAX_ROWCARD; x++)
 		{
-			// SDL_Log("CARD ID %s", ctx->board.rows[i].revealed[x].id);
-			for (int s = 0; ctx->board.rows[i].revealed[x].id[s] != '\0'; s++)
-				boardState[++offset] = ctx->board.rows[i].revealed[x].id[s];
-			// boardState[++offset] = '|';
+			SDL_memcpy(message + offset, ctx->board.rows[i].revealed[x].id, CARD_ID_LEN);
+			offset += CARD_ID_LEN;
 		}
 	}
-	// for (int x = 0; x < ctx->players[ctx->turn].reserveCount; x++)
-	// 	{
-	// 		for (int s = 0; ctx->players[ctx->turn].reserved[x].id[s] != '\0'; s++)
-	// 			boardState[++offset] = ctx->players[ctx->turn].reserved[x].id[s];
-	// 		// boardState[++offset] = '|';
-	// 	}
-	boardState[offset + 1] = '\0';
-	SDL_Log("Send State %s  to %d", boardState, player);
-	send_to(ctx->players[player].handle, boardState);
+	message[offset + 1] = '\0';
+	SDL_Log("Send State %s  to %d", message, player);
+	send_to(ctx->players[player].handle, message);
+}
+
+int send_player_state(Context *ctx, int player)
+{
+	int offset;
+
+	offset = 0;
+	message[0] = 'e';
+	for (int i = 0; i < TOK_COUNT; i++)
+		message[++offset] = ctx->players[player].tokens[i] + '0';
+	message[++offset] = ctx->players[player].reserveCount + '0';
+	// for (int i = 0; i < ctx->players[player].reserveCount; i++)
+	// {
+	// 	for (int s = 0; ctx->board.rows[i].revealed[x].id[s] != '\0'; s++)
+	// 		message[++offset] = ctx->board.rows[i].revealed[x].id[s];
+	// }
+	message[offset + 1] = '\0';
+	SDL_Log("Send State %s  to %d", message, player);
+	send_to(ctx->players[player].handle, message);
 }
 
 // msg = "Player-Action"
