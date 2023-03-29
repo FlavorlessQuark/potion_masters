@@ -81,23 +81,7 @@ void init_reserved_cards(Context *ctx, SDLX_RectContainer *root)
 		// *offset+= 1;
 	}
 	SDL_SetRenderDrawColor(ctx->display->renderer, 0,0,0,255);
-}
-
-// TODO Bye bye magic numbers
-void init_button(Context *ctx, SDLX_RectContainer *root)
-{
-
-	SDLX_ButtonCreate(&ctx->UI.switchMode, NULL);
-	ctx->UI.switchMode._boundingBox.x =  ctx->display->win_w - 55;
-	ctx->UI.switchMode._boundingBox.y = ( ctx->display->win_h / 2) - 25;
-	ctx->UI.switchMode._boundingBox.w =  50;
-	ctx->UI.switchMode._boundingBox.h =  50;
-
-// 	ctx->mainscreen->UI[MAIN_SCREEN_SPRITE_COUNT - 2]._dst.x = ctx->display->win_w - 55;
-// 	ctx->mainscreen->UI[MAIN_SCREEN_SPRITE_COUNT - 2]._dst.y =( ctx->display->win_h / 2) - 25;
-// 	ctx->mainscreen->UI[MAIN_SCREEN_SPRITE_COUNT - 2]._dst.w = 50;
-// 	ctx->mainscreen->UI[MAIN_SCREEN_SPRITE_COUNT - 2]._dst.h = 50;
-}
+}\
 
 void init_main_screen(Context *ctx)
 {
@@ -118,7 +102,6 @@ void init_main_screen(Context *ctx)
 	init_token_bar(ctx, &root->containers[1].containers[0]);
 	// SDL_Log("LOAD TOKEN SCREEN");
 	init_reserved_cards(ctx, &root->containers[1].containers[1]);
-	init_button(ctx, &root->containers[1].containers[2]);
 	SDL_SetRenderTarget(ctx->display->renderer, NULL);
 	endTurn(ctx);
 }

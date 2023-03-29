@@ -164,7 +164,7 @@ int	extract_num(char *str, int *number)
 
 void startTurn(Context *ctx)
 {
-	ctx->UI.switchMode.enabled = SDL_TRUE;
+	ctx->switchMode.enabled = SDL_TRUE;
 	for (int i = 0; i < MAX_RESERVE; i++)
 		ctx->UI.reserved[i].enabled = SDL_TRUE;
 	SDL_Log("Turn started");
@@ -172,7 +172,7 @@ void startTurn(Context *ctx)
 
 void endTurn(Context *ctx)
 {
-	ctx->UI.switchMode.enabled = SDL_FALSE;
+	ctx->switchMode.enabled = SDL_FALSE;
 	ctx->state = 0;
 	for (int i = 0; i < MAX_RESERVE; i++)
 		ctx->UI.reserved[i].enabled = SDL_FALSE;

@@ -10,7 +10,7 @@ void board_screen(Context *ctx)
 	static uint8_t max = MAX_TAKE;
 	int total;
 
-	if (ctx->board.switchMode.triggered == SDLX_KEYDOWN)
+	if (ctx->switchMode.triggered == SDLX_KEYDOWN)
 		ctx->state = 0;
 	total = 0;
 	for (int i = 0; i < CARD_TYPES; i++)
@@ -76,6 +76,7 @@ void board_screen(Context *ctx)
 void render_board_screen(Context *ctx)
 {
 	SDL_RenderCopy(ctx->display->renderer, ctx->board.bg, NULL, NULL);
+	SDLX_RenderQueuePush(&ctx->switchSprite);
 	for (int x = 0; x < ROW_COUNT; x++)
 	{
 		SDLX_RenderQueuePush(&ctx->board.rows[x].rowIcon);
