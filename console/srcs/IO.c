@@ -15,12 +15,11 @@ int send_game_state(Context *ctx, int player)
 
 	offset = 0;
 	boardState[0] = 'b';
-	boardState[TOK_COUNT + (ROW_COUNT * CARD_ID_LEN) + 1] = '\0';
 	for (int i = 0; i < TOK_COUNT; i++)
 		boardState[++offset] = ctx->board.tokens[i] + '0';
-	for (int i = 0; i < TOK_COUNT; i++)
-		boardState[++offset] = ctx->players[ctx->turn].tokens[i] + '0';
-	boardState[++offset] = ctx->players[ctx->turn].points + '0';
+	// for (int i = 0; i < TOK_COUNT; i++)
+	// 	boardState[++offset] = ctx->players[ctx->turn].tokens[i] + '0';
+	// boardState[++offset] = ctx->players[ctx->turn].points + '0';
 	for (int i = 0; i < ROW_COUNT; i++)
 	{
 		for (int x = 0; x < MAX_ROWCARD; x++)
@@ -31,13 +30,13 @@ int send_game_state(Context *ctx, int player)
 			// boardState[++offset] = '|';
 		}
 	}
-	for (int x = 0; x < ctx->players[ctx->turn].reserveCount; x++)
-		{
-			for (int s = 0; ctx->players[ctx->turn].reserved[x].id[s] != '\0'; s++)
-				boardState[++offset] = ctx->players[ctx->turn].reserved[x].id[s];
-			// boardState[++offset] = '|';
-		}
-	boardState[offset] = '\0';
+	// for (int x = 0; x < ctx->players[ctx->turn].reserveCount; x++)
+	// 	{
+	// 		for (int s = 0; ctx->players[ctx->turn].reserved[x].id[s] != '\0'; s++)
+	// 			boardState[++offset] = ctx->players[ctx->turn].reserved[x].id[s];
+	// 		// boardState[++offset] = '|';
+	// 	}
+	boardState[offset + 1] = '\0';
 	SDL_Log("Send State %s  to %d", boardState, player);
 	send_to(ctx->players[player].handle, boardState);
 }
