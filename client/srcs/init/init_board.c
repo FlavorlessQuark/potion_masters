@@ -25,9 +25,9 @@ void initTokens(Context *ctx, SDLX_RectContainer *root)
 		get_img_src(&src, TOK_HEX, i);
 		SDL_RenderCopy(ctx->display->renderer, ctx->cardTex, &src, &root->elems[i]._boundingBox);
 
-		ctx->board.tokenCount[i]._dst = root->elems[i]._boundingBox;
-		ctx->board.tokenTaken[i]._dst = root->elems[i]._boundingBox;
-		ctx->board.tokenTaken[i]._dst.x += ctx->board.tokenTaken[i]._dst.w;
+		ctx->board.tokenCount[i]._dst = scaleAndCenter(0.5, root->elems[i]._boundingBox, root->elems[i]._boundingBox);
+		ctx->board.tokenTaken[i]._dst = 	ctx->board.tokenCount[i]._dst;
+		ctx->board.tokenTaken[i]._dst.x += root->elems[i]._boundingBox.w;
 	}
 	for (int i = TOK_COUNT; i < TOK_COUNT + 2; i++)
 	{

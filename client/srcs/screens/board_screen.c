@@ -96,9 +96,6 @@ void render_board_screen(Context *ctx)
 						255 * (ctx->board.tokenButton[i].state == SDLX_FOCUS_STAY),
 						255,
 						255);
-		SDL_RenderDrawRect(ctx->display->renderer, ctx->board.tokenButton[i].boundingBox);
-		SDL_RenderDrawRect(ctx->display->renderer, ctx->board.tokenCount[i].dst);
-		SDL_RenderDrawRect(ctx->display->renderer, ctx->board.tokenTaken[i].dst);
 		ctx->board.tokenCount[i]._src.x = ctx->nums.x + (ctx->nums.w * (ctx->board.tokens[i] - taken[i]));
 		ctx->board.tokenTaken[i]._src.x = ctx->nums.x + (ctx->nums.w * taken[i]);
 		SDLX_RenderQueuePush(&ctx->board.tokenTaken[i]);
