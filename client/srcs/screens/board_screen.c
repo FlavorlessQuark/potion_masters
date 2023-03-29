@@ -2,12 +2,46 @@
 
 # define MAX_TAKE 3
 
-static uint8_t  taken[TOK_COUNT];
-static uint8_t  takenCount;
+typedef struct board_tokens {
+	uint8_t  taken[TOK_COUNT];
+	uint8_t  count;
+	uint8_t  max;
+	int  lock;
+
+}			board_tokens;
+
+static board_tokens tokens = {.lock = -1, .max = MAX_TAKE, .count = 0};
+
+void reset_tokens(void)
+{
+	SDL_memset(tokens.taken, 0, sizeof(uint8_t) * CARD_TYPES);
+	tokens.count = 0;
+	tokens.lock = -1;
+	tokens.max = MAX_TAKE;
+}
+
+void try_take_token(int index)
+{
+	if (tokens.count >= tokens.max)
+		return ;
+	if (tokens.lock == -1)
+	{
+		if (tokens.count == 2 && tokens.taken[index] > 0)
+			return ;
+		if (tokens.taken[index] >= 1)
+		{
+			tokens.lock = index;
+			tokens.max -= 1;
+		}
+	}
+	else if (tokens.lock != index)
+		return;
+	tokens.count++;
+	tokens.taken[index]++;
+}
+
 void board_screen(Context *ctx)
 {
-	static int  lock = -1;
-	static uint8_t max = MAX_TAKE;
 	int total;
 
 	if (ctx->switchMode.triggered == SDLX_KEYDOWN)
@@ -16,42 +50,25 @@ void board_screen(Context *ctx)
 	for (int i = 0; i < CARD_TYPES; i++)
 		total += ctx->player.tokens[i];
 
-	total += takenCount;
-	SDL_Log("Total %d", total);
+	total += tokens.count;
 	for (int i = 0; i < TOK_COUNT && total < 10; i++)
 	{
-		// SDL_Log("?? %d%d %d | %d %d -> %d", lock < 0, lock == i, takenCount < MAX_TAKE,  ctx->board.tokenButton[i].triggered == SDLX_KEYDOWN, (lock < 0 || lock == i) && (takenCount < MAX_TAKE && ctx->board.tokenButton[i].triggered == SDLX_KEYDOWN));
-		if  (((lock < 0 ) || lock == i) && (takenCount < MAX_TAKE && ctx->board.tokenButton[i].triggered == SDLX_KEYDOWN))
+		if ( ctx->board.tokenButton[i].triggered == SDLX_KEYDOWN)
 		{
-			if (++taken[i] > 1)
-			{
-				lock = i;
-				max = MAX_TAKE - 1;
-			}
-			SDL_Log("Taking %d -> %d", i, takenCount);
-			takenCount++;
-			total++;
-			SDL_Log("TOOOTAAAL %d", total);
+			SDL_Log("? :)");
+			try_take_token(i);
+			break ;
 		}
 	}
 
 	if (ctx->board.tokenButton[TOKEN_BUTTON_RESET].triggered == SDLX_KEYDOWN)
-	{
-		SDL_memset(taken, 0, sizeof(uint8_t) * CARD_TYPES);
-		takenCount = 0;
-		lock = -1;
-		max = MAX_TAKE;
-	}
+		reset_tokens();
 	else if (ctx->board.tokenButton[TOKEN_BUTTON_CONFIRM].triggered == SDLX_KEYDOWN)
 	{
 		for (int i = 0; i < TOK_COUNT; i++)
-			ctx->player.tokens[i] += taken[i];
-		sendTakeTokens(ctx, taken);
-		SDL_memset(taken, 0, sizeof(uint8_t) * CARD_TYPES);
-		ctx->state = 0;
-		takenCount = 0;
-		lock = -1;
-		max = MAX_TAKE;
+			ctx->player.tokens[i] += tokens.taken[i];
+		sendTakeTokens(ctx, tokens.taken);
+		reset_tokens();
 	}
 
 	for (int x = 0; x < ROW_COUNT; x++)
@@ -96,8 +113,8 @@ void render_board_screen(Context *ctx)
 						255 * (ctx->board.tokenButton[i].state == SDLX_FOCUS_STAY),
 						255,
 						255);
-		ctx->board.tokenCount[i]._src.x = ctx->nums.x + (ctx->nums.w * (ctx->board.tokens[i] - taken[i]));
-		ctx->board.tokenTaken[i]._src.x = ctx->nums.x + (ctx->nums.w * taken[i]);
+		ctx->board.tokenCount[i]._src.x = ctx->nums.x + (ctx->nums.w * (ctx->board.tokens[i] - tokens.taken[i]));
+		ctx->board.tokenTaken[i]._src.x = ctx->nums.x + (ctx->nums.w * tokens.taken[i]);
 		SDLX_RenderQueuePush(&ctx->board.tokenTaken[i]);
 		SDLX_RenderQueuePush(&ctx->board.tokenCount[i]);
 	}
