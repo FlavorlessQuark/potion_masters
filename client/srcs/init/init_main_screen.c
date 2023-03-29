@@ -1,16 +1,23 @@
 #include "../includes/splendor.h"
 
+# define SPRITE_TOP (i * 2 + 0)
+# define SPRITE_BOT (i * 2 + 1)
+
 void init_status_bar(Context *ctx, SDLX_RectContainer *root)
 {
 	SDL_Color color = {255,255,255,255};
 
 	SDLX_SpriteCreate(&ctx->UI.name, 1, NULL);
 	SDLX_SpriteCreate(&ctx->UI.points, 1, NULL);
+	root->elems[0]._boundingBox.h /= 2;
 	ctx->UI.name._dst = root->elems[0]._boundingBox;
 	ctx->UI.points._dst = root->elems[0]._boundingBox;
-
-	root->elems[0]._boundingBox.h /= 2;
+	ctx->UI.points._src = ctx->nums;
+	ctx->UI.points.texture = ctx->textSheet.tex;
 	SDLX_RenderMessage(ctx->display, &root->elems[0]._boundingBox, color, "POINTS :");
+	ctx->UI.points._dst.x += ctx->UI.points._dst.w;
+	ctx->UI.points._dst.w = ctx->UI.points._dst.h;
+	ctx->player.points = 0;
 	// ctx.UI.name._dst = root->elems[0]._boundingBox;
 }
 void init_token_bar(Context *ctx, SDLX_RectContainer *root)
@@ -23,8 +30,8 @@ void init_token_bar(Context *ctx, SDLX_RectContainer *root)
 	{
 		SDLX_SpriteCreate(&ctx->UI.permanents[i], 1, ctx->textSheet.tex);
 		SDLX_SpriteCreate(&ctx->UI.tokens[i], 1, ctx->textSheet.tex);
-		ctx->UI.permanents[i]._dst = root->containers[i].elems[0]._boundingBox;
-		ctx->UI.tokens[i]._dst = root->containers[i].elems[1]._boundingBox;
+		ctx->UI.permanents[i]._dst = scaleAndCenter(0.5,root->containers[i].elems[0]._boundingBox, root->containers[i].elems[0]._boundingBox);
+		ctx->UI.tokens[i]._dst = scaleAndCenter(0.5,root->containers[i].elems[1]._boundingBox, root->containers[i].elems[1]._boundingBox);
 		ctx->UI.permanents[i]._src = ctx->nums;
 		ctx->UI.tokens[i]._src = ctx->nums;
 
@@ -39,51 +46,42 @@ void init_token_bar(Context *ctx, SDLX_RectContainer *root)
 	SDLX_SpriteCreate(&ctx->UI.tokens[i], 1, ctx->textSheet.tex);
 	ctx->UI.tokens[i]._dst = root->containers[i].elems[0]._boundingBox;
 	ctx->UI.tokens[i]._src = ctx->nums;
-	// for (int i = 0; i < root->containerCount; i++)
-	// {
-	// 	container = root->containers[i];
-	// 	for(int x = 0; x < container.elemCount; x++)
-	// 	{
-	// 		ctx->mainscreen->UI[*offset]._dst = container.elems[x]._boundingBox;
-	// 		*offset+= 1;
-	// 	}
-	// }
 }
 
 void init_reserved_cards(Context *ctx, SDLX_RectContainer *root)
 {
 	uint8_t buttonOffset;
+	SDL_Point start;
 
+	SDL_SetRenderDrawColor(ctx->display->renderer, 255,255,0,255);
 	for (int i = 0; i < root->containerCount; i++)
 	{
-		SDLX_SpriteCreate(&ctx->player.reserved[i * 2 + 0].sprite, 1, ctx->cardTex);
-		SDLX_SpriteCreate(&ctx->player.reserved[i * 2 + 1].sprite, 1, ctx->cardTex);
-		SDLX_ButtonCreate(&ctx->UI.reserved[i * 2 + 0], ctx->player.reserved[i * 2 + 0].sprite.dst);
-		SDLX_ButtonCreate(&ctx->UI.reserved[i * 2 + 1], ctx->player.reserved[i * 2 + 1].sprite.dst);
-		ctx->player.reserved[i * 2 + 0].sprite._dst = root->containers[i].elems[0]._boundingBox;
-		ctx->player.reserved[i * 2 + 1].sprite._dst = root->containers[i].elems[1]._boundingBox;
+		SDLX_SpriteCreate(&ctx->player.reserved[SPRITE_TOP].sprite, 1, ctx->cardTex);
+		SDLX_SpriteCreate(&ctx->player.reserved[SPRITE_BOT].sprite, 1, ctx->cardTex);
+		SDLX_ButtonCreate(&ctx->UI.reserved[SPRITE_TOP], ctx->player.reserved[SPRITE_TOP].sprite.dst);
+		SDLX_ButtonCreate(&ctx->UI.reserved[SPRITE_BOT], ctx->player.reserved[SPRITE_BOT].sprite.dst);
+		ctx->player.reserved[SPRITE_TOP].sprite._dst = root->containers[i].elems[0]._boundingBox;
+		ctx->player.reserved[SPRITE_BOT].sprite._dst = root->containers[i].elems[1]._boundingBox;
+		ctx->player.reserved[SPRITE_TOP].sprite.texture = SDL_CreateTexture(ctx->display->renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, ctx->player.reserved[SPRITE_TOP].sprite._dst.w, ctx->player.reserved[SPRITE_TOP].sprite._dst.h);
+		ctx->player.reserved[SPRITE_BOT].sprite.texture = SDL_CreateTexture(ctx->display->renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, ctx->player.reserved[SPRITE_BOT].sprite._dst.w, ctx->player.reserved[SPRITE_BOT].sprite._dst.h);
+		SDL_SetTextureBlendMode(ctx->player.reserved[SPRITE_TOP].sprite.texture , SDL_BLENDMODE_BLEND);
+		SDL_SetTextureBlendMode(ctx->player.reserved[SPRITE_BOT].sprite.texture , SDL_BLENDMODE_BLEND);
+		ctx->player.reserved[SPRITE_TOP].sprite.src = NULL;
+		ctx->player.reserved[SPRITE_BOT].sprite.src = NULL;
+		start.x = ctx->player.reserved[SPRITE_TOP].sprite._dst.x;
+		start.y = ctx->player.reserved[SPRITE_TOP].sprite._dst.y;
+		draw_dotted_rect(start,ctx->player.reserved[SPRITE_TOP].sprite._dst.w, ctx->player.reserved[SPRITE_TOP].sprite._dst.h, ctx->player.reserved[SPRITE_TOP].sprite._dst.w / 20);
+
+		start.x = ctx->player.reserved[SPRITE_BOT].sprite._dst.x;
+		start.y = ctx->player.reserved[SPRITE_BOT].sprite._dst.y;
+		draw_dotted_rect(start,ctx->player.reserved[SPRITE_BOT].sprite._dst.w, ctx->player.reserved[SPRITE_BOT].sprite._dst.h, ctx->player.reserved[SPRITE_BOT].sprite._dst.w / 20);
 		// ctx->mainscreen->UI[*offset]._dst = root->containers[i].elems[0]._boundingBox;
 		// *offset+= 1;
 		// ctx->mainscreen->UI[*offset]._dst = root->containers[i].elems[1]._boundingBox;
 		// *offset+= 1;
 	}
-}
-
-// TODO Bye bye magic numbers
-void init_button(Context *ctx, SDLX_RectContainer *root)
-{
-
-	SDLX_ButtonCreate(&ctx->UI.switchMode, NULL);
-	ctx->UI.switchMode._boundingBox.x =  ctx->display->win_w - 55;
-	ctx->UI.switchMode._boundingBox.y = ( ctx->display->win_h / 2) - 25;
-	ctx->UI.switchMode._boundingBox.w =  50;
-	ctx->UI.switchMode._boundingBox.h =  50;
-
-// 	ctx->mainscreen->UI[MAIN_SCREEN_SPRITE_COUNT - 2]._dst.x = ctx->display->win_w - 55;
-// 	ctx->mainscreen->UI[MAIN_SCREEN_SPRITE_COUNT - 2]._dst.y =( ctx->display->win_h / 2) - 25;
-// 	ctx->mainscreen->UI[MAIN_SCREEN_SPRITE_COUNT - 2]._dst.w = 50;
-// 	ctx->mainscreen->UI[MAIN_SCREEN_SPRITE_COUNT - 2]._dst.h = 50;
-}
+	SDL_SetRenderDrawColor(ctx->display->renderer, 0,0,0,255);
+}\
 
 void init_main_screen(Context *ctx)
 {
@@ -104,7 +102,6 @@ void init_main_screen(Context *ctx)
 	init_token_bar(ctx, &root->containers[1].containers[0]);
 	// SDL_Log("LOAD TOKEN SCREEN");
 	init_reserved_cards(ctx, &root->containers[1].containers[1]);
-	init_button(ctx, &root->containers[1].containers[2]);
 	SDL_SetRenderTarget(ctx->display->renderer, NULL);
 	endTurn(ctx);
 }

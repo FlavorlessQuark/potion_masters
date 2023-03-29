@@ -25,9 +25,9 @@ void initTokens(Context *ctx, SDLX_RectContainer *root)
 		get_img_src(&src, TOK_HEX, i);
 		SDL_RenderCopy(ctx->display->renderer, ctx->cardTex, &src, &root->elems[i]._boundingBox);
 
-		ctx->board.tokenCount[i]._dst = root->elems[i]._boundingBox;
-		ctx->board.tokenTaken[i]._dst = root->elems[i]._boundingBox;
-		ctx->board.tokenTaken[i]._dst.x += ctx->board.tokenTaken[i]._dst.w;
+		ctx->board.tokenCount[i]._dst = scaleAndCenter(0.5, root->elems[i]._boundingBox, root->elems[i]._boundingBox);
+		ctx->board.tokenTaken[i]._dst = 	ctx->board.tokenCount[i]._dst;
+		ctx->board.tokenTaken[i]._dst.x += root->elems[i]._boundingBox.w;
 	}
 	for (int i = TOK_COUNT; i < TOK_COUNT + 2; i++)
 	{
@@ -53,24 +53,16 @@ void initRowCards(Context *ctx, Row *row, SDLX_RectContainer *root)
 		SDLX_SpriteCreate(&row->revealed[i].sprite, 1, ctx->cardTex);
 		row->cardButton[i]._boundingBox = root->elems[i + 1]._boundingBox;
 		row->revealed[i].sprite._dst = root->elems[i + 1]._boundingBox;
-		row->revealed[i].sprite._src.h = CARD_H;
-		row->revealed[i].sprite._src.w = CARD_W;
-		for (int n = 0; n < CARD_TYPES; n++)
-		{
-			SDLX_SpriteCreate(&row->revealed[i].costSprite[n], 1, ctx->textSheet.tex);
-			row->revealed[i].costSprite[n].dst->x = row->revealed[i].sprite.dst->x + row->revealed[i].sprite.dst->w / 10;
-			row->revealed[i].costSprite[n].dst->y = row->revealed[i].sprite.dst->y + (row->revealed[i].sprite.dst->h / 4 * n);
-			row->revealed[i].costSprite[n].dst->w = row->revealed[i].sprite.dst->w / 10;
-			row->revealed[i].costSprite[n].dst->h = row->revealed[i].sprite.dst->h / 5;
-			row->revealed[i].costSprite[n]._src = ctx->nums;
-
-		}
+		row->revealed[i].sprite.src = NULL;
+		row->revealed[i].sprite.texture = SDL_CreateTexture(ctx->display->renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, row->revealed[i].sprite._dst.w, row->revealed[i].sprite._dst.h);
+		SDL_SetTextureBlendMode(row->revealed[i].sprite.texture , SDL_BLENDMODE_BLEND);
 	}
 
 }
 
 void init_board_screen(Context *ctx)
 {
+	SDL_Surface *surf;
 	SDLX_RectContainer *root;
 
 	root = parseUI("assets/UI/boardUI");
@@ -80,19 +72,27 @@ void init_board_screen(Context *ctx)
 		SDL_TEXTUREACCESS_TARGET,
 		ctx->display->win_w, ctx->display->win_h
 		);
-
 	SDL_SetRenderTarget(ctx->display->renderer, ctx->board.bg);
 
 	initTokens(ctx, &root->containers[TOKENS]);
 	initRowCards(ctx, &ctx->board.rows[TOP_ROW], &root->containers[CARDS].containers[TOP_ROW]);
 	initRowCards(ctx, &ctx->board.rows[MID_ROW], &root->containers[CARDS].containers[MID_ROW]);
 	initRowCards(ctx, &ctx->board.rows[BOT_ROW], &root->containers[CARDS].containers[BOT_ROW]);
-	SDLX_ButtonCreate(&ctx->board.switchMode, NULL);
-	ctx->board.switchMode._boundingBox.x = root->containers[SWITCH].elems[0]._boundingBox.x;
-	ctx->board.switchMode._boundingBox.y = root->containers[SWITCH].elems[0]._boundingBox.y;
-	ctx->board.switchMode._boundingBox.w = root->containers[SWITCH].elems[0]._boundingBox.w;
-	ctx->board.switchMode._boundingBox.h = root->containers[SWITCH].elems[0]._boundingBox.h;
+
+	// surf = IMG_Load("assets/cards.png");
+	SDLX_SpriteCreate(&ctx->switchSprite, 1, SDL_CreateTextureFromSurface(ctx->display->renderer, surf));
+	SDLX_ButtonCreate(&ctx->switchMode, &ctx->switchSprite._dst);
+	ctx->switchSprite.texture = SDL_CreateTexture(ctx->display->renderer,
+		SDL_PIXELFORMAT_RGBA8888,
+		SDL_TEXTUREACCESS_TARGET,
+		ctx->display->win_w, ctx->display->win_h
+		);
+	ctx->switchSprite._dst = root->containers[SWITCH].elems[0]._boundingBox;
+	ctx->switchSprite.src = NULL;
+	SDL_SetRenderTarget(ctx->display->renderer, ctx->switchSprite.texture);
+	SDLX_RenderMessage(ctx->display, NULL, (SDL_Color){255,255,255,255}, "->");
+	// SDL_FreeSurface(surf);
 
 	SDL_SetRenderTarget(ctx->display->renderer, NULL);
-
+	SDLX_SpritePrint(&ctx->switchSprite);
 }

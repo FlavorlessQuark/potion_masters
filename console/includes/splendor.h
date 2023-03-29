@@ -40,7 +40,7 @@ void initPlayer	 (Context *ctx, uint8_t id, SDLX_RectContainer *root);
 void init_connectScreen(Context *ctx);
 
 // ~-~-~-~-~-~-~- IO.c ~-~-~-~-~-~-~-
-int	sendBoardState(Context *ctx, int player);
+int	send_game_state(Context *ctx, int player);
 int execMsg		(Context *ctx, char *msg);
 int execReserve (Context *ctx, uint8_t playerID, char *msg);
 int execBuy		(Context *ctx, uint8_t playerID, char *msg);
@@ -59,8 +59,10 @@ Card *findCard		(Context *ctx, char *id, int _id);
 void nextTurn		(Context *ctx);
 void startGame		(Context *ctx);
 
+SDL_Rect scaleAndCenter(double scalar, SDL_Rect parent, SDL_Rect this);
+
 int	extract_num		(char *str, int *number);
-int generateCard	(Card *card, int level);
+int generateCard	(SDL_Texture *base, Card *card, int level);
 
 void delReserved 	(Player *player, int cardId);
 void print_config	(Context *ctx, SDLX_RectContainer *root);

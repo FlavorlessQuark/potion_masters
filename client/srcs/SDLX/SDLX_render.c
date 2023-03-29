@@ -72,7 +72,7 @@ void 		SDLX_RenderOne(uint32_t id);
 void        SDLX_RenderReset(SDLX_Display *display)
 {
 	SDL_RenderClear(display->renderer);
-	SDL_SetRenderDrawColor(display->renderer, 0, 0, 0, 0);
+	SDL_SetRenderDrawColor(display->renderer, 54, 60, 66,255);
 	if (display->background)
 		SDL_RenderCopy(display->renderer, display->background, NULL, NULL);
 }

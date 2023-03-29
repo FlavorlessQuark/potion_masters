@@ -35,7 +35,7 @@ int main_game(Context *ctx)
 	{
 		send_to(ctx->players[ctx->turn].handle, "e");
 		ctx->turn = (ctx->turn + 1) % ctx->playerCount; // 0 if turn == playCount else turn + 1
-		sendBoardState(ctx, ctx->turn);
+		send_game_state(ctx, ctx->turn);
 		SDL_Log("Now player %d turn", ctx->turn);
 	}
 	for (int i = 0; i < ctx->playerCount; i++)

@@ -5,7 +5,7 @@
 
 void main_screen(Context *ctx)
 {
-	if (ctx->UI.switchMode.triggered == SDLX_KEYDOWN)
+	if (ctx->switchMode.triggered == SDLX_KEYDOWN)
 		ctx->state = 1;
 	for (int i = 0; i < ctx->player.reserveCount; i++)
 	{
@@ -18,9 +18,8 @@ void main_screen(Context *ctx)
 			ctx->buyscreen.showSelected.src = ctx->player.reserved[i].sprite.src;
 			ctx->buyscreen.showSelected.texture = ctx->player.reserved[i].sprite.texture;
 		}
+
 		SDLX_RenderQueuePush(&ctx->player.reserved[i].sprite);
-		// SDL_SetRenderDrawColor(ctx->display->renderer, 0,255,0,255);
-		// SDL_RenderDrawRect(ctx->display->renderer, ctx->player.reserved[i].sprite.dst);
 	}
 	render_main_screen(ctx);
 }
@@ -28,7 +27,8 @@ void main_screen(Context *ctx)
 void render_main_screen(Context *ctx)
 {
 	SDL_RenderCopy(ctx->display->renderer, ctx->UI.bg, NULL, NULL);
-	SDL_SetRenderDrawColor(ctx->display->renderer, 255,0,0,255);
+	ctx->UI.points._src.x = ctx->nums.x + (ctx->player.points * ctx->nums.w);
+	SDLX_RenderQueuePush(&ctx->UI.points);
 	for (int i = 0; i < CARD_TYPES; i++)
 	{
 		// SDLX_RenderQueuePush(&ctx->player.reserved[i]);
@@ -39,12 +39,10 @@ void render_main_screen(Context *ctx)
 	}
 	ctx->UI.tokens[CARD_TYPES]._src.x = ctx->nums.x + (ctx->player.tokens[CARD_TYPES] * ctx->nums.w);
 	SDLX_RenderQueuePush(&ctx->UI.tokens[CARD_TYPES]);
-	SDL_RenderDrawRect(ctx->display->renderer, ctx->UI.tokens[TOK_COUNT - 1].dst);
-	if (ctx->UI.switchMode.enabled)
-		SDL_RenderDrawRect(ctx->display->renderer, ctx->UI.switchMode.boundingBox);
+	if (ctx->switchMode.enabled)
+		SDLX_RenderQueuePush(&ctx->switchSprite);
+
 	for (int i = 0; i < ctx->player.reserveCount; i++)
 		SDLX_RenderQueuePush(&ctx->player.reserved[i].sprite);
-
-	SDL_SetRenderDrawColor(ctx->display->renderer, 0,0,0,255);
 }
 

@@ -53,7 +53,10 @@
 # define CARD_VARIATIONS 0
 
 # define CARD_ID_LEN (3 + CARD_TYPES + 2)
-# define MSG_LEN TOK_COUNT + (ROW_COUNT * (CARD_ID_LEN + 1) * MAX_ROWCARD) + 2
+# define PLAYER_DATA_LEN ((ROW_COUNT * (CARD_ID_LEN + 1) * MAX_ROWCARD) + TOK_COUNT)
+# define BOARD_DATA_LEN ((TOK_COUNT * 2) + (MAX_RESERVE * CARD_ID_LEN))
+# define MSG_LEN PLAYER_DATA_LEN + BOARD_DATA_LEN + 2
+// #define MSG_LEN (TOK_COUNT * 3) + (ROW_COUNT * (CARD_ID_LEN + 1) * MAX_ROWCARD) + (MAX_RESERVE * CARD_ID_LEN + 1) + 1 + 3
 
 
 #define TOKEN_BUTTON_RESET TOK_COUNT + 0
@@ -106,7 +109,6 @@ typedef struct Board
 	SDLX_Button tokenButton[TOK_COUNT + 2];
 	SDLX_Sprite tokenCount[TOK_COUNT];
 	SDLX_Sprite tokenTaken[TOK_COUNT];
-	SDLX_Button switchMode;
 	SDL_Texture *bg;
 }	Board;
 
@@ -135,7 +137,7 @@ typedef struct BuyScreen
 typedef struct PlayerUI
 {
 	SDLX_Button reserved[MAX_RESERVE];
-	SDLX_Button switchMode;
+
 	//			 REserved card + tokens + owned + golden + point display + no card + Buy
 	// SDLX_Sprite UI[MAIN_SCREEN_SPRITE_COUNT];
 	SDLX_Sprite name;
@@ -157,5 +159,7 @@ typedef struct Context
 	SDLX_Display *display;
 	SDL_Texture *cardTex;
 	SDLX_TextSheet textSheet;
+	SDLX_Button switchMode;
+	SDLX_Sprite switchSprite;
 }	Context;
 #endif
