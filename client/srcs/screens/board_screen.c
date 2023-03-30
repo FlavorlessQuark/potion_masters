@@ -55,7 +55,6 @@ void board_screen(Context *ctx)
 	{
 		if ( ctx->board.tokenButton[i].triggered == SDLX_KEYDOWN)
 		{
-			SDL_Log("? :)");
 			try_take_token(i);
 			break ;
 		}
@@ -78,6 +77,14 @@ void board_screen(Context *ctx)
 			if (ctx->board.rows[x].cardButton[i].triggered == SDLX_KEYDOWN)
 			{
 				ctx->state = 2;
+				SDL_Log("Try buying card %s cost { %d %d %d %d) -> %d",
+					ctx->board.rows[x].revealed[i].id,
+					ctx->board.rows[x].revealed[i].cost[0],
+					ctx->board.rows[x].revealed[i].cost[1],
+					ctx->board.rows[x].revealed[i].cost[2],
+					ctx->board.rows[x].revealed[i].cost[3],
+					ctx->board.rows[x].revealed[i].points
+				);
 				ctx->buyscreen.cardOrigin = 0;
 				ctx->buyscreen.selected = &ctx->board.rows[x].revealed[i];
 				// ctx->buyscreen.showSelected.src = ctx->buyscreen.selected->sprite.src;

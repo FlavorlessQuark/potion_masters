@@ -33,6 +33,7 @@ void renderConnectScreen(Context *ctx)
 	}
 	else if (ctx->connection.status == CONNECTED)
 	{
+		SDL_Log("Connexr");
 		SDL_SetRenderDrawColor(ctx->display->renderer, 0,255,0, 255);
 		SDL_RenderFillRect(ctx->display->renderer, ctx->connection.connectButton.boundingBox);
 		SDLX_RenderMessage(ctx->display, &dst, (SDL_Color){255,255,255,255}, "CONNECT");

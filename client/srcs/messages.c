@@ -74,7 +74,7 @@ void parse_player_state(Context *ctx, char *input);
 // b[tok1, tok2, tok3, tok4, tok5]|[r0c0 ID] ||[r0c1 ID]| |[r0c2 ID] ...
 void parseMsg(Context *ctx, char *input)
 {
-	SDL_Log("Parsin msg %s", input);
+	SDL_Log("Parsing msg %s", input);
 	if (input[0] == 'c')
 	{
 		ctx->player.id = input[1] -'0';
@@ -126,14 +126,7 @@ void parse_board_state(Context *ctx, char *input)
 	{
 		for (int c = 0; c < MAX_ROWCARD; c++)
 		{
-			// memcpy(&ctx->board.rows[r].revealed[c].id, input, CARD_ID_LEN);
 			extract_card_from_input(ctx, &ctx->board.rows[r].revealed[c], input);
-			// extract_num(ctx->board.rows[r].revealed[c].id, &_id);
-			// if (ctx->board.rows[r].revealed[c]._id != _id)
-			// {
-			// 	fillCard(&ctx->board.rows[r].revealed[c]);
-			// 	generateCardTexture(ctx->cardTex, &ctx->board.rows[r].revealed[c], ctx->board.rows[r].revealed[c].id[1] - '0');
-			// }
 			input += CARD_ID_LEN;
 		}
 	}
@@ -145,17 +138,20 @@ void parse_player_state(Context *ctx, char *input)
 	int i;
 	int reserveCount;
 
-	SDL_Log("Received player status %s", input);
-	// input++;
-	// ctx->state = PLAYERSTATUS;
-	// for (i = 0; i < TOK_COUNT; i++)
-	// 	ctx->player.tokens[i] = input[i] - '0';
-	// input += i;
-	// reserveCount =  *input - '0';
-	// for (i = 0; i < reserveCount; i++)
-	// {
-	// 	memcpy(&ctx->board.rows[r].revealed[c].id, input, CARD_ID_LEN);
-	// 	extract_num(ctx->board.rows[r].revealed[c].id, &_id);
-	// }
+	SDL_Log("Received player status %s %c", input, input[0]);
+	for (i = 0; i < TOK_COUNT; i++)
+	{
+		SDL_Log("token %d -> %d %c", i, input[i] - '0', input[i]);
+		ctx->player.tokens[i] = input[i] - '0';
+	}
+	input += i;
+	reserveCount =  *input - '0';
+	for (i = 0; i < reserveCount; i++)
+	{
+		extract_card_from_input(ctx, &ctx->player.reserved[i], input);
+		input += CARD_ID_LEN;
+	}
+	SDL_Log("REmaining input %s", input);
+	ctx->player.points = ((input[0] - '0') * 10) + (input[1] - '0');
 	endTurn(ctx);
 }
