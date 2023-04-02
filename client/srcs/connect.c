@@ -1,15 +1,15 @@
 #include "../includes/splendor.h"
 #include <emscripten.h>
+
 static Context *ctx;
+static char message[MSG_LEN];
 
 void recvMessage(char *msg)
 {
 	SDL_Log("received message %s LEN -> %d", msg, MSG_LEN);
-	// ctx->connection.hasMessage = SDL_TRUE;
-	SDL_memcpy(ctx->connection.message, msg, MSG_LEN);
+	SDL_memcpy(message, msg, MSG_LEN);
 	SDL_free(msg);
-	parseMsg(ctx, ctx->connection.message);
-	// ctx->connection.message = msg;
+	parseMsg(ctx, message);
 }
 
 void setConnectionStatus(int status)

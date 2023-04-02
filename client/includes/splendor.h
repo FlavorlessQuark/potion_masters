@@ -46,4 +46,5 @@ SDL_Rect scaleAndCenter(double scalar, SDL_Rect parent, SDL_Rect this);
 void generateCardTexture(SDL_Texture *base, Card *card, int type);
 void draw_dotted_rect(SDL_Point start, int w, int h, int size);
 int extract_card_from_input(Context *ctx, Card *dst, char *input);
+void sendStatus(Context *ctx);
 #endif

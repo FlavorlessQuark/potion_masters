@@ -31,7 +31,7 @@
 
 # define DISCONNECTED 0
 # define CONNECTED 1
-# define CONNECTEDCONSOLE 2
+# define READY 2
 
 # define CARD_BACK 0
 # define CARD 1
@@ -114,10 +114,10 @@ typedef struct Board
 
 typedef struct Connection
 {
-	char message[MSG_LEN];
-	uint8_t status;
-	uint8_t hasMessage;
 	SDLX_Button connectButton;
+	SDLX_Sprite connectSprite;
+	SDLX_Sprite text;
+	uint8_t status;
 }			Connection;
 
 typedef struct BuyScreen
@@ -158,6 +158,7 @@ typedef struct Context
 	SDL_Rect nums;
 	SDLX_Display *display;
 	SDL_Texture *cardTex;
+	SDL_Texture *buttonTex;
 	SDLX_TextSheet textSheet;
 	SDLX_Button switchMode;
 	SDLX_Sprite switchSprite;

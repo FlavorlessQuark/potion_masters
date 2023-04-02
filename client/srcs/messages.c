@@ -68,6 +68,15 @@ void sendTakeTokens(Context *ctx, uint8_t *taken)
 	sendMessage(msg);
 }
 
+void sendStatus(Context *ctx)
+{
+	msg[0] = ctx->player.id + '0';
+	msg[1] = 'c';
+	msg[2] = ctx->player.id + '0';
+	msg[3] = ctx->connection.status + '0';
+	sendMessage(msg);
+}
+
 void parse_board_state(Context *ctx, char *input);
 void parse_player_state(Context *ctx, char *input);
 
@@ -77,28 +86,16 @@ void parseMsg(Context *ctx, char *input)
 	SDL_Log("Parsing msg %s", input);
 	if (input[0] == 'c')
 	{
-		ctx->player.id = input[1] -'0';
-		ctx->connection.status = CONNECTED;
+		ctx->player.id = input[1] - '0';
+		ctx->connection.status = input[2] - '0';
 		SDL_Log("Connected as Player %d", ctx->player.id);
 	}
-	else if (input[0] == 'r')
-	{
-		ctx->connection.status = CONNECTEDCONSOLE;
-	}
-	else if (input[0] == 'd')
-	{
-
-		if(input[1] == 'c')
-			ctx->connection.status = CONNECTED;
-		if(input[1] == 's')
-			ctx->connection.status = DISCONNECTED;
-	}
-	else if (input[0] == 's')
+	else if (input[0] == 'r')//start game
 	{
 		ctx->state = PLAYERSTATUS;
 		SDL_Log("Game starting");
 	}
-	else if (input[0] == 'e')
+	else if (input[0] == 's')
 	{
 		parse_player_state(ctx, input + 1);
 	}
@@ -106,7 +103,6 @@ void parseMsg(Context *ctx, char *input)
 	{
 		parse_board_state(ctx, input + 1);
 	}
-	ctx->connection.hasMessage = SDL_FALSE;
 
 }
 
@@ -143,6 +139,12 @@ void parse_player_state(Context *ctx, char *input)
 	{
 		SDL_Log("token %d -> %d %c", i, input[i] - '0', input[i]);
 		ctx->player.tokens[i] = input[i] - '0';
+	}
+	input += i;
+	for (i = 0; i < TOK_COUNT - 1; i++)
+	{
+		SDL_Log("owned %d -> %d %c", i, input[i] - '0', input[i]);
+		ctx->player.owned[i] = input[i] - '0';
 	}
 	input += i;
 	reserveCount =  *input - '0';

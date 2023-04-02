@@ -29,6 +29,7 @@ INIT_NAMES =			\
 	init_buy			\
 	init_connect_screen	\
 	init_main_screen	\
+	init				\
 
 SCREEN_NAMES =			\
 	board_screen		\
