@@ -1,6 +1,6 @@
 #include "../includes/splendor.h"
 
-#define MSG_LEN (TOK_COUNT * 3) + (ROW_COUNT * (CARD_ID_LEN + 1) * MAX_ROWCARD) + (MAX_RESERVE * CARD_ID_LEN + 1) + 1 + 3
+
 // (TOK_COUNT * 3)  \ /// Board tokens + player permanent & tokens
 // + (ROW_COUNT * (CARD_ID_LEN + 1) * MAX_ROWCARD) \ // Board card Ids (+1 for separator)
 // + (MAX_RESERVE * CARD_ID_LEN + 1) \ // Player Reserved card iDs (+1 for separator)
@@ -14,6 +14,7 @@ int send_game_state(Context *ctx, int player)
 	int offset;
 
 	offset = 0;
+
 	message[0] = 'b';
 	for (int i = 0; i < TOK_COUNT; i++)
 		message[++offset] = ctx->board.tokens[i] + '0';
@@ -27,7 +28,7 @@ int send_game_state(Context *ctx, int player)
 		}
 	}
 	message[offset + 1] = '\0';
-	SDL_Log("Send State %s  to %d", message, player);
+	SDL_Log("Send board %s  to %d", message, player);
 	send_to(ctx->players[player].handle, message);
 }
 
@@ -38,15 +39,23 @@ int send_player_state(Context *ctx, int player)
 	offset = 0;
 	message[0] = 'e';
 	for (int i = 0; i < TOK_COUNT; i++)
+	{
 		message[++offset] = ctx->players[player].tokens[i] + '0';
+	}
+	for (int i = 0; i < TOK_COUNT - 1; i++)
+	{
+		message[++offset] = ctx->players[player].owned[i] + '0';
+	}
 	message[++offset] = ctx->players[player].reserveCount + '0';
-	// for (int i = 0; i < ctx->players[player].reserveCount; i++)
-	// {
-	// 	for (int s = 0; ctx->board.rows[i].revealed[x].id[s] != '\0'; s++)
-	// 		message[++offset] = ctx->board.rows[i].revealed[x].id[s];
-	// }
+	for (int i = 0; i < ctx->players[player].reserveCount; i++)
+	{
+		SDL_memcpy(message + offset, ctx->players[player].reserved[i].id, CARD_ID_LEN);
+		offset += CARD_ID_LEN;
+	}
+	offset++;
+	message[offset] = ctx->players[player].points + '0';
 	message[offset + 1] = '\0';
-	SDL_Log("Send State %s  to %d", message, player);
+	SDL_Log("Send player %s  to %d", message, player);
 	send_to(ctx->players[player].handle, message);
 }
 
@@ -59,26 +68,34 @@ int send_player_state(Context *ctx, int player)
 int execMsg(Context *ctx, char *msg)
 {
 	int playerID;
-	int cardId;
-	int amount;
-	int isReserved;
-	char *id;
-	Card *card;
-	SDL_Rect dst;
+	int result;
 
 	if (msg == NULL)
 		return 0;
+
 	playerID = msg[0] - '0';
 	msg++;
 
-	if (msg[0] == 'r')
-		return execReserve(ctx, playerID, msg);
+	SDL_Log("received %s from %d", msg, playerID);
+	if (msg[0] == 'c' )
+		result = execPlayerStatus(ctx, playerID, msg);
+	else if (msg[0] == 'r')
+		result = execReserve(ctx, playerID, msg);
 	else if (msg[0] == 'p')
-		return execBuy(ctx, playerID, msg);
+		result = execBuy(ctx, playerID, msg);
 	else if (msg[0] == 't')
-		return execTake(ctx, playerID, msg);
+		result = execTake(ctx, playerID, msg);
 
-	return 0;
+	send_player_state(ctx, playerID);
+
+	return result;
+}
+
+int execPlayerStatus(Context *ctx, uint8_t playerID, char *msg)
+{
+
+	ctx->players[playerID].status = msg[2] - '0';
+	send_to(ctx->players[playerID].handle, msg);
 }
 
 int execReserve(Context *ctx, uint8_t playerID, char *msg)
@@ -138,6 +155,8 @@ int execBuy(Context *ctx, uint8_t playerID, char *msg)
 
 	SDL_Log("Player %d , Buys card %d from reserve? %d | msg %s", playerID, cardId, isReserved, msg);
 	SDL_Log("CArd %s points %c", msg, msg[CARD_ID_LEN - 1]);
+	SDL_Log("Card id %s -> type shpuld be %d", id, id[1] - '0');
+	ctx->players[playerID].owned[id[1] - '0']++;
 	for (int i = 0; i < CARD_TYPES; i++)
 	{
 		SDL_Log("Paying token %d (%d) my tokens %d Owned %d",
@@ -165,6 +184,8 @@ int execBuy(Context *ctx, uint8_t playerID, char *msg)
 		}
 	}
 
+	ctx->players[playerID].points += msg[CARD_ID_LEN - 1] - '0';
+
 	if (isReserved)
 		delReserved(&ctx->players[playerID], cardId);
 	else
@@ -181,8 +202,7 @@ int execBuy(Context *ctx, uint8_t playerID, char *msg)
 			ctx->players[playerID].tokens[3],
 			ctx->players[playerID].tokens[4],
 			ctx->players[playerID].points);
-	SDL_Log("Card type %d", id[1] - '0');
-	ctx->players[playerID].owned[id[1] - '0']++;
+
 	return 1;
 }
 

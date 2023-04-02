@@ -34,19 +34,20 @@ c_string_vec *get_connections(void)
 	return &handles;
 }
 
-char *recv_from(char *handle)
+int recv_from(Context *ctx, char *handle)
 {
-	 CP_CHECK(get_messages(handle, &msg));
-		if (msg.len > 0) {
-			return msg.ptr[0];
-		}
-		return NULL;
-		// free_strvec(messages);
+	int result;
+
+	CP_CHECK(get_messages(handle, &msg));
+	result = msg.len;
+	for (int i = 0; i < msg.len; i++)
+		result = execMsg(ctx, msg.ptr[i]);
+	free_strvec(msg);
+	return result;
 }
 
 int send_to(char *handle, char *msg)
 {
-	SDL_Log("Send message %s to %s", msg, handle);
 	CP_CHECK(send_message(handle, msg));
 }
 
@@ -64,7 +65,7 @@ int connect_handles(Context *ctx, char **handles, int len)
 {
 	int n;
 	int connections;
-	char msg[3];
+	char msg[4];
 
 	n = 0;
 	connections = 0;
@@ -75,11 +76,12 @@ int connect_handles(Context *ctx, char **handles, int len)
 		if (ctx->players[i].status == DISCONNECTED)
 		{
 			// ctx->players[i].handle = SDL_calloc(HANDLE_LEN, sizeof(char));
-			msg[1] = i + '0';
-			msg[2] = '\0';
 			ctx->players[i].status = CONNECTED;
 			SDL_strlcpy(ctx->players[i].handle, handles[n], HANDLE_LEN);
 			SDL_Log("Added player %d - %s", i, handles[n]);
+			msg[1] = i + '0';
+			msg[2] = ctx->players[i].status + '0';
+			msg[3] = '\0';
 			send_to(handles[n], msg);
 			connections++;
 			n++;

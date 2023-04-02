@@ -61,7 +61,7 @@
 
 # define CONNECT_SCREEN_STATUS (0)
 # define ASSETS "../assets"
-
+# define MSG_LEN (TOK_COUNT * 3) + (ROW_COUNT * (CARD_ID_LEN + 1) * MAX_ROWCARD) + (MAX_RESERVE * CARD_ID_LEN + 1) + 1 + 3
 typedef struct c_string_vec {
   char **ptr;
   uint64_t len;
@@ -131,6 +131,9 @@ typedef struct Context
 	uint8_t playerCount;
 	uint8_t turn;
 	uint8_t state;
+	uint8_t hasMessage;
+
+	char 	message[MSG_LEN];
 
 	SDL_Rect		numbers;
 	SDL_Texture 	*Tcards;

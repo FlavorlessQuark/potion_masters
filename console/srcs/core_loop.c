@@ -22,27 +22,17 @@ int core(void *arg, char *msg)
 int main_game(Context *ctx)
 {
 	int msgWasExec;
-	char *msg;
 
-	msgWasExec = 0;
-	msg = recv_from(ctx->players[ctx->turn].handle);
-	if (msg)
+	msgWasExec = recv_from(ctx, ctx->players[ctx->turn].handle);
+	if (msgWasExec > 0)
 	{
-		SDL_Log("Message from %d %s", ctx->turn, msg);
-		msgWasExec = execMsg(ctx, msg);
-	}
-	if (msgWasExec)
-	{
-		send_to(ctx->players[ctx->turn].handle, "e");
+		send_player_state(ctx, ctx->turn);
 		ctx->turn = (ctx->turn + 1) % ctx->playerCount; // 0 if turn == playCount else turn + 1
 		send_game_state(ctx, ctx->turn);
 		SDL_Log("Now player %d turn", ctx->turn);
 	}
 	for (int i = 0; i < ctx->playerCount; i++)
 		renderPlayer(ctx, &ctx->players[i]);
-	// renderPlayer(ctx, &ctx->players[1]);
-	// renderPlayer(ctx, &ctx->players[2]);
-	// renderPlayer(ctx, &ctx->players[3]);
 	renderBoard(ctx);
 }
 
@@ -70,7 +60,6 @@ int connect_screen(Context *ctx)
 {
 	c_string_vec *handles;
 	uint8_t ready;
-	char *msg;
 
 	handles = get_connections();
 	if (handles)
@@ -84,12 +73,7 @@ int connect_screen(Context *ctx)
 	{
 		if (ctx->players[i].status != DISCONNECTED)
 		{
-			msg = recv_from(ctx->players[i].handle);
-			if (msg != NULL && msg[0] == 'r')
-			{
-				send_to(ctx->players[i].handle, "r");
-				ctx->players[i].status = (msg[1] + 1) - '0';
-			}
+			recv_from(ctx, ctx->players[i].handle);
 		}
 		ready &= ctx->players[i].status;
 	}

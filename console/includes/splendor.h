@@ -10,10 +10,9 @@ SDLX_RectContainer *parse_UIConfig(char *filename);
 
 c_string_vec 	*get_connections(void);
 extern void 	free_strvec(c_string_vec vec);
-void 	render_connect_screen(Context *ctx);
-
-char 	*recv_from	(char *handle);
-int 	send_to		(char *handle, char *msg);
+void 			render_connect_screen(Context *ctx);
+int 			recv_from(Context *ctx, char *handle);
+int 			send_to		(char *handle, char *msg);
 
 int sortHandles(const void *a, const void *b);
 
@@ -40,11 +39,13 @@ void initPlayer	 (Context *ctx, uint8_t id, SDLX_RectContainer *root);
 void init_connectScreen(Context *ctx);
 
 // ~-~-~-~-~-~-~- IO.c ~-~-~-~-~-~-~-
+int send_player_state(Context *ctx, int player);
 int	send_game_state(Context *ctx, int player);
-int execMsg		(Context *ctx, char *msg);
-int execReserve (Context *ctx, uint8_t playerID, char *msg);
-int execBuy		(Context *ctx, uint8_t playerID, char *msg);
-int execTake	(Context *ctx, uint8_t playerID, char *msg);
+int execMsg			(Context *ctx, char *msg);
+int execReserve 	(Context *ctx, uint8_t playerID, char *msg);
+int execBuy			(Context *ctx, uint8_t playerID, char *msg);
+int execTake		(Context *ctx, uint8_t playerID, char *msg);
+int execPlayerStatus(Context *ctx, uint8_t playerID, char *msg);
 
 // ~-~-~-~-~-~-~- render.c ~-~-~-~-~-~-~-
 
