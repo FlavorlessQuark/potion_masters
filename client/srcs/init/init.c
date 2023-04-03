@@ -16,7 +16,6 @@ void load_files(Context *ctx)
 	SDL_FreeSurface(surf);
 	surf = IMG_Load("assets/buttons.png");
 	ctx->buttonTex  = SDL_CreateTextureFromSurface(ctx->display->renderer, surf);
-	SDL_Log("IMAGE SOZE IS % d% d", surf->w, surf->h);
 	SDL_FreeSurface(surf);
 }
 

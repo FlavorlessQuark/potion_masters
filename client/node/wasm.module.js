@@ -3,7 +3,9 @@ import Module from './client.js'
 const wasmModule = Module({
         preRun: [],
         postRun: [],
-		arguments: [window.innerHeight.toString(), window.innerWidth.toString()]
+		arguments: [
+			Math.min(window.innerWidth, window.innerHeight).toString(),
+			Math.max(window.innerWidth, window.innerHeight).toString()]
 		// (function () {
 		// 	const w = window.innerWidth.toString();
 		// 	const h = window.innerHeight.toString();

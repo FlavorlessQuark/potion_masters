@@ -32,8 +32,8 @@ int main(int argc, char **argv)
 {
 	// printf("ARguemnts %d\n", argc);
 
-	// for (int i = 0; i < argc; i++)
-	// 	printf("Argument %d : %s\n", i, argv[i]);
+	for (int i = 0; i < argc; i++)
+		printf("Argument %d : %s\n", i, argv[i]);
 	init(&ctx, SDL_atoi(argv[1]), SDL_atoi(argv[2]));
 	#ifdef __EMSCRIPTEN__
 			emscripten_set_main_loop(core, 0, 1);

@@ -1,6 +1,6 @@
 #include "../includes/splendor.h"
 
-# define OFFSET 40 * 0.58
+# define OFFSET 40
 # define WAIT_TEXT_W  1120
 # define WAIT_TEXT_H  160
 # define CONNECT_TEXT_W  850
@@ -32,9 +32,9 @@ void init_connect_screen(Context *ctx)
 	ctx->connection.connectButton._boundingBox = scaleAndCenter(1, rect , ctx->connection.connectButton._boundingBox);
 	ctx->connection.text._dst = scaleAndCenter(1, rect , ctx->connection.text._dst);
 	ctx->connection.text._dst.y = ctx->connection.connectSprite.dst->y - ctx->connection.text._dst.h;
-	ctx->connection.text._src = (SDL_Rect){.x = 0, .y = OFFSET, .w = WAIT_TEXT_W * 0.58, .h = WAIT_TEXT_H * 0.58};
+	ctx->connection.text._src = (SDL_Rect){.x = OFFSET, .y = OFFSET, .w = WAIT_TEXT_W, .h = WAIT_TEXT_H};
 
-	ctx->connection.connectSprite._src = (SDL_Rect){.x =  WAIT_TEXT_W * 0.58 + 70, .y = 0, .w = BUTTONS_W * 0.6, .h = BUTTONS_H * 0.58};
+	ctx->connection.connectSprite._src = (SDL_Rect){.x = OFFSET + WAIT_TEXT_W, .y = 0, .w = BUTTONS_W, .h = BUTTONS_H};
 
 }
 
