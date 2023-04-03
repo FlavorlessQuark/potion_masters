@@ -26,15 +26,15 @@ void init_connect_screen(Context *ctx)
 	ctx->connection.text._dst =  ctx->connection.connectButton._boundingBox;
 	ctx->connection.text._dst.h = ctx->connection.text._dst.w * TEXT_RATIO;
 
-	ctx->connection.connectButton.boundingBox->h *= BUTTON_RATIO;
+	ctx->connection.connectButton.boundingBox->h = ctx->connection.connectButton.boundingBox->w * BUTTON_RATIO;
 	ctx->connection.connectSprite.dst = ctx->connection.connectButton.boundingBox;
 
-	ctx->connection.connectButton._boundingBox = scaleAndCenter(1, rect , ctx->connection.connectButton._boundingBox);
+	ctx->connection.connectButton._boundingBox = scaleAndCenter(0.5, rect , ctx->connection.connectButton._boundingBox);
 	ctx->connection.text._dst = scaleAndCenter(1, rect , ctx->connection.text._dst);
 	ctx->connection.text._dst.y = ctx->connection.connectSprite.dst->y - ctx->connection.text._dst.h;
 	ctx->connection.text._src = (SDL_Rect){.x = OFFSET, .y = OFFSET, .w = WAIT_TEXT_W, .h = WAIT_TEXT_H};
 
-	ctx->connection.connectSprite._src = (SDL_Rect){.x = OFFSET + WAIT_TEXT_W, .y = 0, .w = BUTTONS_W, .h = BUTTONS_H};
+	ctx->connection.connectSprite._src = (SDL_Rect){.x = OFFSET + WAIT_TEXT_W, .y = OFFSET, .w = BUTTONS_W, .h = BUTTONS_H};
 
 }
 

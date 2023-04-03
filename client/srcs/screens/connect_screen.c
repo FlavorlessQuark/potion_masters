@@ -34,13 +34,13 @@ void renderConnectScreen(Context *ctx)
 	if (ctx->connection.status == READY)
 	{
 		ctx->connection.text._src.y =  (OFFSET) + (WAIT_TEXT_H + OFFSET) * 4;
-		ctx->connection.connectSprite._src.y =  OFFSET * 2 + WAIT_TEXT_H;
+		ctx->connection.connectSprite._src.y =  OFFSET * 2 + BUTTONS_H;
 		SDLX_RenderQueuePush(&ctx->connection.text);
 		SDLX_RenderQueuePush(&ctx->connection.connectSprite);
 	}
 	else if (ctx->connection.status == CONNECTED)
 	{
-		ctx->connection.connectSprite._src.y = 0;
+		ctx->connection.connectSprite._src.y = OFFSET;
 		SDLX_RenderQueuePush(&ctx->connection.connectSprite);
 	}
 	else if (ctx->connection.status == DISCONNECTED)
