@@ -30,7 +30,6 @@ void renderBoard(Context *ctx)
 	int i;
 	static int count;
 
-
 	SDL_SetRenderDrawColor(ctx->display->renderer, 255, 0,0,255);
 
 	for (i = 0; i < ROW_COUNT; i++)
@@ -55,7 +54,7 @@ void renderBoard(Context *ctx)
 	SDLX_RenderResetColour(ctx->display);
 }
 
-void render_connect_screen(Context *ctx)
+void render_connect_screen(Context *ctx, int *timer)
 {
 
 	for (int i = 0; i < MAX_PLAYERS; i++)
@@ -67,6 +66,20 @@ void render_connect_screen(Context *ctx)
 		else if (ctx->players[i].status == CONNECTED)
 			SDL_SetRenderDrawColor(ctx->display->renderer, 0x0, 0x0, 255, 255);
 		SDL_RenderDrawRect(ctx->display->renderer, ctx->connectscreen.playerSprites[i].dst);
+	}
+	if (timer != NULL)
+	{
+		char timerStr[6];
+		SDL_Rect rect = {0,0, 0, 0};
+
+		TTF_SizeText(ctx->display->defaultFont, "Game starting in:_", &rect.w, &rect.h);
+		rect.y = ctx->display->win_h / 2;
+		rect.x = ctx->display->win_w / 2 - rect.w / 2;
+		SDLX_RenderMessage(ctx->display, &rect, (SDL_Color){255,255,255,255}, "Game starting in: ");
+		rect.x += rect.w;
+		SDL_itoa(*timer /(FPS * UPDATE_LEN_MS) ,timerStr, 10 );
+		TTF_SizeText(ctx->display->defaultFont, timerStr, &rect.w, &rect.h);
+		SDLX_RenderMessage(ctx->display, &rect, (SDL_Color){255,255,255,255}, timerStr);
 	}
 	SDL_SetRenderDrawColor(ctx->display->renderer, 255, 0x0, 0x0,255);
 	SDL_RenderDrawRect(ctx->display->renderer, &ctx->connectscreen.status);

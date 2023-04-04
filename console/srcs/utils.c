@@ -43,7 +43,9 @@ void startGame(Context *ctx)
 	for (int i = 0; i < MAX_PLAYERS; i++)
 	{
 		if (ctx->players[i].status == READY)
-			send_to(ctx->players[i].handle, "s");
+		{
+			send_player_state(ctx, i);
+		}
 	}
 	send_game_state(ctx, ctx->turn);
 }

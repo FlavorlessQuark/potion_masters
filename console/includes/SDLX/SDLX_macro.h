@@ -16,7 +16,7 @@
 // Frame and update macros
 
 # define FPS 60
-# define FRAME_TIME 1000 / FPS
+# define FRAME_TIME (1000 / FPS)
 # define UPDATE_LEN_MS 10
 # define MAX_UPDATE_PER_FRAME 30
 

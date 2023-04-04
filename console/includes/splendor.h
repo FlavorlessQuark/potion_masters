@@ -10,7 +10,7 @@ SDLX_RectContainer *parse_UIConfig(char *filename);
 
 c_string_vec 	*get_connections(void);
 extern void 	free_strvec(c_string_vec vec);
-void 			render_connect_screen(Context *ctx);
+void 			render_connect_screen(Context *ctx, int *timer);
 int 			recv_from(Context *ctx, char *handle);
 int 			send_to		(char *handle, char *msg);
 

@@ -18,7 +18,6 @@ int core(void *arg, char *msg)
 		main_game(ctx);
 }
 
-
 int main_game(Context *ctx)
 {
 	int msgWasExec;
@@ -56,6 +55,14 @@ int title_screen(Context *ctx)
 	}
 }
 
+#define WAIT_TIME (30 * (FPS * UPDATE_LEN_MS))
+#define MIN_PLAYERS 2
+
+void timer_fn(int *wait)
+{
+	*wait -= 1;
+}
+
 int connect_screen(Context *ctx)
 {
 	c_string_vec *handles;
@@ -77,10 +84,21 @@ int connect_screen(Context *ctx)
 		}
 		ready &= ctx->players[i].status;
 	}
+	// if (ready && ctx->playerCount >= MIN_PLAYERS)
 	if (ready)
 	{
-		startGame(ctx);
-		ctx->state = PLAYING;
+		if (ctx->connectscreen.counter <= 0)
+		{
+			startGame(ctx);
+			ctx->state = PLAYING;
+		}
+		else
+			SDLX_TimedLoop(timer_fn, &ctx->connectscreen.counter);
+		render_connect_screen(ctx, &ctx->connectscreen.counter);
 	}
-	render_connect_screen(ctx);
+	else
+	{
+		ctx->connectscreen.counter = WAIT_TIME;
+		render_connect_screen(ctx, NULL);
+	}
 }
