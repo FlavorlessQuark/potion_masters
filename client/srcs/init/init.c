@@ -27,8 +27,8 @@ void init(Context *ctx, int width, int height)
 
 	load_files(ctx);
 	init_connect_screen(ctx);
-	init_main_screen(ctx);
 	init_board_screen(ctx);
+	init_main_screen(ctx);
 	init_buy_screen(ctx);
 	initConnection(ctx);
 	endTurn(ctx);
