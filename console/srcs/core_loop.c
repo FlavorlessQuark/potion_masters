@@ -22,6 +22,7 @@ int main_game(Context *ctx)
 {
 	int msgWasExec;
 
+	parse_connections(ctx);
 	msgWasExec = recv_from(ctx, ctx->players[ctx->turn].handle);
 	if (msgWasExec > 0)
 	{
@@ -30,8 +31,11 @@ int main_game(Context *ctx)
 		send_game_state(ctx, ctx->turn);
 		SDL_Log("Now player %d turn", ctx->turn);
 	}
-	for (int i = 0; i < ctx->playerCount; i++)
-		renderPlayer(ctx, &ctx->players[i]);
+	for (int i = 0; i < MAX_PLAYERS; i++)
+	{
+		if (ctx->players[i].status >= CONNECTED)
+			renderPlayer(ctx, &ctx->players[i]);
+	}
 	renderBoard(ctx);
 }
 
@@ -65,12 +69,9 @@ void timer_fn(int *wait)
 
 int connect_screen(Context *ctx)
 {
-	c_string_vec *handles;
 	uint8_t ready;
 
-	handles = get_connections();
-	if (handles)
-		handle_Connect(ctx, handles);
+	parse_connections(ctx);
 
 	if (ctx->playerCount > 0)
 		ready = READY;

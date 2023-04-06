@@ -41,7 +41,14 @@ void renderBoard(Context *ctx)
 	}
 	for (i = 0; i < TOK_COUNT; i++)
 	{
-		ctx->board.tokenUI[i].src->x = ctx->numbers.x + (ctx->board.tokens[i] * ctx->numbers.w);
+		if (ctx->board.tokens[i] <= 9)
+			ctx->board.tokenUI[i].src->x = ctx->numbers.x + (ctx->board.tokens[i] * ctx->numbers.w);
+		else
+		{
+			ctx->board.tokenUI[i].src->x = ctx->numbers.x + (9 *  ctx->numbers.w);
+			ctx->board.tokenUI[i].src->x += ((ctx->board.tokens[i] - 9) *  ctx->numbers.w * 2);
+			ctx->board.tokenUI[i].src->x = ctx->numbers.w * 2;
+		}
 		SDLX_RenderQueuePush(&ctx->board.tokenUI[i]);
 	}
 	if (count == 100)
@@ -54,18 +61,36 @@ void renderBoard(Context *ctx)
 	SDLX_RenderResetColour(ctx->display);
 }
 
+# define FRAME_COUNT 6
+# define OFFSET 40
+# define HEIGHT 640
+# define WIDTH 600
 void render_connect_screen(Context *ctx, int *timer)
 {
-
+	static uint8_t frame[MAX_PLAYERS] = {0,0,0,0};
+	SDL_Rect dst = {0,0, 0, 0};
 	for (int i = 0; i < MAX_PLAYERS; i++)
 	{
 		if (ctx->players[i].status == DISCONNECTED)
-			SDL_SetRenderDrawColor(ctx->display->renderer, 255, 0x0, 0x0,255);
+		{
+			if (frame[i] > 0)
+				frame[i]--;
+			ctx->connectscreen.playerSprites[i].src->x = OFFSET + ((WIDTH + OFFSET) * frame[i]);
+		}
 		else if (ctx->players[i].status == READY)
+		{
 			SDL_SetRenderDrawColor(ctx->display->renderer, 0x0, 255, 0x0,255);
+		}
 		else if (ctx->players[i].status == CONNECTED)
-			SDL_SetRenderDrawColor(ctx->display->renderer, 0x0, 0x0, 255, 255);
+		{
+			if (frame[i] < FRAME_COUNT - 1)
+			{
+				frame[i] += 1;
+			}
+			ctx->connectscreen.playerSprites[i].src->x = OFFSET + ((WIDTH + OFFSET) * frame[i]);
+		}
 		SDL_RenderDrawRect(ctx->display->renderer, ctx->connectscreen.playerSprites[i].dst);
+		SDLX_RenderQueuePush(&ctx->connectscreen.playerSprites[i]);
 	}
 	if (timer != NULL)
 	{

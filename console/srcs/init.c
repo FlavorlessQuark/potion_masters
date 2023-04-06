@@ -35,7 +35,7 @@ Context *init()
 	ctx->playerCount = 0;
 	ctx->display->defaultFont = TTF_OpenFont("assets/underwood.ttf", 40);
 	SDLX_TextSheet_Create(&ctx->textSheet, ctx->display->win_w, ctx->display->win_h);
-	ctx->numbers = SDLX_TextSheet_Add(&ctx->textSheet, "0123456789", ctx->display->defaultFont, (SDL_Color){255, 255, 255, 255});
+	ctx->numbers = SDLX_TextSheet_Add(&ctx->textSheet, "0123456789101112131415", ctx->display->defaultFont, (SDL_Color){255, 255, 255, 255});
 
 	TTF_SizeText(ctx->display->defaultFont, "0", &ctx->numbers.w, &ctx->numbers.h);
 
@@ -206,10 +206,15 @@ void initPlayer(Context *ctx, uint8_t id, SDLX_RectContainer *root)
 	}
 }
 # define START 3000
+# define OFFSET 40
+# define HEIGHT 640
+# define WIDTH 600
+# define RATIO (HEIGHT / WIDTH)
 void init_connectScreen(Context *ctx)
 {
 	SDLX_RectContainer *root;
 	SDL_Surface *surf;
+	SDL_Texture *texture;
 
 	root = loadConfig("assets/startUI");
 
@@ -218,16 +223,25 @@ void init_connectScreen(Context *ctx)
 	ctx->connectscreen.counter = START;
 	surf = IMG_Load("assets/PMTitle.png");
 	ctx->display->background = SDL_CreateTextureFromSurface(ctx->display->renderer, surf);
-	ctx->display->bgColor = (SDL_Color){54, 60, 66,255};
 	SDL_FreeSurface(surf);
+	surf = IMG_Load("assets/buttons.png");
+	texture = SDL_CreateTextureFromSurface(ctx->display->renderer, surf);
+	SDL_FreeSurface(surf);
+	ctx->display->bgColor = (SDL_Color){54, 60, 66,255};
 
-	SDLX_SpriteCreate(&ctx->connectscreen.playerSprites[0], 1 , NULL);
+	SDLX_SpriteCreate(&ctx->connectscreen.playerSprites[0], 1 , texture);
 	ctx->connectscreen.playerSprites[0]._dst = root->containers[0].elems[0]._boundingBox;
-	ctx->connectscreen.playerSprites[0]._src = (SDL_Rect){.x = 0, .y = 0, .w = 500, .h = 700};
-	SDLX_SpriteCreate(&ctx->connectscreen.playerSprites[1], 1 , NULL);
+	ctx->connectscreen.playerSprites[0]._src = (SDL_Rect){.x = OFFSET, .y = OFFSET, .w = WIDTH, .h = HEIGHT};
+
+	SDLX_SpriteCreate(&ctx->connectscreen.playerSprites[1], 1 , texture);
 	ctx->connectscreen.playerSprites[1]._dst = root->containers[0].elems[1]._boundingBox;
-	SDLX_SpriteCreate(&ctx->connectscreen.playerSprites[2], 1 , NULL);
+	ctx->connectscreen.playerSprites[1]._src = (SDL_Rect){.x = OFFSET, .y = OFFSET, .w = WIDTH, .h = HEIGHT};
+
+	SDLX_SpriteCreate(&ctx->connectscreen.playerSprites[2], 1 , texture);
 	ctx->connectscreen.playerSprites[2]._dst = root->containers[1].elems[0]._boundingBox;
-	SDLX_SpriteCreate(&ctx->connectscreen.playerSprites[3], 1 , NULL);
+	ctx->connectscreen.playerSprites[2]._src = (SDL_Rect){.x = OFFSET, .y = OFFSET, .w = WIDTH, .h = HEIGHT};
+
+	SDLX_SpriteCreate(&ctx->connectscreen.playerSprites[3], 1 , texture);
 	ctx->connectscreen.playerSprites[3]._dst = root->containers[1].elems[1]._boundingBox;
+	ctx->connectscreen.playerSprites[3]._src = (SDL_Rect){.x = OFFSET, .y = OFFSET, .w = WIDTH, .h = HEIGHT};
 }

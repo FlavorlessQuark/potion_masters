@@ -30,6 +30,7 @@ SRCS_NAMES =								\
 	init				\
 	IO					\
 	main 				\
+	messages			\
 	render				\
 	utils				\
 

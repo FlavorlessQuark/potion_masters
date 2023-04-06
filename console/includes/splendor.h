@@ -7,7 +7,7 @@
 SDLX_RectContainer *parse_UIConfig(char *filename);
 
 // ~-~-~-~-~-~-~ connection.c ~-~-~-~-~-~-~
-
+void  parse_connections(Context *ctx);
 c_string_vec 	*get_connections(void);
 extern void 	free_strvec(c_string_vec vec);
 void 			render_connect_screen(Context *ctx, int *timer);
@@ -39,6 +39,9 @@ void initPlayer	 (Context *ctx, uint8_t id, SDLX_RectContainer *root);
 void init_connectScreen(Context *ctx);
 
 // ~-~-~-~-~-~-~- IO.c ~-~-~-~-~-~-~-
+void input_loop(Context *ctx);
+
+// ~-~-~-~-~-~-~- messages.c ~-~-~-~-~-~-~-
 int send_player_state(Context *ctx, int player);
 int	send_game_state(Context *ctx, int player);
 int execMsg			(Context *ctx, char *msg);

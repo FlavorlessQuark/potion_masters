@@ -130,9 +130,9 @@ typedef struct Context
 {
 	uint8_t playerCount;
 	uint8_t turn;
-	uint8_t state;
 	uint8_t hasMessage;
 
+	int state;
 	char 	message[MSG_LEN];
 
 	SDL_Rect		numbers;
