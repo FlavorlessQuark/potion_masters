@@ -1,6 +1,6 @@
 #include "../includes/splendor.h"
 
-#define WAIT_TIME (30 * (FPS * UPDATE_LEN_MS))
+#define WAIT_TIME (10 * (FPS * UPDATE_LEN_MS))
 #define CONNECTION_TIMER (2 * (FPS * UPDATE_LEN_MS))
 #define MIN_PLAYERS 2
 
@@ -31,7 +31,7 @@ int main_game(Context *ctx)
 
 	if (get_connections() != NULL)
 		connect_handles_filtered(ctx);
-	msgWasExec = recv_from(ctx, ctx->players[ctx->turn].handle);
+	msgWasExec = recv_from(ctx, ctx->turn, ctx->players[ctx->turn].handle);
 	if (msgWasExec > 0)
 	{
 		send_player_state(ctx, ctx->turn);
@@ -87,7 +87,7 @@ int connect_screen(Context *ctx)
 	{
 		if (ctx->players[i].status != DISCONNECTED)
 		{
-			recv_from(ctx, ctx->players[i].handle);
+			recv_from(ctx, i, ctx->players[i].handle);
 			// SDL_Log("PLaery %d Ready %d",i,  ctx->players[i].status);
 			ready &= ctx->players[i].status;
 		}
@@ -99,7 +99,6 @@ int connect_screen(Context *ctx)
 		if (ctx->connectscreen.counter <= 0)
 		{
 			startGame(ctx);
-			ctx->state = PLAYING;
 		}
 		else
 			SDLX_TimedLoop(timer_fn, &ctx->connectscreen.counter);

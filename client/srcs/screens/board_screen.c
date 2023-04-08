@@ -45,7 +45,7 @@ void board_screen(Context *ctx)
 	int total;
 
 	if (ctx->switchMode.triggered == SDLX_KEYDOWN)
-		ctx->state = 0;
+		ctx->state = PLAYERSTATUS;
 	total = 0;
 	for (int i = 0; i < CARD_TYPES; i++)
 		total += ctx->player.tokens[i];
@@ -76,7 +76,7 @@ void board_screen(Context *ctx)
 		{
 			if (ctx->board.rows[x].cardButton[i].triggered == SDLX_KEYDOWN)
 			{
-				ctx->state = 2;
+				ctx->state = BUYMENU;
 				SDL_Log("Try buying card %s cost { %d %d %d %d) -> %d",
 					ctx->board.rows[x].revealed[i].id,
 					ctx->board.rows[x].revealed[i].cost[0],

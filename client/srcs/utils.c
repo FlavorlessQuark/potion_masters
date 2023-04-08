@@ -173,7 +173,6 @@ void startTurn(Context *ctx)
 void endTurn(Context *ctx)
 {
 	ctx->switchMode.enabled = SDL_FALSE;
-	ctx->state = PLAYERSTATUS;
 	for (int i = 0; i < MAX_RESERVE; i++)
 		ctx->UI.reserved[i].enabled = SDL_FALSE;
 }

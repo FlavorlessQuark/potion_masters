@@ -16,12 +16,11 @@ void sendReserve(Context *ctx)
 
 	SDL_memset(msg, 0, MSG_LEN);
 
-	msg[0] = ctx->player.id + '0';
-	msg[1] = 'r';
+	msg[0] = 'r';
 	for (i = 0; i < CARD_ID_LEN; i++)
-		msg[2 + i] = ctx->buyscreen.selected->id[i];
+		msg[1 + i] = ctx->buyscreen.selected->id[i];
 	// msg[2] = '0';
-	msg[2 + i] = '\0';
+	msg[1 + i] = '\0';
 	memcpy(ctx->player.reserved[ctx->player.reserveCount].id, ctx->buyscreen.selected->id, CARD_ID_LEN);
 	memcpy(ctx->player.reserved[ctx->player.reserveCount].cost, ctx->buyscreen.selected->cost, TOK_COUNT - 1);
 	tmp = ctx->player.reserved[ctx->player.reserveCount].sprite.texture;
@@ -41,14 +40,14 @@ void sendPay(Context *ctx)
 	int n;
 	SDL_memset(msg, 0, MSG_LEN);
 
-	msg[0] = ctx->player.id + '0';
-	msg[1] = 'p';
-	msg[2] = ctx->buyscreen.cardOrigin + '0';
+	msg[0] = 'p';
+	msg[1] = ctx->buyscreen.cardOrigin + '0';
+
 	SDL_Log("Pay for %s", ctx->buyscreen.selected->id);
-	memcpy(msg + 3, ctx->buyscreen.selected->id, CARD_ID_LEN);
+	memcpy(msg + 2, ctx->buyscreen.selected->id, CARD_ID_LEN);
 	if (ctx->buyscreen.cardOrigin)
 		delReserved(ctx, ctx->buyscreen.selected->_id);
-	msg[3 + CARD_ID_LEN] = '\0';
+	msg[2 + CARD_ID_LEN] = '\0';
 	// SDL_Log("Sending %s -> %s", msg, ctx->buyscreen.selected->id);
 	sendMessage(msg);
 }
@@ -57,23 +56,21 @@ void sendTakeTokens(Context *ctx, uint8_t *taken)
 {
 	SDL_memset(msg, 0, MSG_LEN);
 
-	msg[0] = ctx->player.id + '0';
-	msg[1] = 't';
-	msg[2] = taken[TOK_A] + '0';
-	msg[3] = taken[TOK_B] + '0';
-	msg[4] = taken[TOK_C] + '0';
-	msg[5] = taken[TOK_D] + '0';
-	msg[6] = taken[TOK_R] + '0';
-	msg[7] = '\0';
+	msg[0] = 't';
+	msg[1] = taken[TOK_A] + '0';
+	msg[2] = taken[TOK_B] + '0';
+	msg[3] = taken[TOK_C] + '0';
+	msg[4] = taken[TOK_D] + '0';
+	msg[5] = taken[TOK_R] + '0';
+	msg[6] = '\0';
 	sendMessage(msg);
 }
 
 void sendStatus(Context *ctx)
 {
-	msg[0] = ctx->player.id + '0';
-	msg[1] = 'c';
-	msg[2] = ctx->connection.status + '0';
-	msg[3] ='\0';
+	msg[0] = 's';
+	msg[1] = ctx->connection.status + '0';
+	msg[2] ='\0';
 	SDL_Log("Send status");
 	sendMessage(msg);
 }
@@ -84,19 +81,7 @@ void parse_player_state(Context *ctx, char *input);
 // b[tok1, tok2, tok3, tok4, tok5]|[r0c0 ID] ||[r0c1 ID]| |[r0c2 ID] ...
 void parseMsg(Context *ctx, char *input)
 {
-	SDL_Log("Parsing msg %s", input);
-	if (input[0] == 'c')
-	{
-		ctx->player.id = input[1] - '0';
-		ctx->connection.status = input[2] - '0';
-		ctx->state = input[3] - '0';
-		SDL_Log("Connected as Player %d ready ? %d state %d",
-		 ctx->player.id,
-		 ctx->connection.status,
-		 ctx->state
-		 );
-	}
-	else if (input[0] == 's')
+	if (input[0] == 's')
 	{
 		parse_player_state(ctx, input + 1);
 	}
@@ -126,16 +111,25 @@ void parse_board_state(Context *ctx, char *input)
 			input += CARD_ID_LEN;
 		}
 	}
-	startTurn(ctx);
 }
 
 void parse_player_state(Context *ctx, char *input)
 {
 	int i;
+	int isPlaying;
 	int reserveCount;
 
-	ctx->state = PLAYERSTATUS;
-	SDL_Log("Received player status %s %c", input, input[0]);
+	ctx->player.id = input[0] - '0';
+	ctx->state = input[1] - '0';
+	ctx->connection.status = input[2] - '0';
+	SDL_Log(" id %d state %d statues %d turn %d", input[0], input[1], input[2], input[3]);
+	if ((input[3] - '0') == ctx->player.id)
+		startTurn(ctx);
+	else
+		endTurn(ctx);
+
+	input += 3;
+
 	for (i = 0; i < TOK_COUNT; i++)
 	{
 		SDL_Log("token %d -> %d %c", i, input[i] - '0', input[i]);
@@ -156,5 +150,5 @@ void parse_player_state(Context *ctx, char *input)
 	}
 	SDL_Log("REmaining input %s", input);
 	ctx->player.points = ((input[0] - '0') * 10) + (input[1] - '0');
-	endTurn(ctx);
+
 }

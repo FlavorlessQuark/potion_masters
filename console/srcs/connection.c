@@ -44,14 +44,14 @@ void get_current_handles(void)
 	CP_CHECK(get_client_handles(&handles));
 }
 
-int recv_from(Context *ctx, char *handle)
+int recv_from(Context *ctx, int playerID , char *handle)
 {
 	int result;
 
 	CP_CHECK(get_messages(handle, &msg));
 	result = msg.len;
 	for (int i = 0; i < msg.len; i++)
-		result = execMsg(ctx, msg.ptr[i]);
+		result = execMsg(ctx, playerID, msg.ptr[i]);
 	free_strvec(msg);
 	return result;
 }
@@ -72,21 +72,10 @@ int sortHandles(const void *a, const void *b)
 
 void connect_player(Context *ctx, int playerID, char *handle)
 {
-	char msg[5];
-
-	msg[0] = 'c';
-	ctx->players[playerID].status |= CONNECTED;
+	ctx->players[playerID].status = CONNECTED;
 	SDL_strlcpy(ctx->players[playerID].handle, handle, HANDLE_LEN);
-	SDL_Log("Connected player %d - %s", playerID, handle);
-	msg[1] = playerID + '0';
-	msg[2] = ctx->players[playerID].status + '0';
-	msg[3] = ctx->state + '0';
-	msg[4] = '\0';
-	send_to(handle, msg);
+	send_player_state(ctx, playerID);
 }
-
-# define INTER 5
-
 
 int connect_handles_filtered(Context *ctx)
 {

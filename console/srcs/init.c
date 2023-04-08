@@ -18,6 +18,7 @@
 # define MID_CARD_ROW 1
 # define BOT_CARD_ROW 2
 
+# define NO_TURN 9
 
 Context *init()
 {
@@ -32,6 +33,7 @@ Context *init()
 	init_connectScreen(ctx);
 	ctx->board.remainingTitles = MAX_TITLES;
 	ctx->state = TITLE;
+	ctx->turn = NO_TURN;
 	ctx->playerCount = 0;
 	ctx->display->defaultFont = TTF_OpenFont("assets/underwood.ttf", 40);
 	SDLX_TextSheet_Create(&ctx->textSheet, ctx->display->win_w, ctx->display->win_h);
@@ -83,6 +85,8 @@ void initNewGame(Context *ctx)
 	SDL_SetRenderDrawBlendMode(ctx->display->renderer, SDL_BLENDMODE_BLEND);
 	cleanupUIConfig(root);
 	SDL_free(root);
+
+	ctx->state = PLAYING;
 }
 
 void initBoard(Context *ctx, SDLX_RectContainer *root)

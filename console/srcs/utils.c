@@ -43,6 +43,7 @@ void startGame(Context *ctx)
 	initNewGame(ctx);
 	for (int i = 0; i < MAX_PLAYERS; i++)
 	{
+		SDL_Log("trying %d %d", i, ctx->players[i].status);
 		if (ctx->players[i].status != DISCONNECTED)
 			send_player_state(ctx, i);
 	}

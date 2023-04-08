@@ -6,7 +6,7 @@
 void main_screen(Context *ctx)
 {
 	if (ctx->switchMode.triggered == SDLX_KEYDOWN)
-		ctx->state = 1;
+		ctx->state = CARDSELECT;
 	for (int i = 0; i < ctx->player.reserveCount; i++)
 	{
 
@@ -40,7 +40,10 @@ void render_main_screen(Context *ctx)
 	ctx->UI.tokens[CARD_TYPES]._src.x = ctx->nums.x + (ctx->player.tokens[CARD_TYPES] * ctx->nums.w);
 	SDLX_RenderQueuePush(&ctx->UI.tokens[CARD_TYPES]);
 	if (ctx->switchMode.enabled == SDL_TRUE)
+	{
+		SDL_Log("aaaaa %d", ctx->switchMode.triggered);
 		SDLX_RenderQueuePush(&ctx->switchSprite);
+	}
 
 	for (int i = 0; i < ctx->player.reserveCount; i++)
 		SDLX_RenderQueuePush(&ctx->player.reserved[i].sprite);

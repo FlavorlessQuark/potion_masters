@@ -103,7 +103,6 @@ void init_main_screen(Context *ctx)
 	// SDL_Log("LOAD TOKEN SCREEN");
 	init_reserved_cards(ctx, &root->containers[1].containers[1]);
 	SDL_SetRenderTarget(ctx->display->renderer, NULL);
-	endTurn(ctx);
 }
 
 
