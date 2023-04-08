@@ -1,28 +1,36 @@
 #include "../includes/splendor.h"
 
+#define WAIT_TIME (30 * (FPS * UPDATE_LEN_MS))
+#define CONNECTION_TIMER (2 * (FPS * UPDATE_LEN_MS))
+#define MIN_PLAYERS 2
+
+int timer_fn(int *wait)
+{
+	*wait -= 1;
+	return 0;
+}
+
+
 int core(void *arg, char *msg)
 {
 	Context *ctx;
 	ctx = (Context *)arg;
 
-	if (ctx->state == EXIT_GAME)
-	{
-		cleanup(ctx);
-		exit(0);
-	}
-	else if (ctx->state == CONNECT_SCREEN)
+	if (ctx->state == CONNECT_SCREEN)
 		connect_screen(ctx);
 	else if (ctx->state == TITLE)
 		SDLX_TimedLoop(title_screen, ctx);
-	else
+	else if (ctx->state == PLAYING)
 		main_game(ctx);
 }
 
 int main_game(Context *ctx)
 {
 	int msgWasExec;
+	static int time;
 
-	parse_connections(ctx);
+	if (get_connections() != NULL)
+		connect_handles_filtered(ctx);
 	msgWasExec = recv_from(ctx, ctx->players[ctx->turn].handle);
 	if (msgWasExec > 0)
 	{
@@ -54,24 +62,22 @@ int title_screen(Context *ctx)
 	else
 	{
 		SDL_DestroyTexture(ctx->display->background);
+		ctx->connectscreen.counter = WAIT_TIME;
 		ctx->display->background = NULL;
 		ctx->state = CONNECT_SCREEN;
+		get_current_handles();
+		connect_handles_unfiltered(ctx);
 	}
 }
 
-#define WAIT_TIME (30 * (FPS * UPDATE_LEN_MS))
-#define MIN_PLAYERS 2
 
-void timer_fn(int *wait)
-{
-	*wait -= 1;
-}
 
 int connect_screen(Context *ctx)
 {
 	uint8_t ready;
 
-	parse_connections(ctx);
+	if (get_connections() != NULL)
+		connect_handles_unfiltered(ctx);
 
 	if (ctx->playerCount > 0)
 		ready = READY;
@@ -82,11 +88,13 @@ int connect_screen(Context *ctx)
 		if (ctx->players[i].status != DISCONNECTED)
 		{
 			recv_from(ctx, ctx->players[i].handle);
+			// SDL_Log("PLaery %d Ready %d",i,  ctx->players[i].status);
+			ready &= ctx->players[i].status;
 		}
-		ready &= ctx->players[i].status;
 	}
 	// if (ready && ctx->playerCount >= MIN_PLAYERS)
-	if (ready)
+	// SDL_Log("Ready %d", ready);
+	if (ready == READY)
 	{
 		if (ctx->connectscreen.counter <= 0)
 		{
@@ -99,7 +107,6 @@ int connect_screen(Context *ctx)
 	}
 	else
 	{
-		ctx->connectscreen.counter = WAIT_TIME;
 		render_connect_screen(ctx, NULL);
 	}
 }

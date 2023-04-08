@@ -30,7 +30,6 @@
   <body>
 	<div id="pls"> Please turn your phone sideways </div>
 	<canvas id="canvas"> </canvas>
-
  <script type="module" src="wasm.module.js"></script>
 <script>
   const url_arg_str = window.location.search;
@@ -87,6 +86,7 @@
 
 	ws.onclose = (event) =>
 	{
+		SDL_Log("Conection closed");
 		Module.ccall('setConnectionStatus', null, ['number'], [0]);
 	}
 

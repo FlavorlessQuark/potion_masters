@@ -15,6 +15,8 @@ void recvMessage(char *msg)
 void setConnectionStatus(int status)
 {
 	ctx->connection.status = status;
+	if (status == DISCONNECTED)
+		ctx->state = CONNECT;
 	SDL_Log("Set status to %d", status);
 }
 

@@ -1,5 +1,6 @@
 #ifndef SPLENDOR_H
-# define SPLENDOR_H
+# define SPLENDOR_Hn
+
 # include "splendor_structs.h"
 
 // ~-~-~-~-~-~-~- config_parser.c ~-~-~-~-~-~-~
@@ -7,8 +8,10 @@
 SDLX_RectContainer *parse_UIConfig(char *filename);
 
 // ~-~-~-~-~-~-~ connection.c ~-~-~-~-~-~-~
-void  parse_connections(Context *ctx);
+int				connect_handles_unfiltered(Context *ctx);
+int				connect_handles_filtered(Context *ctx);
 c_string_vec 	*get_connections(void);
+void			get_current_handles(void);
 extern void 	free_strvec(c_string_vec vec);
 void 			render_connect_screen(Context *ctx, int *timer);
 int 			recv_from(Context *ctx, char *handle);

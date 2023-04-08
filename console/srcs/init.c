@@ -155,7 +155,7 @@ void initPlayer(Context *ctx, uint8_t id, SDLX_RectContainer *root)
 
 	memset(ctx->players[id].owned, 0, 5 * sizeof(uint8_t));
 	memset(ctx->players[id].tokens, 0, 5 *sizeof(uint8_t));
-	ctx->players[id].status = DISCONNECTED;
+	ctx->players[id].status = CONNECTED;
 	ctx->players[id].reserveCount = 0;
 
 	SDLX_SpriteCreate(&ctx->players[id].pointSprite, 1,  ctx->textSheet.tex);

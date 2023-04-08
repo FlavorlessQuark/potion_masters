@@ -6,7 +6,7 @@ Context ctx;
 
 typedef void (*loop)(Context *);
 
-loop fnloops[4] ={main_screen, board_screen, buy_screen, connect_screen};
+loop fnloops[4] ={connect_screen, main_screen, board_screen, buy_screen};
 
 
 
@@ -17,21 +17,13 @@ void core(void)
 	window_events(&ctx);
 	SDLX_InputUpdate();
 	SDLX_ButtonUpdate();
-	// if (ctx.connection.hasMessage == SDL_TRUE)
-	// {
-	// 	SDL_Log("Received a message %s %p",  ctx.connection.message, ctx.connection.message);
-	// 	parseMsg(&ctx, ctx.connection.message);
-	// }
 	fnloops[ctx.state](&ctx);
 	SDLX_RenderAll(ctx.display);
-	// SDL_RenderCopy(ctx.display->renderer, ctx.switchSprite.texture, NULL, NULL);
 	SDL_RenderPresent(ctx.display->renderer);
 }
 
 int main(int argc, char **argv)
 {
-	// printf("ARguemnts %d\n", argc);
-
 	for (int i = 0; i < argc; i++)
 		printf("Argument %d : %s\n", i, argv[i]);
 	init(&ctx, SDL_atoi(argv[1]), SDL_atoi(argv[2]));

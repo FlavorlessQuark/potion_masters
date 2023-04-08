@@ -24,10 +24,11 @@
 # define TOK_D 3
 # define TOK_R 4
 
-# define PLAYERSTATUS 0
-# define CARDSELECT 1
-# define BUYMENU 2
-# define CONNECT 3
+# define CONNECT 0
+# define PLAYERSTATUS 1
+# define CARDSELECT 2
+# define BUYMENU 3
+
 
 # define DISCONNECTED 0
 # define CONNECTED 1

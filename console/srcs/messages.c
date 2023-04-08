@@ -9,6 +9,8 @@
 char message[MSG_LEN];
 
 // b[boardTokens]|[playerTokens][playerPoints][r0c0 ID] ||[r0c1 ID]| |[r0c2 ID] ...|[reservedIDs]
+int send_status(Context *ctx, int player);
+
 int send_game_state(Context *ctx, int player)
 {
 	int offset;
@@ -37,7 +39,7 @@ int send_player_state(Context *ctx, int player)
 	int offset;
 
 	offset = 0;
-	message[0] = 'e';
+	message[0] = 's';
 	for (int i = 0; i < TOK_COUNT; i++)
 	{
 		message[++offset] = ctx->players[player].tokens[i] + '0';
@@ -79,6 +81,7 @@ int execMsg(Context *ctx, char *msg)
 	SDL_Log("received %s from %d", msg, playerID);
 	if (msg[0] == 'c' )
 		result = execPlayerStatus(ctx, playerID, msg);
+	// else if (msg[0] == 'r')
 	else if (msg[0] == 'r')
 		result = execReserve(ctx, playerID, msg);
 	else if (msg[0] == 'p')
@@ -86,7 +89,11 @@ int execMsg(Context *ctx, char *msg)
 	else if (msg[0] == 't')
 		result = execTake(ctx, playerID, msg);
 
-	send_player_state(ctx, playerID);
+	if (ctx->state == PLAYING)
+	{
+		for (int i; i = 0; i < ctx->playerCount)
+			send_player_state(ctx, i);
+	}
 
 	return result;
 }
@@ -94,8 +101,8 @@ int execMsg(Context *ctx, char *msg)
 int execPlayerStatus(Context *ctx, uint8_t playerID, char *msg)
 {
 
-	ctx->players[playerID].status = msg[2] - '0';
-	send_to(ctx->players[playerID].handle, msg);
+	ctx->players[playerID].status = msg[1] - '0';
+	// send_to(ctx->players[playerID].handle, msg);
 }
 
 int execReserve(Context *ctx, uint8_t playerID, char *msg)

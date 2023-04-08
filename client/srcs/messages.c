@@ -72,8 +72,9 @@ void sendStatus(Context *ctx)
 {
 	msg[0] = ctx->player.id + '0';
 	msg[1] = 'c';
-	msg[2] = ctx->player.id + '0';
-	msg[3] = ctx->connection.status + '0';
+	msg[2] = ctx->connection.status + '0';
+	msg[3] ='\0';
+	SDL_Log("Send status");
 	sendMessage(msg);
 }
 
@@ -88,12 +89,12 @@ void parseMsg(Context *ctx, char *input)
 	{
 		ctx->player.id = input[1] - '0';
 		ctx->connection.status = input[2] - '0';
-		SDL_Log("Connected as Player %d", ctx->player.id);
-	}
-	else if (input[0] == 'r')//start game
-	{
-		ctx->state = PLAYERSTATUS;
-		SDL_Log("Game starting");
+		ctx->state = input[3] - '0';
+		SDL_Log("Connected as Player %d ready ? %d state %d",
+		 ctx->player.id,
+		 ctx->connection.status,
+		 ctx->state
+		 );
 	}
 	else if (input[0] == 's')
 	{
@@ -114,7 +115,6 @@ void parse_board_state(Context *ctx, char *input)
 	int i;
 
 	SDL_Log("Received board state %s", input);
-	ctx->state = PLAYERSTATUS;
 	for (i = 0; i < TOK_COUNT; i++)
 		ctx->board.tokens[i] = input[i] - '0';
 	input += i;
@@ -134,6 +134,7 @@ void parse_player_state(Context *ctx, char *input)
 	int i;
 	int reserveCount;
 
+	ctx->state = PLAYERSTATUS;
 	SDL_Log("Received player status %s %c", input, input[0]);
 	for (i = 0; i < TOK_COUNT; i++)
 	{

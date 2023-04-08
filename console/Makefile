@@ -1,6 +1,7 @@
 NAME = console_bin
 
-DEBUG_FLAGS = -fsanitize=address -g
+# DEBUG_FLAGS = -fsanitize=address -g
+DEBUG_FLAGS =
 FLAGS = $(DEBUG_FLAGS)
 INCLUDES = -I includes/ -I includes/SDL2/ -I includes/SDLX/ -I includes/MT/
 

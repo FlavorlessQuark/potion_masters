@@ -39,7 +39,7 @@ void render_main_screen(Context *ctx)
 	}
 	ctx->UI.tokens[CARD_TYPES]._src.x = ctx->nums.x + (ctx->player.tokens[CARD_TYPES] * ctx->nums.w);
 	SDLX_RenderQueuePush(&ctx->UI.tokens[CARD_TYPES]);
-	if (ctx->switchMode.enabled)
+	if (ctx->switchMode.enabled == SDL_TRUE)
 		SDLX_RenderQueuePush(&ctx->switchSprite);
 
 	for (int i = 0; i < ctx->player.reserveCount; i++)

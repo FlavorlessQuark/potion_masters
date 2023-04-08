@@ -39,13 +39,12 @@ void nextTurn(Context *ctx)
 void startGame(Context *ctx)
 {
 	ctx->turn = 0;
+	SDL_Log("starting game)");
 	initNewGame(ctx);
 	for (int i = 0; i < MAX_PLAYERS; i++)
 	{
-		if (ctx->players[i].status == READY)
-		{
+		if (ctx->players[i].status != DISCONNECTED)
 			send_player_state(ctx, i);
-		}
 	}
 	send_game_state(ctx, ctx->turn);
 }
@@ -119,7 +118,7 @@ void generateCardTexture(SDL_Texture *base, Card *card, int type)
 	SDL_SetRenderDrawColor(renderer, 0, 0, 255, 0);
 	SDL_RenderFillRect(renderer, NULL);
 	SDL_RenderCopy(renderer, base, &src, NULL);
-	SDL_Log("Texture fro card %s", card->id);
+	// SDL_Log("Texture fro card %s", card->id);
 	for (int i = 0; i < CARD_TYPES; i++)
 	{
 		if (card->cost[i] > 0)
