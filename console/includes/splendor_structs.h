@@ -64,10 +64,9 @@ typedef struct Player
 typedef struct Row
 {
 	uint8_t remainCount;
-	uint8_t revealedCount;
+	uint8_t recipeCount;
 
-	Potion		revealed[MAX_ROWCARD];
-	SDLX_Sprite rowIcon;
+	Potion	recipes[MAX_ROWCARD];
 }	Row;
 
 typedef struct Board
@@ -88,8 +87,8 @@ typedef struct ConnectScreen
 
 typedef struct Assets
 {
-	SDL_Texture *Potions;
-	SDL_Texture *UI;
+	SDL_Texture *texPotions;
+	SDL_Texture *texUI;
 	SDLX_TextSheet text;
 
 	SDL_Rect textSrc;

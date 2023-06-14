@@ -28,25 +28,14 @@ Context *init()
 	SDLX_InitDefault();
 
 	ctx = SDL_calloc(1, sizeof(Context));
-	ctx->display = SDLX_DisplayGet();
+	init_graphics(ctx);
 	init_connectScreen(ctx);
-	ctx->board.remainingTitles = MAX_MASTER_POTIONS;
 	ctx->state = TITLE;
 	ctx->playerCount = 0;
-	ctx->display->defaultFont = TTF_OpenFont("assets/underwood.ttf", 40);
-	SDLX_TextSheet_Create(&ctx->textSheet, ctx->display->win_w, ctx->display->win_h);
-	ctx->numbers = SDLX_TextSheet_Add(&ctx->textSheet, "0123456789", ctx->display->defaultFont, (SDL_Color){255, 255, 255, 255});
-
-	TTF_SizeText(ctx->display->defaultFont, "0", &ctx->numbers.w, &ctx->numbers.h);
-
-	surf = IMG_Load("assets/cards.png");
-	ctx->Tcards = SDL_CreateTextureFromSurface(ctx->display->renderer, surf);
-	SDL_FreeSurface(surf);
 
 
-	surf = IMG_Load("assets/buttons.png");
-	ctx->Tbuttons = SDL_CreateTextureFromSurface(ctx->display->renderer, surf);
-	SDL_FreeSurface(surf);
+
+
 	return ctx;
 }
 
@@ -56,17 +45,7 @@ void initNewGame(Context *ctx)
 
 	root = loadConfig("assets/UIconfig");
 
-	ctx->display->background = SDL_CreateTexture(
-			ctx->display->renderer,
-			SDL_PIXELFORMAT_RGBA8888,
-			SDL_TEXTUREACCESS_TARGET,
-			ctx->display->win_w, ctx->display->win_h
-			);
 
-	SDLX_RenderResetColour(ctx->display);
-	SDL_SetRenderTarget(ctx->display->renderer, ctx->display->background);
-	SDL_SetTextureBlendMode(ctx->display->background , SDL_BLENDMODE_BLEND);
-	SDL_RenderCopy(ctx->display->renderer, NULL, NULL, NULL);
 	initBoard (ctx, &root->containers[UI_BOARD]);
 
 	SDL_Log("Board was init");
@@ -98,23 +77,6 @@ void initBoard(Context *ctx, SDLX_RectContainer *root)
 	initRowPotions(ctx, &root->containers[CARD_ROW].containers[MID_CARD_ROW], MID_ROW);
 	initRowPotions(ctx, &root->containers[CARD_ROW].containers[BOT_CARD_ROW], BOT_ROW);
 
-
-	for (int i = 0; i < ESSENCE_TYPES; i++)
-	{
-		ctx->board.tokens[i] = 7;
-		SDLX_SpriteCreate(&ctx->board.tokenUI[i], 1, NULL);
-		ctx->board.tokenUI[i]._dst = root->containers[TOKEN_ROW].elems[i]._boundingBox;
-		ctx->board.tokenUI[i].texture = ctx->Tcards;
-		get_img_src(&src, TOK_HEX, i);
-		SDL_RenderCopy(ctx->display->renderer, ctx->Tcards, &src, root->containers[TOKEN_ROW].elems[i].boundingBox);
-
-		ctx->board.tokenUI[i]._src = ctx->numbers;
-		ctx->board.tokenUI[i]._dst.w /= 2;
-		ctx->board.tokenUI[i]._dst.h /= 2;
-		ctx->board.tokenUI[i]._dst.x += ctx->board.tokenUI[i]._dst.w / 2;
-		ctx->board.tokenUI[i]._dst.y += ctx->board.tokenUI[i]._dst.h / 2;
-		ctx->board.tokenUI[i].texture = ctx->textSheet.tex;
-	}
 	ctx->board.tokens[ESSENCE_TYPES - 1] = 5;
 	for (int i = 0; i < MAX_MASTER_POTIONS; i++)
 	{
@@ -129,20 +91,10 @@ void initRowPotions(Context *ctx, SDLX_RectContainer *container, int level)
 	Row *row;
 
 	row = &ctx->board.rows[level];
-
-	SDLX_SpriteCreate(&row->rowIcon, 1, NULL);
-	row->rowIcon._dst = container->elems[0]._boundingBox;
-	row->rowIcon.texture = ctx->Tcards;
-	row->revealedCount = MAX_ROWCARD;
-	get_img_src(&row->rowIcon._src, CARD_BACK, level);
+	row->recipeCount = MAX_ROWCARD;
 	for (int i = 0; i < MAX_ROWCARD; i++)
 	{
-		SDLX_SpriteCreate(&row->revealed[i].sprite, 1, NULL);
-		row->revealed[i].sprite._dst = container->elems[i + 1]._boundingBox;
-		row->revealed[i].sprite.src = NULL;
-		row->revealed[i].sprite.texture = SDL_CreateTexture(ctx->display->renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, row->revealed[i].sprite._dst.w, row->revealed[i].sprite._dst.h);
-		SDL_SetTextureBlendMode(row->revealed[i].sprite.texture , SDL_BLENDMODE_BLEND);
-		generatePotion(ctx->Tcards, &row->revealed[i], level);
+		generatePotion(ctx->assets.texPotions, &row->recipes[i], level);
 	}
 
 }

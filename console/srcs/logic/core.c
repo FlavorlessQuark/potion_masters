@@ -15,7 +15,7 @@ int core(void *arg, char *msg)
 		SDLX_TimedLoop(title_screen, ctx);
 	else if (ctx->state == CONNECT_SCREEN)
 		connect_screen(ctx);
-	else
+	else  if (ctx->state == PLAYING)
 		main_game(ctx);
 }
 
