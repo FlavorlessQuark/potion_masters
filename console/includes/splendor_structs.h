@@ -5,45 +5,17 @@
 
 # define MIN_PLAYERS (2)
 # define MAX_PLAYERS (4)
-# define MAX_RESERVE (4)
+# define MAX_POTIONS (10)
 # define MAX_ROWCARD (4)
-# define MAX_TITLES (4)
+# define MAX_MASTER_POTIONS (4)
 
-# define CARD_ID_LEN (3 + CARD_TYPES + 2)
+# define ESSENCE_TYPES (4)
 
-# define CARD_BACK 0
-# define CARD 1
-# define TOK_RECT 2
-# define TOK_HEX 3
+# define CARD_ID_LEN (3 + POTION_TYPES + 2)
 
-#define OFF_X (198)
-#define OFF_Y (225)
-#define SEP_Y (133)
-#define SEP_X (128)
-#define TOK_OFF_X (187)
-#define TOK_OFF_Y (150)
-#define TOK_W (804)
-#define TOK_H (958)
-#define CARD_H (2342)
-#define CARD_W (1570)
-#define CARD_OFF_X (CARD_W + SEP_X)
-#define CARD_OFF_Y (CARD_H + (SEP_Y * 2))
-# define CARD_VARIATIONS 0
-
-# define CARD_TYPES (3)
+# define POTION_TYPES (3)
 
 # define ROW_COUNT (3)
-# define TOK_COUNT (5)
-
-# define TOP_ROW (0)
-# define MID_ROW (1)
-# define BOT_ROW (2)
-
-# define TOK_A (0)
-# define TOK_B (1)
-# define TOK_C (2)
-# define TOK_D (3)
-# define TOK_R (4)
 
 # define EXIT_GAME (-1)
 # define CONNECT_SCREEN (0)
@@ -59,40 +31,32 @@
 # define NUMS	"-0123456789"
 # define NMATHC	"0123456789-+()x*=/ "
 
-# define CONNECT_SCREEN_STATUS (0)
 # define ASSETS "../assets"
 
-typedef struct c_string_vec {
-  char **ptr;
-  uint64_t len;
-  uint64_t cap;
-} c_string_vec;
-
-typedef struct Card
+typedef struct Potion
 {
 	SDLX_Sprite sprite;
-	uint8_t 	cost[TOK_COUNT - 1];
+	uint8_t 	cost[ESSENCE_TYPES - 1];
 	uint8_t 	points;
 	uint8_t		type;
 
-	char id[CARD_TYPES + 3 + 1];
+	char id[CARD_ID_LEN];
 	int _id;
-}	Card;
+}	Potion;
 
 typedef struct Player
 {
-	Card 	reserved[MAX_RESERVE];
-	uint8_t tokens[TOK_COUNT];
-	uint8_t owned[CARD_TYPES];
-	uint8_t reserveCount;
+	Potion 	owned[MAX_POTIONS];
+	uint8_t tokens[ESSENCE_TYPES];
+	uint8_t potionCount;
 	uint8_t status;
 	uint8_t points;
 
 	SDL_Rect pointsTag;
+	SDL_Rect potions[MAX_POTIONS];
 
 	SDLX_Sprite pointSprite;
-	SDLX_Sprite ressources[TOK_COUNT];
-	SDLX_Sprite permanents[CARD_TYPES];
+	SDLX_Sprite ressources[ESSENCE_TYPES];
 
 	char handle[HANDLE_LEN];
 }	Player;
@@ -102,19 +66,15 @@ typedef struct Row
 	uint8_t remainCount;
 	uint8_t revealedCount;
 
-	Card		revealed[MAX_ROWCARD];
+	Potion		revealed[MAX_ROWCARD];
 	SDLX_Sprite rowIcon;
 }	Row;
 
 typedef struct Board
 {
-	uint8_t tokens[TOK_COUNT];
-	uint8_t remainingTitles;
+	Potion		titles[MAX_MASTER_POTIONS];
 
-	Card		titles[MAX_TITLES];
-
-	SDLX_Sprite tokenUI[TOK_COUNT];
-	SDLX_Sprite titleUI[MAX_TITLES];
+	SDLX_Sprite essenceUI[ESSENCE_TYPES];
 	Row 		rows[ROW_COUNT];
 }	Board;
 
@@ -126,21 +86,27 @@ typedef struct ConnectScreen
 	SDLX_Sprite playerSprites[MAX_PLAYERS];
 }	ConnectScreen;
 
+typedef struct Assets
+{
+	SDL_Texture *Potions;
+	SDL_Texture *UI;
+	SDLX_TextSheet text;
+
+	SDL_Rect textSrc;
+
+}	Assets;
+
 typedef struct Context
 {
 	uint8_t playerCount;
 	uint8_t turn;
 	uint8_t state;
 
-	SDL_Rect		numbers;
-	SDL_Texture 	*Tcards;
-	SDL_Texture 	*Tbuttons;
 	SDLX_Display 	*display;
 
 	ConnectScreen connectscreen;
-
 	Board	board;
 	Player players[MAX_PLAYERS];
-	SDLX_TextSheet textSheet;
+	Assets assets;
 }	Context;
 #endif

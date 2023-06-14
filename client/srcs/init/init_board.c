@@ -14,7 +14,7 @@ void initTokens(Context *ctx, SDLX_RectContainer *root)
 {
 	SDL_Rect src;
 
-	for (int i = 0; i < TOK_COUNT; i++)
+	for (int i = 0; i < ESSENCE_TYPES; i++)
 	{
 		SDLX_SpriteCreate(&ctx->board.tokenCount[i], 1, ctx->textSheet.tex);
 		SDLX_SpriteCreate(&ctx->board.tokenTaken[i], 1, ctx->textSheet.tex);
@@ -29,18 +29,18 @@ void initTokens(Context *ctx, SDLX_RectContainer *root)
 		ctx->board.tokenTaken[i]._dst = 	ctx->board.tokenCount[i]._dst;
 		ctx->board.tokenTaken[i]._dst.x += root->elems[i]._boundingBox.w;
 	}
-	for (int i = TOK_COUNT; i < TOK_COUNT + 2; i++)
+	for (int i = ESSENCE_TYPES; i < ESSENCE_TYPES + 2; i++)
 	{
 		root->elems[i]._boundingBox.w = root->elems[i]._boundingBox.h;
 		SDLX_ButtonCreate(&ctx->board.tokenButton[i], NULL);
 		ctx->board.tokenButton[i]._boundingBox = root->elems[i]._boundingBox;
 	}
-	SDLX_RenderMessage(ctx->display, &root->elems[TOK_COUNT]._boundingBox, (SDL_Color){255,255,255}, "X");
-	SDLX_RenderMessage(ctx->display, &root->elems[TOK_COUNT + 1]._boundingBox, (SDL_Color){255,255,255}, "V");
+	SDLX_RenderMessage(ctx->display, &root->elems[ESSENCE_TYPES]._boundingBox, (SDL_Color){255,255,255}, "X");
+	SDLX_RenderMessage(ctx->display, &root->elems[ESSENCE_TYPES + 1]._boundingBox, (SDL_Color){255,255,255}, "V");
 
 }
 
-void initRowCards(Context *ctx, Row *row, SDLX_RectContainer *root)
+void initRowPotions(Context *ctx, Row *row, SDLX_RectContainer *root)
 {
 	//Parse texture data here
 	SDLX_SpriteCreate(&row->rowIcon, 1, NULL);
@@ -75,9 +75,9 @@ void init_board_screen(Context *ctx)
 	SDL_SetRenderTarget(ctx->display->renderer, ctx->board.bg);
 
 	initTokens(ctx, &root->containers[TOKENS]);
-	initRowCards(ctx, &ctx->board.rows[TOP_ROW], &root->containers[CARDS].containers[TOP_ROW]);
-	initRowCards(ctx, &ctx->board.rows[MID_ROW], &root->containers[CARDS].containers[MID_ROW]);
-	initRowCards(ctx, &ctx->board.rows[BOT_ROW], &root->containers[CARDS].containers[BOT_ROW]);
+	initRowPotions(ctx, &ctx->board.rows[TOP_ROW], &root->containers[CARDS].containers[TOP_ROW]);
+	initRowPotions(ctx, &ctx->board.rows[MID_ROW], &root->containers[CARDS].containers[MID_ROW]);
+	initRowPotions(ctx, &ctx->board.rows[BOT_ROW], &root->containers[CARDS].containers[BOT_ROW]);
 
 	// surf = IMG_Load("assets/cards.png");
 	SDLX_SpriteCreate(&ctx->switchSprite, 1, SDL_CreateTextureFromSurface(ctx->display->renderer, surf));

@@ -27,7 +27,7 @@ void init(Context *ctx, int width, int height)
 	ctx->cardTex  = SDL_CreateTextureFromSurface(ctx->display->renderer, surf);
 	SDL_FreeSurface(surf);
 
-	SDLX_Sprite costSprite[CARD_TYPES];
+	SDLX_Sprite costSprite[POTION_TYPES];
 	init_connect_screen(ctx);
 	init_main_screen(ctx);
 	init_board_screen(ctx);

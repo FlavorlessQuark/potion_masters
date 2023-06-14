@@ -11,7 +11,7 @@ void renderPlayer(Context *ctx, Player *player)
 
 	SDLX_RenderQueuePush(&player->pointSprite);
 
-	for (i = 0; i < CARD_TYPES; i++)
+	for (i = 0; i < POTION_TYPES; i++)
 	{
 		player->ressources[i].src->x = ctx->numbers.x + (player->tokens[i] * ctx->numbers.w);
 		player->permanents[i].src->x = ctx->numbers.x + (player->owned[i] * ctx->numbers.w);
@@ -40,7 +40,7 @@ void renderBoard(Context *ctx)
 		for (int n = 0; n < ctx->board.rows[i].revealedCount; n++)
 			SDLX_RenderQueuePush(&ctx->board.rows[i].revealed[n].sprite);
 	}
-	for (i = 0; i < TOK_COUNT; i++)
+	for (i = 0; i < ESSENCE_TYPES; i++)
 	{
 		ctx->board.tokenUI[i].src->x = ctx->numbers.x + (ctx->board.tokens[i] * ctx->numbers.w);
 		SDLX_RenderQueuePush(&ctx->board.tokenUI[i]);
@@ -48,7 +48,7 @@ void renderBoard(Context *ctx)
 	if (count == 100)
 		count = 0;
 	count++;
-	// for (i = 0; i < MAX_TITLES; i++)
+	// for (i = 0; i < MAX_MASTER_POTIONS; i++)
 	// {
 	// 	SDL_RenderDrawRect(ctx->display->renderer,  ctx->board.titleUI[i].dst);
 	// }

@@ -3,6 +3,7 @@
 int core(void *arg, char *msg)
 {
 	Context *ctx;
+
 	ctx = (Context *)arg;
 
 	if (ctx->state == EXIT_GAME)
@@ -10,10 +11,10 @@ int core(void *arg, char *msg)
 		cleanup(ctx);
 		exit(0);
 	}
-	else if (ctx->state == CONNECT_SCREEN)
-		connect_screen(ctx);
 	else if (ctx->state == TITLE)
 		SDLX_TimedLoop(title_screen, ctx);
+	else if (ctx->state == CONNECT_SCREEN)
+		connect_screen(ctx);
 	else
 		main_game(ctx);
 }
@@ -40,9 +41,7 @@ int main_game(Context *ctx)
 	}
 	for (int i = 0; i < ctx->playerCount; i++)
 		renderPlayer(ctx, &ctx->players[i]);
-	// renderPlayer(ctx, &ctx->players[1]);
-	// renderPlayer(ctx, &ctx->players[2]);
-	// renderPlayer(ctx, &ctx->players[3]);
+
 	renderBoard(ctx);
 }
 

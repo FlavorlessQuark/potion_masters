@@ -30,7 +30,7 @@ Context *init()
 	ctx = SDL_calloc(1, sizeof(Context));
 	ctx->display = SDLX_DisplayGet();
 	init_connectScreen(ctx);
-	ctx->board.remainingTitles = MAX_TITLES;
+	ctx->board.remainingTitles = MAX_MASTER_POTIONS;
 	ctx->state = TITLE;
 	ctx->playerCount = 0;
 	ctx->display->defaultFont = TTF_OpenFont("assets/underwood.ttf", 40);
@@ -87,19 +87,19 @@ void initNewGame(Context *ctx)
 
 void initBoard(Context *ctx, SDLX_RectContainer *root)
 {
-	Card *cards;
+	Potion *cards;
 	SDL_Rect src;
 
 	ctx->board.rows[TOP_ROW].remainCount = TOP_ROW_COUNT;
 	ctx->board.rows[MID_ROW].remainCount = MID_ROW_COUNT;
 	ctx->board.rows[BOT_ROW].remainCount = BOT_ROW_COUNT;
 
-	initRowCards(ctx, &root->containers[CARD_ROW].containers[TOP_CARD_ROW], TOP_ROW);
-	initRowCards(ctx, &root->containers[CARD_ROW].containers[MID_CARD_ROW], MID_ROW);
-	initRowCards(ctx, &root->containers[CARD_ROW].containers[BOT_CARD_ROW], BOT_ROW);
+	initRowPotions(ctx, &root->containers[CARD_ROW].containers[TOP_CARD_ROW], TOP_ROW);
+	initRowPotions(ctx, &root->containers[CARD_ROW].containers[MID_CARD_ROW], MID_ROW);
+	initRowPotions(ctx, &root->containers[CARD_ROW].containers[BOT_CARD_ROW], BOT_ROW);
 
 
-	for (int i = 0; i < TOK_COUNT; i++)
+	for (int i = 0; i < ESSENCE_TYPES; i++)
 	{
 		ctx->board.tokens[i] = 7;
 		SDLX_SpriteCreate(&ctx->board.tokenUI[i], 1, NULL);
@@ -115,8 +115,8 @@ void initBoard(Context *ctx, SDLX_RectContainer *root)
 		ctx->board.tokenUI[i]._dst.y += ctx->board.tokenUI[i]._dst.h / 2;
 		ctx->board.tokenUI[i].texture = ctx->textSheet.tex;
 	}
-	ctx->board.tokens[TOK_COUNT - 1] = 5;
-	for (int i = 0; i < MAX_TITLES; i++)
+	ctx->board.tokens[ESSENCE_TYPES - 1] = 5;
+	for (int i = 0; i < MAX_MASTER_POTIONS; i++)
 	{
 		SDLX_SpriteCreate(&ctx->board.titleUI[i], 1, NULL);
 		ctx->board.titleUI[i]._dst = root->containers[TITLE_ROW].elems[i]._boundingBox;
@@ -124,7 +124,7 @@ void initBoard(Context *ctx, SDLX_RectContainer *root)
 	SDL_SetRenderDrawColor(ctx->display->renderer, 0, 0, 0, 255);
 }
 
-void initRowCards(Context *ctx, SDLX_RectContainer *container, int level)
+void initRowPotions(Context *ctx, SDLX_RectContainer *container, int level)
 {
 	Row *row;
 
@@ -142,7 +142,7 @@ void initRowCards(Context *ctx, SDLX_RectContainer *container, int level)
 		row->revealed[i].sprite.src = NULL;
 		row->revealed[i].sprite.texture = SDL_CreateTexture(ctx->display->renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, row->revealed[i].sprite._dst.w, row->revealed[i].sprite._dst.h);
 		SDL_SetTextureBlendMode(row->revealed[i].sprite.texture , SDL_BLENDMODE_BLEND);
-		generateCard(ctx->Tcards, &row->revealed[i], level);
+		generatePotion(ctx->Tcards, &row->revealed[i], level);
 	}
 
 }
@@ -172,7 +172,7 @@ void initPlayer(Context *ctx, uint8_t id, SDLX_RectContainer *root)
 	SDLX_RenderMessage(ctx->display, root->containers[0].elems[0].boundingBox, (SDL_Color){255,255,255,255}, name);
 	SDLX_RenderMessage(ctx->display, root->containers[0].elems[1].boundingBox, (SDL_Color){255,255,255,255}, "POINTS : ");
 
-	for (i = 0; i < CARD_TYPES; i++)
+	for (i = 0; i < POTION_TYPES; i++)
 	{
 		ctx->players[id].owned[i] = 0;
 		ctx->players[id].tokens[i] = 0;

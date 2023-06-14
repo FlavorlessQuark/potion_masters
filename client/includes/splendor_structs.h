@@ -7,12 +7,12 @@
 # define MAX_PLAYERS 4
 # define MAX_RESERVE 4
 # define MAX_ROWCARD 4
-# define MAX_TITLES 5
+# define MAX_MASTER_POTIONS 5
 
-# define CARD_TYPES 3
+# define POTION_TYPES 3
 
 # define ROW_COUNT 3
-# define TOK_COUNT 5
+# define ESSENCE_TYPES 5
 
 # define TOP_ROW 0
 # define MID_ROW 1
@@ -52,16 +52,16 @@
 #define CARD_OFF_Y (CARD_H + (SEP_Y * 2))
 # define CARD_VARIATIONS 0
 
-# define CARD_ID_LEN (3 + CARD_TYPES + 2)
-# define PLAYER_DATA_LEN ((ROW_COUNT * (CARD_ID_LEN + 1) * MAX_ROWCARD) + TOK_COUNT)
-# define BOARD_DATA_LEN ((TOK_COUNT * 2) + (MAX_RESERVE * CARD_ID_LEN))
+# define CARD_ID_LEN (3 + POTION_TYPES + 2)
+# define PLAYER_DATA_LEN ((ROW_COUNT * (CARD_ID_LEN + 1) * MAX_ROWCARD) + ESSENCE_TYPES)
+# define BOARD_DATA_LEN ((ESSENCE_TYPES * 2) + (MAX_RESERVE * CARD_ID_LEN))
 # define MSG_LEN PLAYER_DATA_LEN + BOARD_DATA_LEN + 2
-// #define MSG_LEN (TOK_COUNT * 3) + (ROW_COUNT * (CARD_ID_LEN + 1) * MAX_ROWCARD) + (MAX_RESERVE * CARD_ID_LEN + 1) + 1 + 3
+// #define MSG_LEN (ESSENCE_TYPES * 3) + (ROW_COUNT * (CARD_ID_LEN + 1) * MAX_ROWCARD) + (MAX_RESERVE * CARD_ID_LEN + 1) + 1 + 3
 
 
-#define TOKEN_BUTTON_RESET TOK_COUNT + 0
-#define TOKEN_BUTTON_CONFIRM TOK_COUNT + 1
-# define MAIN_SCREEN_SPRITE_COUNT MAX_RESERVE + (CARD_TYPES * 2) + 1 + 3 + 1 + 1
+#define TOKEN_BUTTON_RESET ESSENCE_TYPES + 0
+#define TOKEN_BUTTON_CONFIRM ESSENCE_TYPES + 1
+# define MAIN_SCREEN_SPRITE_COUNT MAX_RESERVE + (POTION_TYPES * 2) + 1 + 3 + 1 + 1
 
 # define ASSETS "../assets"
 
@@ -72,22 +72,22 @@ typedef struct Button
 	SDLX_Button button;
 	void *data;
 }	Button;
-typedef struct Card
+typedef struct Potion
 {
 	SDLX_Sprite sprite;
-	SDLX_Sprite costSprite[TOK_COUNT - 1];
-	uint8_t cost[TOK_COUNT - 1];
+	SDLX_Sprite costSprite[ESSENCE_TYPES - 1];
+	uint8_t cost[ESSENCE_TYPES - 1];
 	uint8_t points;
 	uint8_t type;
 	int _id;
 	char id[CARD_ID_LEN];
-}	Card;
+}	Potion;
 
 typedef struct Player
 {
-	Card reserved[MAX_RESERVE];
-	uint8_t tokens[TOK_COUNT];
-	uint8_t owned[CARD_TYPES];
+	Potion reserved[MAX_RESERVE];
+	uint8_t tokens[ESSENCE_TYPES];
+	uint8_t owned[POTION_TYPES];
 	uint8_t reserveCount;
 	uint8_t id;
 	uint8_t points;
@@ -97,18 +97,18 @@ typedef struct Row
 {
 	uint8_t revealedCount;//RM
 	SDLX_Sprite rowIcon;//RM BAKE INTO BG
-	Card	revealed[MAX_ROWCARD];
+	Potion	revealed[MAX_ROWCARD];
 	SDLX_Button cardButton[MAX_ROWCARD];
 }	Row;
 
 typedef struct Board
 {
-	uint8_t tokens[TOK_COUNT];
+	uint8_t tokens[ESSENCE_TYPES];
 
 	Row 	rows[ROW_COUNT];
-	SDLX_Button tokenButton[TOK_COUNT + 2];
-	SDLX_Sprite tokenCount[TOK_COUNT];
-	SDLX_Sprite tokenTaken[TOK_COUNT];
+	SDLX_Button tokenButton[ESSENCE_TYPES + 2];
+	SDLX_Sprite tokenCount[ESSENCE_TYPES];
+	SDLX_Sprite tokenTaken[ESSENCE_TYPES];
 	SDL_Texture *bg;
 }	Board;
 
@@ -125,11 +125,11 @@ typedef struct BuyScreen
 	SDLX_Sprite showSelected;
 	SDLX_Sprite reserveSprite;
 	SDLX_Sprite buySprite;
-	SDLX_Sprite costSprite[TOK_COUNT - 1];
+	SDLX_Sprite costSprite[ESSENCE_TYPES - 1];
 	SDLX_Button buyButton;
 	SDLX_Button reserveButton;
 	SDLX_Button exit;
-	Card  		*selected;
+	Potion  		*selected;
 	SDL_Texture *bg;
 	uint8_t cardOrigin; // -1 = no card, 0 = board, 1 reserverd index
 }			BuyScreen;
@@ -142,8 +142,8 @@ typedef struct PlayerUI
 	// SDLX_Sprite UI[MAIN_SCREEN_SPRITE_COUNT];
 	SDLX_Sprite name;
 	SDLX_Sprite points;
-	SDLX_Sprite permanents[CARD_TYPES];
-	SDLX_Sprite tokens[TOK_COUNT];
+	SDLX_Sprite permanents[POTION_TYPES];
+	SDLX_Sprite tokens[ESSENCE_TYPES];
 	SDL_Texture *bg;
 }		PlayerUI;
 

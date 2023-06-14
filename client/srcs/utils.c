@@ -72,7 +72,7 @@ SDL_Rect scaleAndCenter(double scalar, SDL_Rect parent, SDL_Rect this)
 	return result;
 }
 
-void generateCardTexture(SDL_Texture *base, Card *card, int type)
+void generatePotionTexture(SDL_Texture *base, Potion *card, int type)
 {
 	SDL_Rect src;
 	SDL_Rect dst;
@@ -94,7 +94,7 @@ void generateCardTexture(SDL_Texture *base, Card *card, int type)
 	SDL_SetRenderDrawColor(renderer, 0, 0, 255, 0);
 	SDL_RenderFillRect(renderer, NULL);
 	SDL_RenderCopy(renderer, base, &src, NULL);
-	for (int i = 0; i < CARD_TYPES; i++)
+	for (int i = 0; i < POTION_TYPES; i++)
 	{
 		if (card->cost[i] > 0)
 		{
@@ -126,7 +126,7 @@ void generateCardTexture(SDL_Texture *base, Card *card, int type)
 	SDL_SetRenderTarget(renderer, NULL);
 }
 
-void fillCard(Card *card)
+void fillPotion(Potion *card)
 {
 	char *str;
 	int type;
@@ -138,7 +138,7 @@ void fillCard(Card *card)
 		return ;
 	get_img_src(&card->sprite._src, CARD, type);
 	str = card->id + 3;
-	for (i = 0; i < CARD_TYPES + 1; i++)
+	for (i = 0; i < POTION_TYPES + 1; i++)
 		card->cost[i] = str[i] - '0';
 
 	card->points = str[i] - '0';
@@ -199,12 +199,12 @@ void delReserved(Context *ctx, int id)
 		if (id == ctx->player.reserved[i]._id)
 		{
 
-			memcpy(&ctx->player.reserved[i], &ctx->player.reserved[ctx->player.reserveCount - 1], sizeof(Card));
+			memcpy(&ctx->player.reserved[i], &ctx->player.reserved[ctx->player.reserveCount - 1], sizeof(Potion));
 
 			ctx->player.reserved[i].sprite.dst = &ctx->player.reserved[i].sprite._dst;
 
 			memset(ctx->player.reserved[ctx->player.reserveCount - 1].id, '0', CARD_ID_LEN);
-			memset(ctx->player.reserved[ctx->player.reserveCount - 1].cost, -1, TOK_COUNT - 1);
+			memset(ctx->player.reserved[ctx->player.reserveCount - 1].cost, -1, ESSENCE_TYPES - 1);
 			ctx->player.reserved[ctx->player.reserveCount - 1]._id	 = -1;
 
 			ctx->player.reserveCount--;
@@ -213,7 +213,7 @@ void delReserved(Context *ctx, int id)
 	}
 }
 
-int extract_card_from_input(Context *ctx, Card *dst, char *input)
+int extract_card_from_input(Context *ctx, Potion *dst, char *input)
 {
 	int _id;
 
@@ -221,8 +221,8 @@ int extract_card_from_input(Context *ctx, Card *dst, char *input)
 	extract_num(dst->id, &_id);
 	if (dst->_id != _id)
 	{
-		fillCard(dst);
-		generateCardTexture(ctx->cardTex, dst, dst->id[1] - '0');
+		fillPotion(dst);
+		generatePotionTexture(ctx->cardTex, dst, dst->id[1] - '0');
 	}
 	else
 		return 0;
@@ -231,7 +231,7 @@ int extract_card_from_input(Context *ctx, Card *dst, char *input)
 
 void get_img_src(SDL_Rect *dst, int imageType, int index)
 {
-	if (index < 0 || index >= CARD_TYPES)
+	if (index < 0 || index >= POTION_TYPES)
 		return ;
 	if (imageType == CARD_BACK)
 	{
@@ -251,14 +251,14 @@ void get_img_src(SDL_Rect *dst, int imageType, int index)
 	{
 		dst->w = TOK_W;
 		dst->h = TOK_H;
-		dst->x = OFF_X + (CARD_TYPES * (CARD_W + SEP_X)) - SEP_X + TOK_OFF_X;
+		dst->x = OFF_X + (POTION_TYPES * (CARD_W + SEP_X)) - SEP_X + TOK_OFF_X;
 		dst->y = OFF_Y + (index * (TOK_H + TOK_OFF_Y));
 	}
 	else if (imageType == TOK_RECT)
 	{
 		dst->w = TOK_W;
 		dst->h = TOK_H;
-		dst->x = OFF_X + (CARD_TYPES * (CARD_W + SEP_X)) - SEP_X + TOK_W + (TOK_OFF_X * 2);
+		dst->x = OFF_X + (POTION_TYPES * (CARD_W + SEP_X)) - SEP_X + TOK_W + (TOK_OFF_X * 2);
 		dst->y = OFF_Y + (index * (TOK_H + TOK_OFF_Y));
 	}
 }

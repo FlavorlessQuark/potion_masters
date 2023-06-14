@@ -337,8 +337,8 @@ typedef struct _SDL_Haptic SDL_Haptic;
 #define SDL_HAPTIC_SPHERICAL  2
 
 /**
- *  \brief Use this value to play an effect on the steering wheel axis. This 
- *  provides better compatibility across platforms and devices as SDL will guess 
+ *  \brief Use this value to play an effect on the steering wheel axis. This
+ *  provides better compatibility across platforms and devices as SDL will guess
  *  the correct axis.
  *  \sa SDL_HapticDirection
  */
@@ -371,7 +371,7 @@ typedef struct _SDL_Haptic SDL_Haptic;
  *   - ::SDL_HAPTIC_CARTESIAN : Specified by cartesian coordinates.
  *   - ::SDL_HAPTIC_SPHERICAL : Specified by spherical coordinates.
  *
- *  Cardinal directions of the haptic device are relative to the positioning
+ *  Potioninal directions of the haptic device are relative to the positioning
  *  of the device.  North is considered to be away from the user.
  *
  *  The following diagram represents the cardinal directions:

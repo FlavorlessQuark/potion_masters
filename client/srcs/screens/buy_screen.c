@@ -6,20 +6,20 @@ int canBuy(Context *ctx)
 
 	missing = 0;
 
-	for (int i = 0; i < CARD_TYPES; i++)
+	for (int i = 0; i < POTION_TYPES; i++)
 	{
 		if (ctx->player.owned[i] + ctx->player.tokens[i] < ctx->buyscreen.selected->cost[i])
 			missing += ctx->buyscreen.selected->cost[i] -( ctx->player.owned[i] + ctx->player.tokens[i]);
 	}
-	if (missing <= ctx->player.tokens[CARD_TYPES])
+	if (missing <= ctx->player.tokens[POTION_TYPES])
 		return 1;
 	return 0;
 }
 
 void buy_screen(Context *ctx)
 {
-	SDL_Log("??? %d %d %d | %d", ctx->buyscreen.cardOrigin == 1, ctx->player.reserveCount < MAX_RESERVE, ctx->board.tokens[CARD_TYPES] > 0, ctx->buyscreen.cardOrigin == 1 && ctx->player.reserveCount < MAX_RESERVE && ctx->board.tokens[CARD_TYPES] > 0);
-	if (ctx->buyscreen.cardOrigin == 0 && ctx->player.reserveCount < MAX_RESERVE && ctx->board.tokens[CARD_TYPES] > 0)
+	SDL_Log("??? %d %d %d | %d", ctx->buyscreen.cardOrigin == 1, ctx->player.reserveCount < MAX_RESERVE, ctx->board.tokens[POTION_TYPES] > 0, ctx->buyscreen.cardOrigin == 1 && ctx->player.reserveCount < MAX_RESERVE && ctx->board.tokens[POTION_TYPES] > 0);
+	if (ctx->buyscreen.cardOrigin == 0 && ctx->player.reserveCount < MAX_RESERVE && ctx->board.tokens[POTION_TYPES] > 0)
 		ctx->buyscreen.reserveButton.enabled = SDL_TRUE;
 	else
 		ctx->buyscreen.reserveButton.enabled = SDL_FALSE;
@@ -39,10 +39,10 @@ void buy_screen(Context *ctx)
 	}
 	else if (ctx->buyscreen.buyButton.triggered == SDLX_KEYDOWN)
 	{
-		for (int i = 0; i < CARD_TYPES; i++)
+		for (int i = 0; i < POTION_TYPES; i++)
 		{
 			if ((ctx->player.tokens[i] + ctx->player.owned[i]) < ctx->buyscreen.selected->cost[i])
-				ctx->player.tokens[CARD_TYPES] -= ctx->buyscreen.selected->cost[i] - (ctx->player.tokens[i] + ctx->player.owned[i]);
+				ctx->player.tokens[POTION_TYPES] -= ctx->buyscreen.selected->cost[i] - (ctx->player.tokens[i] + ctx->player.owned[i]);
 			ctx->player.tokens[i] -= ctx->buyscreen.selected->cost[i] - ctx->player.owned[i];
 		}
 		sendPay(ctx);
@@ -61,7 +61,7 @@ void buy_screen(Context *ctx)
 
 void render_buy_screen(Context *ctx)
 {
-	if (ctx->buyscreen.cardOrigin == 0 && ctx->player.reserveCount < MAX_RESERVE  && ctx->board.tokens[CARD_TYPES] > 0)
+	if (ctx->buyscreen.cardOrigin == 0 && ctx->player.reserveCount < MAX_RESERVE  && ctx->board.tokens[POTION_TYPES] > 0)
 	{
 		SDLX_RenderQueuePush(&ctx->buyscreen.reserveSprite);
 	}

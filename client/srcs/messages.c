@@ -4,7 +4,7 @@ static char msg[MSG_LEN];
 
 // msg = "Player-Action"
 // Action -> Reserve : r[card-id]|
-// 		  -> Pay : p|[isReserveCard][card_id]|[tok1, tok2, tok3, tok4, tok5]
+// 		  -> Pay : p|[isReservePotion][card_id]|[tok1, tok2, tok3, tok4, tok5]
 //        -> Take : t[tok1, tok2, tok3, tok4]
 //Example : 1r12 , 2p042|10201, 4t00111, 2p142|10201
 
@@ -23,14 +23,14 @@ void sendReserve(Context *ctx)
 	// msg[2] = '0';
 	msg[2 + i] = '\0';
 	memcpy(ctx->player.reserved[ctx->player.reserveCount].id, ctx->buyscreen.selected->id, CARD_ID_LEN);
-	memcpy(ctx->player.reserved[ctx->player.reserveCount].cost, ctx->buyscreen.selected->cost, TOK_COUNT - 1);
+	memcpy(ctx->player.reserved[ctx->player.reserveCount].cost, ctx->buyscreen.selected->cost, ESSENCE_TYPES - 1);
 	tmp = ctx->player.reserved[ctx->player.reserveCount].sprite.texture;
 	ctx->player.reserved[ctx->player.reserveCount].sprite.texture = ctx->buyscreen.selected->sprite.texture;
 	ctx->buyscreen.selected->sprite.texture = tmp;
 	// ctx->player.reserved[ctx->player.reserveCount].sprite.texture =
 
 	ctx->player.reserveCount++;
-	ctx->player.tokens[TOK_COUNT - 1]++;
+	ctx->player.tokens[ESSENCE_TYPES - 1]++;
 
 	sendMessage(msg);
 }
@@ -119,7 +119,7 @@ void parse_board_state(Context *ctx, char *input)
 
 	SDL_Log("Received board state %s", input);
 	ctx->state = PLAYERSTATUS;
-	for (i = 0; i < TOK_COUNT; i++)
+	for (i = 0; i < ESSENCE_TYPES; i++)
 		ctx->board.tokens[i] = input[i] - '0';
 	input += i;
 	for (int r = 0; r < ROW_COUNT; r++)
@@ -131,8 +131,8 @@ void parse_board_state(Context *ctx, char *input)
 			// extract_num(ctx->board.rows[r].revealed[c].id, &_id);
 			// if (ctx->board.rows[r].revealed[c]._id != _id)
 			// {
-			// 	fillCard(&ctx->board.rows[r].revealed[c]);
-			// 	generateCardTexture(ctx->cardTex, &ctx->board.rows[r].revealed[c], ctx->board.rows[r].revealed[c].id[1] - '0');
+			// 	fillPotion(&ctx->board.rows[r].revealed[c]);
+			// 	generatePotionTexture(ctx->cardTex, &ctx->board.rows[r].revealed[c], ctx->board.rows[r].revealed[c].id[1] - '0');
 			// }
 			input += CARD_ID_LEN;
 		}
@@ -148,7 +148,7 @@ void parse_player_state(Context *ctx, char *input)
 	SDL_Log("Received player status %s", input);
 	// input++;
 	// ctx->state = PLAYERSTATUS;
-	// for (i = 0; i < TOK_COUNT; i++)
+	// for (i = 0; i < ESSENCE_TYPES; i++)
 	// 	ctx->player.tokens[i] = input[i] - '0';
 	// input += i;
 	// reserveCount =  *input - '0';

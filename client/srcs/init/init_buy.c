@@ -38,7 +38,7 @@ void init_buy_screen(Context *ctx)
 
 	ctx->buyscreen.showSelected.src = NULL;
 	SDLX_RenderMessage(ctx->display, &ctx->buyscreen.exit._boundingBox, (SDL_Color){255, 0, 0, 255}, "X");
-	for (int n = 0; n < CARD_TYPES; n++)
+	for (int n = 0; n < POTION_TYPES; n++)
 	{
 		get_img_src(&src, TOK_HEX, n);
 		SDLX_SpriteCreate(&ctx->buyscreen.costSprite[n], 1, ctx->textSheet.tex);

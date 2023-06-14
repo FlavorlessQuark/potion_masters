@@ -29,7 +29,7 @@ void render_main_screen(Context *ctx)
 	SDL_RenderCopy(ctx->display->renderer, ctx->UI.bg, NULL, NULL);
 	ctx->UI.points._src.x = ctx->nums.x + (ctx->player.points * ctx->nums.w);
 	SDLX_RenderQueuePush(&ctx->UI.points);
-	for (int i = 0; i < CARD_TYPES; i++)
+	for (int i = 0; i < POTION_TYPES; i++)
 	{
 		// SDLX_RenderQueuePush(&ctx->player.reserved[i]);
 		ctx->UI.tokens[i]._src.x = ctx->nums.x + (ctx->player.tokens[i] * ctx->nums.w);
@@ -37,8 +37,8 @@ void render_main_screen(Context *ctx)
 		SDLX_RenderQueuePush(&ctx->UI.tokens[i]);
 		SDLX_RenderQueuePush(&ctx->UI.permanents[i]);
 	}
-	ctx->UI.tokens[CARD_TYPES]._src.x = ctx->nums.x + (ctx->player.tokens[CARD_TYPES] * ctx->nums.w);
-	SDLX_RenderQueuePush(&ctx->UI.tokens[CARD_TYPES]);
+	ctx->UI.tokens[POTION_TYPES]._src.x = ctx->nums.x + (ctx->player.tokens[POTION_TYPES] * ctx->nums.w);
+	SDLX_RenderQueuePush(&ctx->UI.tokens[POTION_TYPES]);
 	if (ctx->switchMode.enabled)
 		SDLX_RenderQueuePush(&ctx->switchSprite);
 

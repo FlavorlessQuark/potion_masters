@@ -26,7 +26,7 @@ void init_token_bar(Context *ctx, SDLX_RectContainer *root)
 	SDL_Rect src;
 	int i;
 
-	for (i = 0; i < CARD_TYPES; i++)
+	for (i = 0; i < POTION_TYPES; i++)
 	{
 		SDLX_SpriteCreate(&ctx->UI.permanents[i], 1, ctx->textSheet.tex);
 		SDLX_SpriteCreate(&ctx->UI.tokens[i], 1, ctx->textSheet.tex);
