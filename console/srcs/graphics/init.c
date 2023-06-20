@@ -113,4 +113,6 @@ void init_player_graphics(Context *ctx, uint8_t id, SDLX_RectContainer *root)
 		SDL_RenderCopy(ctx->display->renderer, ctx->Tcards, &src,  root->containers[1].containers[i].elems[1].boundingBox);
 	}
 
+
+
 }

@@ -1,19 +1,19 @@
 #include "splendor.h"
 
-void print_config(Context *ctx, SDLX_RectContainer *root)
+void print_config(SDL_Renderer *renderer, SDLX_RectContainer *root)
 {
-	SDL_SetRenderDrawColor(ctx->display->renderer, 255, 0,0,255);
-	SDL_RenderDrawRect(ctx->display->renderer, root->self.boundingBox);
+	SDL_SetRenderDrawColor(renderer, 255, 0,0,255);
+	SDL_RenderDrawRect(renderer, root->self.boundingBox);
 
 	for (int i = 0; i < root->containerCount; i++)
-		print_config(ctx, &root->containers[i]);
+		print_config(renderer, &root->containers[i]);
 
-	SDL_SetRenderDrawColor(ctx->display->renderer, 255, 255, 255,255);
+	SDL_SetRenderDrawColor(renderer, 255, 255, 255,255);
 	for (int x = 0; x < root->elemCount; x++)
 	{
-		SDL_RenderDrawRect(ctx->display->renderer, root->elems[x].boundingBox);
+		SDL_RenderDrawRect(renderer, root->elems[x].boundingBox);
 	}
-	SDL_SetRenderDrawColor(ctx->display->renderer, 0, 0,0,255);
+	SDL_SetRenderDrawColor(renderer, 0, 0,0,255);
 }
 
 SDLX_RectContainer *loadConfig(char *filename)

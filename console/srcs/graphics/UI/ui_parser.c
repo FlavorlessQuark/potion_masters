@@ -7,6 +7,14 @@
 //  c[amount] : container x amount
 //  e[amount] : elem x amount
 //  containers and elements will be parented to the container that came before
+int	extract_num(char *str, int *number)
+{
+	int spn;
+
+	spn = strcspn(str, NUMS);
+	*number = atoi(str + spn);
+	return spn + strspn(str + spn, NUMS);
+}
 
 char *fetch_file(char *filename, size_t *size)
 {
@@ -79,6 +87,10 @@ char *parse_object(SDLX_RectContainer *current,SDLX_RectContainer *parent, char 
 	fill_container(current, parent, line);
 	line = strtok(NULL, "\n");
 
+	SDL_Log("Line before %s", line);
+	if (line)
+		line += strspn(line, "\t");
+	SDL_Log("Line after %s", line);
 	count = 0;
 	if (line && line[0] == 'c')
 	{
