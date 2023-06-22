@@ -1,14 +1,18 @@
 NAME = console_bin
 
-DEBUG_FLAGS = -fsanitize=address -g
+# DEBUG_FLAGS = -fsanitize=address -g
+DEBUG_FLAGS = -g
 FLAGS = $(DEBUG_FLAGS)
 INCLUDES = -I includes/ -I includes/SDL2/ -I includes/SDLX/ -I includes/MT/
 
 LIB_DIR = libs/
 STATIC_LIB = -l SDL2 -l SDL2_image -l SDL2_ttf -lm -ldl -lpthread
 
-SDLX_DIR = SDLX/
-SRCS_DIR = srcs/
+SDLX_DIR       = SDLX/
+CONNECTION_DIR = connection/
+GRAPHIC_DIR    = graphics/
+LOGIC_DIR      = logic/
+SRCS_DIR       = srcs/
 
 BIN_DIR = bin/
 
@@ -22,19 +26,40 @@ SDLX_NAMES = 			\
 	SDLX_text			\
 	SDLX_utils			\
 
-SRCS_NAMES =								\
-	$(addprefix $(SDLX_DIR), $(SDLX_NAMES))	\
-	config_parser		\
+CONNECTION_NAMES = 		\
 	connection			\
-	core_loop			\
+
+GRAPHIC_NAMES = 		\
+	UI/parser_utils		\
+	UI/ui_parser		\
 	init				\
-	IO					\
-	main 				\
 	render				\
 	utils				\
 
+LOGIC_NAMES =			\
+		core			\
+		init			\
+		messages		\
+		utils			\
+
+SRCS_NAMES =											\
+	$(addprefix $(SDLX_DIR), 		$(SDLX_NAMES))		\
+	$(addprefix $(CONNECTION_DIR),  $(CONNECTION_NAMES))\
+	$(addprefix $(GRAPHIC_DIR),		$(GRAPHIC_NAMES))	\
+	$(addprefix $(LOGIC_DIR),		$(LOGIC_NAMES))		\
+	main 												\
+
+TEST_NAMES =											\
+	$(addprefix $(SDLX_DIR), 		$(SDLX_NAMES))		\
+	graphics/UI/parser_utils		\
+	graphics/UI/ui_parser		\
+	test_main 					\
+
 SRCS = $(addprefix $(SRCS_DIR), $(addsuffix .c, $(SRCS_NAMES)))
+TESTSRCS = $(addprefix $(SRCS_DIR), $(addsuffix .c, $(TEST_NAMES)))
+
 OBJS = $(addprefix $(BIN_DIR), $(SRCS:.c=.o))
+TESTOBJS = $(addprefix $(BIN_DIR), $(TESTSRCS:.c=.o))
 
 all: $(NAME)
 # all:
@@ -48,6 +73,9 @@ $(BIN_DIR):
 $(BIN_DIR)%.o: %.c
 	mkdir -p $(BIN_DIR)$(dir $<)
 	gcc $(FLAGS) $(INCLUDES) -c $< -o $@
+
+ui:$(BIN_DIR) $(TESTOBJS)
+	gcc $(FLAGS) $(INCLUDES) -o UI_test $(TESTOBJS) $(STATIC_LIB)
 
 run: re clean
 	./$(NAME)

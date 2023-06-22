@@ -136,7 +136,10 @@ int calc_spacing(SDLX_RectContainer *container, SDLX_Display *display)
 	if (container->alignment == SDLX_SPACE_EVEN)
 		spacing = (direction - measurement) / (container->elemCount + container->containerCount + 1);
 	else if (container->alignment == SDLX_SPACE_BETWEEN)
-		spacing = direction - measurement;
+	{
+		// spacing = direction - measurement;
+		spacing = (direction - measurement) / MAX(1, (container->elemCount + container->containerCount - 1));
+	}
 	return spacing;
 }
 
@@ -240,8 +243,11 @@ void SDLX_ContainerUpdate(SDLX_RectContainer *container, SDLX_RectContainer *par
 
 	// SDL_SetRenderDrawColor(SDLX_DisplayGet()->renderer, 255, 0, 0, 255);
 	// SDL_RenderDrawRect(SDLX_DisplayGet()->renderer, container->self.boundingBox);
+	// SDL_Log("HEELLO YOU SHOULD BERE");
 	get_innerMeasurements(container);
+	// SDL_Log("THEN YOU SHOULD BERE");
 	position_elems(container, display);
+
 	while (i < container->containerCount)
 	{
 		SDLX_ContainerUpdate(&container->containers[i], container);

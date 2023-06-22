@@ -5,7 +5,7 @@
 SDLX_RectContainer *parse_UIConfig(char *filename);
 
 // ~-~-~-~-~-~-~-~-~- UI/utils.c ~-~-~-~-~-~-~~-~-
-void print_config	(Context *ctx, SDLX_RectContainer *root);
+void print_config	(SDL_Renderer *renderer, SDLX_RectContainer *root);
 void cleanupUIConfig(SDLX_RectContainer *container);
 
 // ~-~-~-~-~-~-~-~-  render.c ~-~-~-~-~-~-~-~- -~-

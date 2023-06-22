@@ -47,10 +47,9 @@ char *fill_elem(SDLX_ContainerElem *elem, SDLX_RectContainer *parent, char *line
 
 	if (line[0] == '%')
 		num = ((parent ? parent->self.boundingBox->w : display->win_w) * num ) / 100;
-
 	elem->boundingBox->w = num;
-	line = line + extract_num(line, &num);
 
+	line = line + extract_num(line, &num);
 	if (line[0] == '%')
 		num = ((parent ? parent->self.boundingBox->h : display->win_h)  * num ) / 100;
 
@@ -87,10 +86,8 @@ char *parse_object(SDLX_RectContainer *current,SDLX_RectContainer *parent, char 
 	fill_container(current, parent, line);
 	line = strtok(NULL, "\n");
 
-	SDL_Log("Line before %s", line);
 	if (line)
 		line += strspn(line, "\t");
-	SDL_Log("Line after %s", line);
 	count = 0;
 	if (line && line[0] == 'c')
 	{

@@ -23,6 +23,7 @@ SDLX_RectContainer *loadConfig(char *filename)
 	root = parse_UIConfig(filename);
 	SDLX_ContainerUpdate(root, NULL);
 
+
 	return root;
 }
 

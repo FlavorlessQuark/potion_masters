@@ -102,7 +102,7 @@ void initRowPotions(Context *ctx, SDLX_RectContainer *container, int level)
 void initPlayer(Context *ctx, uint8_t id, SDLX_RectContainer *root)
 {
 	int i;
-	char name[9] = {'P', 'L', 'A', 'Y', 'E', 'R', ' ', (id + 1) + '0', '\0'};
+
 	SDL_Rect src;
 
 	memset(ctx->players[id].owned, 0, 5 * sizeof(uint8_t));
@@ -110,19 +110,13 @@ void initPlayer(Context *ctx, uint8_t id, SDLX_RectContainer *root)
 	ctx->players[id].status = DISCONNECTED;
 	ctx->players[id].reserveCount = 0;
 
-	SDLX_SpriteCreate(&ctx->players[id].pointSprite, 1,  ctx->textSheet.tex);
 
-	ctx->players[id].pointsTag = root->containers[0].elems[1]._boundingBox;
-	ctx->players[id].pointSprite._dst = root->containers[0].elems[1]._boundingBox;
-	ctx->players[id].pointSprite._dst.x += root->containers[0].elems[1]._boundingBox.w;
-	ctx->players[id].pointSprite._dst.w = ctx->players[id].pointSprite._dst.h;
 	// ctx->players[id].pointSprite._dst.h = ctx->numbers.h;
-	ctx->players[id].pointSprite._src = ctx->numbers;
+
 
 	// TTF_SizeText(ctx->display->defaultFont, name, &root->containers[0].elems[0].boundingBox->w, &root->containers[0].elems[0].boundingBox->h);
 	// TTF_SizeText(ctx->display->defaultFont, "POINTS : ", &root->containers[0].elems[1].boundingBox->w, &root->containers[0].elems[1].boundingBox->h);
-	SDLX_RenderMessage(ctx->display, root->containers[0].elems[0].boundingBox, (SDL_Color){255,255,255,255}, name);
-	SDLX_RenderMessage(ctx->display, root->containers[0].elems[1].boundingBox, (SDL_Color){255,255,255,255}, "POINTS : ");
+
 
 	for (i = 0; i < POTION_TYPES; i++)
 	{
