@@ -6,7 +6,9 @@ int main()
 	char *msg;
 
 	ctx = init();
+	init_new_game(ctx);
 	// execMsg(ctx, "0p0|000000");
+	// ctx->display->background = ctx->assets.texPotions;
 	while (1)
 	{
 		SDLX_RenderReset(ctx->display);
@@ -14,7 +16,6 @@ int main()
 		SDLX_InputLoop();
 		core(ctx, msg);
 		SDLX_RenderAll(ctx->display);
-		// SDL_RenderCopy(ctx->display->renderer, ctx->assets.mainBg, NULL, NULL);
 		// SDLX_RenderResetColour(ctx->display);
 		SDL_RenderPresent(ctx->display->renderer);
 	}

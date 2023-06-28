@@ -71,10 +71,12 @@ void 		SDLX_RenderOne(uint32_t id);
 void        SDLX_RenderReset(SDLX_Display *display)
 {
 	SDL_RenderClear(display->renderer);
-	SDL_SetRenderDrawColor(display->renderer, display->bgColor.r, display->bgColor.g, display->bgColor.b, display->bgColor.a);
+	// SDL_SetRenderDrawColor(display->renderer, display->bgColor.r, display->bgColor.g, display->bgColor.b, display->bgColor.a);
 	// SDL_SetRenderDrawBlendMode(display->renderer, SDL_BLENDMODE_BLEND);
 	if (display->background)
+	{
 		SDL_RenderCopy(display->renderer, display->background, NULL, NULL);
+	}
 }
 
 void		SDLX_RenderQueuePush(SDLX_Sprite *sprite)

@@ -1,23 +1,19 @@
 #include "../includes/splendor.h"
 #include <time.h>
 
+# define TOP_ROW 0
+# define MID_ROW 1
+# define BOT_ROW 2
+
 # define TOP_ROW_COUNT 10
 # define MID_ROW_COUNT 10
-# define BOT_ROW_COUNT 10
+# define BOT_ROW_COUNT 0
 
 # define ROW_CARD_COUNT 4
 
-# define UI_PLAYER_LEFT 0
-# define UI_BOARD 1
-# define UI_PLAYER_RIGHT 2
-
-# define TOKEN_ROW 0
-# define CARD_ROW 1
-# define TITLE_ROW 2
-# define TOP_CARD_ROW 0
-# define MID_CARD_ROW 1
-# define BOT_CARD_ROW 2
-
+void init_new_game(Context *ctx);
+void fill_board(Context *ctx);
+void fill_player(Context *ctx, uint8_t id);
 
 Context *init()
 {
@@ -32,53 +28,42 @@ Context *init()
 	ctx->state = PLAYING;
 	ctx->playerCount = 0;
 
-
-
-
 	return ctx;
 }
 
-// void initNewGame(Context *ctx)
-// {
-// 	SDLX_RectContainer *root;
+void init_new_game(Context *ctx)
+{
+	SDLX_RenderResetColour(ctx->display);
+	SDL_SetRenderTarget(ctx->display->renderer, ctx->display->background);
+	SDL_SetTextureBlendMode(ctx->display->background , SDL_BLENDMODE_BLEND);
 
-// 	root = loadConfig("assets/UIconfig");
+	fill_board(ctx);
 
+	// if (ctx->players[0].status == READY)
+		fill_player(ctx, 0);
+	// if (ctx->players[1].status == READY)
+		fill_player(ctx, 1);
+	// if (ctx->players[2].status == READY)
+		fill_player(ctx, 2);
+	// if (ctx->players[3].status == READY)
+		fill_player(ctx, 3);
 
-// 	initBoard (ctx, &root->containers[UI_BOARD]);
+	SDL_Log("Init new game");
+	SDL_SetRenderTarget(ctx->display->renderer, NULL);
+}
 
-// 	SDL_Log("Board was init");
-// 	if (ctx->players[0].status == READY)
-// 		initPlayer(ctx, 0, &root->containers[UI_PLAYER_LEFT].containers[0]);
-// 	if (ctx->players[1].status == READY)
-// 		initPlayer(ctx, 1, &root->containers[UI_PLAYER_RIGHT].containers[0]);
-// 	if (ctx->players[2].status == READY)
-// 		initPlayer(ctx, 2, &root->containers[UI_PLAYER_LEFT].containers[1]);
-// 	if (ctx->players[3].status == READY)
-// 		initPlayer(ctx, 3, &root->containers[UI_PLAYER_RIGHT].containers[1]);
+void fill_board(Context *ctx)
+{
+	SDL_Rect src;
 
-// 	SDL_SetRenderTarget(ctx->display->renderer, NULL);
-// 	SDL_SetRenderDrawBlendMode(ctx->display->renderer, SDL_BLENDMODE_BLEND);
-// 	cleanupUIConfig(root);
-// 	SDL_free(root);
-// }
+	ctx->board.rows[TOP_ROW].remainCount = TOP_ROW_COUNT;
+	ctx->board.rows[MID_ROW].remainCount = MID_ROW_COUNT;
+	ctx->board.rows[BOT_ROW].remainCount = BOT_ROW_COUNT;
 
-// void initBoard(Context *ctx, SDLX_RectContainer *root)
-// {
-// 	Potion *cards;
-// 	SDL_Rect src;
-
-// 	ctx->board.rows[TOP_ROW].remainCount = TOP_ROW_COUNT;
-// 	ctx->board.rows[MID_ROW].remainCount = MID_ROW_COUNT;
-// 	ctx->board.rows[BOT_ROW].remainCount = BOT_ROW_COUNT;
-
-// 	initRowPotions(ctx, &root->containers[CARD_ROW].containers[TOP_CARD_ROW], TOP_ROW);
-// 	initRowPotions(ctx, &root->containers[CARD_ROW].containers[MID_CARD_ROW], MID_ROW);
-// 	initRowPotions(ctx, &root->containers[CARD_ROW].containers[BOT_CARD_ROW], BOT_ROW);
-
-// 	ctx->board.tokens[ESSENCE_TYPES - 1] = 5;
-// 	SDL_SetRenderDrawColor(ctx->display->renderer, 0, 0, 0, 255);
-// }
+	ctx->board.rows[TOP_ROW].recipeCount = ROW_CARD_COUNT;
+	ctx->board.rows[MID_ROW].recipeCount = ROW_CARD_COUNT;
+	ctx->board.rows[BOT_ROW].recipeCount = ROW_CARD_COUNT;
+}
 
 // void initRowPotions(Context *ctx, SDLX_RectContainer *container, int level)
 // {
@@ -93,58 +78,38 @@ Context *init()
 
 // }
 
-// void initPlayer(Context *ctx, uint8_t id, SDLX_RectContainer *root)
-// {
-// 	int i;
+void fill_player(Context *ctx, uint8_t id)
+{
+	int i;
 
-// 	SDL_Rect src;
+	SDL_Rect src;
+	char name[9] = {'P', 'L', 'A', 'Y', 'E', 'R', ' ', (id + 1) + '0', '\0'};
 
-// 	memset(ctx->players[id].owned, 0, 5 * sizeof(uint8_t));
-// 	memset(ctx->players[id].tokens, 0, 5 *sizeof(uint8_t));
-// 	ctx->players[id].status = DISCONNECTED;
-// 	ctx->players[id].reserveCount = 0;
+	memset(ctx->players[id].owned, 0, 5 * sizeof(uint8_t));
+	memset(ctx->players[id].tokens, 0, 5 *sizeof(uint8_t));
+	ctx->players[id].potionCount = 0;
+	ctx->players[id].status = DISCONNECTED;
+	ctx->players[id].points = 0;
 
+	// TTF_SizeText(ctx->display->defaultFont, name, &ctx->players[id].pointsTag.w, &ctx->players[id].pointsTag.h);
 
-// 	// ctx->players[id].pointSprite._dst.h = ctx->numbers.h;
+	SDLX_RenderMessage(ctx->display, &ctx->players[id].pointsTag, (SDL_Color){255,255,255,255}, name);
+	// SDLX_RenderMessage(ctx->display,ctx->players[id].pointSprite., (SDL_Color){255,255,255,255}, "POINTS : ");
+	ctx->players[id].pointSprite._dst.h = ctx->assets.textSrc.h;
 
+	// src = (SDL_Rect){.h = 53, .w = CARD_W / 2,
+	// 					 .x = (SEP_X + 5) + (CARD_W / 2 + SEP_X) * i, .y =  (CARD_H * 2) + SEP_Y * 3 + 35};
+	// SDLX_SpriteCreate(&ctx->players[id].ressources[i], 1, ctx->textSheet.tex);
+	// ctx->players[id].ressources[i]._dst = root->containers[1].containers[i].elems[0]._boundingBox;
 
-// 	// TTF_SizeText(ctx->display->defaultFont, name, &root->containers[0].elems[0].boundingBox->w, &root->containers[0].elems[0].boundingBox->h);
-// 	// TTF_SizeText(ctx->display->defaultFont, "POINTS : ", &root->containers[0].elems[1].boundingBox->w, &root->containers[0].elems[1].boundingBox->h);
-
-
-// 	for (i = 0; i < POTION_TYPES; i++)
-// 	{
-// 		ctx->players[id].owned[i] = 0;
-// 		ctx->players[id].tokens[i] = 0;
-
-// 		SDLX_SpriteCreate(&ctx->players[id].ressources[i], 1,  ctx->textSheet.tex);
-// 		SDLX_SpriteCreate(&ctx->players[id].permanents[i], 1,  ctx->textSheet.tex);
-// 		ctx->players[id].ressources[i]._dst = root->containers[1].containers[i].elems[0]._boundingBox;
-// 		ctx->players[id].permanents[i]._dst = root->containers[1].containers[i].elems[1]._boundingBox;
-// 		ctx->players[id].ressources[i]._src = ctx->numbers;
-// 		ctx->players[id].permanents[i]._src = ctx->numbers;
-// 		get_img_src(&src, TOK_RECT, i);
-// 		SDL_RenderCopy(ctx->display->renderer, ctx->Tcards, &src,  root->containers[1].containers[i].elems[0].boundingBox);
-// 		get_img_src(&src, TOK_HEX, i);
-// 		SDL_RenderCopy(ctx->display->renderer, ctx->Tcards, &src,  root->containers[1].containers[i].elems[1].boundingBox);
-// 	}
-
-// 	// src = (SDL_Rect){.h = 53, .w = CARD_W / 2,
-// 	// 					 .x = (SEP_X + 5) + (CARD_W / 2 + SEP_X) * i, .y =  (CARD_H * 2) + SEP_Y * 3 + 35};
-// 	// SDLX_SpriteCreate(&ctx->players[id].ressources[i], 1, ctx->textSheet.tex);
-// 	// ctx->players[id].ressources[i]._dst = root->containers[1].containers[i].elems[0]._boundingBox;
-// 	// ctx->players[id].ressources[i]._src = ctx->numbers;
-// 	// SDL_RenderCopy(ctx->display->renderer, ctx->Tcards, &src,  root->containers[1].containers[i].elems[0].boundingBox);
-
-// 	for (i = 0; i < MAX_RESERVE; i++)
-// 	{
-// 		SDLX_SpriteCreate(&ctx->players[id].reserved[i].sprite, 1, ctx->Tcards);
-// 		ctx->players[id].reserved[i].sprite._dst = root->containers[2].elems[i]._boundingBox;
-// 		ctx->players[id].reserved[i].sprite.src = NULL;
-// 		ctx->players[id].reserved[i].sprite.texture = SDL_CreateTexture(ctx->display->renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, ctx->board.rows[0].revealed[0].sprite._dst.w, ctx->board.rows[0].revealed[0].sprite._dst.h);
-// 		SDL_SetTextureBlendMode(ctx->players[id].reserved[i].sprite.texture , SDL_BLENDMODE_BLEND);
-// 	}
-// }
+	for (i = 0; i < ESSENCE_TYPES; i++)
+	{
+		ctx->players[id].tokens[i] = 0;
+		SDL_RenderCopy(ctx->display->renderer, ctx->assets.mainBg, NULL,  ctx->players[id].ressources[i].dst);
+		// TTF_SizeText(ctx->display->defaultFont, "00", &ctx->players[id].ressources[i]._dst.w, &ctx->players[id].ressources[i]._dst.h);
+		ctx->players[id].ressources[i]._src = ctx->assets.textSrc;
+	}
+}
 // # define START 3000
 // void init_connectScreen(Context *ctx)
 // {

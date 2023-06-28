@@ -9,7 +9,7 @@ void renderPlayer(Context *ctx, Player *player)
 
 	// player->pointSprite.src->x = ctx->assets.textSrc.x + (player->points * ctx->assets.textSrc.w);
 
-	// SDLX_RenderQueuePush(&player->pointSprite);
+	SDLX_RenderQueuePush(&player->pointSprite);
 
 
 	for (i = 0; i < ESSENCE_TYPES; i++)

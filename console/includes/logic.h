@@ -11,11 +11,7 @@ int 	title_screen(Context *ctx);
 
 Context *init();
 
-void initNewGame(Context *ctx);
-void initBoard	 (Context *ctx, SDLX_RectContainer *root);
-void initRowPotions(Context *ctx, SDLX_RectContainer *container, int level);
-void initPlayer	 (Context *ctx, uint8_t id, SDLX_RectContainer *root);
-
+void init_new_game(Context *ctx);
 void init_connectScreen(Context *ctx);
 
 // ~-~-~-~-~-~-~- messages.c ~-~-~-~-~-~-~-

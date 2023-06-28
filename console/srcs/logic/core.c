@@ -59,8 +59,8 @@ int title_screen(Context *ctx)
 	}
 	else
 	{
-		SDL_DestroyTexture(ctx->display->background);
-		ctx->display->background = NULL;
+		// SDL_DestroyTexture(ctx->display->background);
+		// ctx->display->background = NULL;
 		ctx->state = CONNECT_SCREEN;
 	}
 }
