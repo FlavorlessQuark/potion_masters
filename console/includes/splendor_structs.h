@@ -73,7 +73,6 @@ typedef struct Board
 {
 	Potion		titles[MAX_MASTER_POTIONS];
 
-	SDLX_Sprite essenceUI[ESSENCE_TYPES];
 	Row 		rows[ROW_COUNT];
 }	Board;
 
@@ -81,12 +80,14 @@ typedef struct ConnectScreen
 {
 	int counter;
 	SDL_Rect status;
-	SDL_Texture *buttons;
 	SDLX_Sprite playerSprites[MAX_PLAYERS];
+	SDLX_Sprite playerStatus[MAX_PLAYERS];
 }	ConnectScreen;
 
 typedef struct Assets
 {
+	SDL_Texture *connectBg;
+	SDL_Texture *mainBg;
 	SDL_Texture *texPotions;
 	SDL_Texture *texUI;
 	SDLX_TextSheet text;

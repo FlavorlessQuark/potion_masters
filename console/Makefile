@@ -7,6 +7,7 @@ INCLUDES = -I includes/ -I includes/SDL2/ -I includes/SDLX/ -I includes/MT/
 
 LIB_DIR = libs/
 STATIC_LIB = -l SDL2 -l SDL2_image -l SDL2_ttf -lm -ldl -lpthread
+# STATIC_LIB = libc_controlpads.a -l SDL2 -l SDL2_image -l SDL2_ttf -lm -ldl -lpthread
 
 SDLX_DIR       = SDLX/
 CONNECTION_DIR = connection/
@@ -65,7 +66,7 @@ all: $(NAME)
 # all:
 # 	echo $(SRCS)
 $(NAME): $(BIN_DIR) $(OBJS)
-	gcc $(FLAGS) $(INCLUDES) -o $(NAME) $(OBJS) libc_controlpads.a $(STATIC_LIB)
+	gcc $(FLAGS) $(INCLUDES) -o $(NAME) $(OBJS)  $(STATIC_LIB)
 
 $(BIN_DIR):
 	mkdir -p $(BIN_DIR)

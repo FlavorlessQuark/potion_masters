@@ -22,32 +22,32 @@ extern Err get_messages(char * client, c_string_vec * messages);
 
 c_string_vec *get_connections(void)
 {
-	bool did_change;
+	// bool did_change;
 
-	CP_CHECK(clients_changed(&did_change));
-	if (did_change) {
-		free_strvec(handles);
-		CP_CHECK(get_client_handles(&handles));
-	}
-	else
-		return NULL;
-	return &handles;
+	// CP_CHECK(clients_changed(&did_change));
+	// if (did_change) {
+	// 	free_strvec(handles);
+	// 	CP_CHECK(get_client_handles(&handles));
+	// }
+	// else
+	// 	return NULL;
+	// return &handles;
 }
 
 char *recv_from(char *handle)
 {
-	 CP_CHECK(get_messages(handle, &msg));
-		if (msg.len > 0) {
-			return msg.ptr[0];
-		}
-		return NULL;
+	//  CP_CHECK(get_messages(handle, &msg));
+	// 	if (msg.len > 0) {
+	// 		return msg.ptr[0];
+	// 	}
+	// 	return NULL;
 		// free_strvec(messages);
 }
 
 int send_to(char *handle, char *msg)
 {
-	SDL_Log("Send message %s to %s", msg, handle);
-	CP_CHECK(send_message(handle, msg));
+	// SDL_Log("Send message %s to %s", msg, handle);
+	// CP_CHECK(send_message(handle, msg));
 }
 
 
