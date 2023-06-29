@@ -1,5 +1,7 @@
 #include "../includes/splendor.h"
 
+
+
 // Potion *findPotion(Context *ctx, char *id, int _id)
 // {
 // 	int level;
@@ -72,69 +74,67 @@
 // }
 
 
-// int generatePotion(SDL_Texture *base, Potion *card, int level)
-// {
 
-// 	int type;
-// 	int variation;
-// 	int arr[ESSENCE_TYPES - 1] = {0,1,2,3};
-// 	int singleMax = 3 + (2 * level);
-// 	int totalMax = 6 + (2 * level);
-// 	int length = ESSENCE_TYPES - 1;
-// 	int cost;
-// 	int i;
+/*
+	 Potions ids: <type>|<current_fill>: <max_fill>|<count>|<cost>
+	Type:          integer
+	Current_fill : integer
+	Max_fill :     integer
+	Cost: [<identifier>|<type>:<count>]
+		identifier:p or e
+		type:      integer
+		count:     integer
+ */
 
-// 	type = rand() % POTION_TYPES;
-// 	variation = 0;
+int generatePotion(SDL_Texture *base, Potion *card, int level)
+{
+	int type;
+	int count;
+	int i;
 
+	type = rand() % POTION_TYPES;
 
-// 	while (totalMax > 0 && length > 0)
-// 	{
-// 		i = rand() % length;
-// 		cost = rand() % MIN(singleMax, totalMax);
-// 		totalMax -= cost;
-// 		card->cost[arr[i]] = cost;
-// 		arr[i] = arr[length - 1];
-// 		length -= 1;
-// 	}
+	card->id[0] = type + '0';
+	card->id[1] = '|';
+	card->id[2] = 3 + '0';
+	card->id[3] = ':';
+	card->id[4] = 3 + '0';
+	card->id[5] = '|';
 
-// 	if (level == 0)
-// 		card->points = (rand() % 100) > 75;
-// 	else if (level == 1)
-// 		card->points = (rand() % 2);
-// 	else
-// 		card->points = (rand() % 4);
-// 	card->id[0] = level + '0';
-// 	card->id[1] = type + '0';
-// 	card->id[2] = variation + '0';
-// 	card->id[3] = card->cost[0] + '0';
-// 	card->id[4] = card->cost[1] + '0';
-// 	card->id[5] = card->cost[2] + '0';
-// 	card->id[6] = card->cost[3] + '0';
-// 	card->id[7] = card->points + '0';
-// 	card->id[8] = '\0';
+	count = rand() % MAX_COST_TYPES;
+
+	card->id[6] = count + '0';
+	card->id[7] = '|';
+
+	for (int i = 0; i < count; i++)
+	{
+		card->id[8 + i * 3 + 0] = 'e';
+		card->id[8 + i * 3 + 1] = (rand() % POTION_TYPES) + '0';
+		card->id[8 + i * 3 + 2] = (rand() % 4) + '0';
+	}
+	card->id[8 + count * 3] = '\0';
 
 
 
-// 	extract_num(card->id, &card->_id);
-// 	generatePotionTexture(base, card, type);
-// 	// SDL_Log("Generate %s  (%d)",
-// 	// 	card->id,
-// 	// 	card->_id
-// 	// );
-// 	SDL_Log("Generate %s  (%d) | Src (%d,%d) Cost: %d %d %d %d, points %d",
-// 		card->id,
-// 		card->_id,
-// 		card->sprite._src.x, card->sprite._src.y,
-// 		card->cost[0],
-// 		card->cost[1],
-// 		card->cost[2],
-// 		card->cost[3],
-// 		card->points
-// 	);
+	// extract_num(card->id, &card->_id);
+	// generatePotionTexture(base, card, type);
+	// SDL_Log("Generate %s  (%d)",
+	// 	card->id,
+	// 	card->_id
+	// );
+	// SDL_Log("Generate %s  (%d) | Src (%d,%d) Cost: %d %d %d %d, points %d",
+	// 	card->id,
+	// 	card->_id,
+	// 	card->sprite._src.x, card->sprite._src.y,
+	// 	card->cost[0],
+	// 	card->cost[1],
+	// 	card->cost[2],
+	// 	card->cost[3],
+	// 	card->points
+	// );
 
-// 	return 1;
-// }
+	return 1;
+}
 
 
 

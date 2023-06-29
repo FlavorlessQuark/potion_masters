@@ -24,7 +24,15 @@ int main_game(Context *ctx)
 {
 	// int msgWasExec;
 	// char *msg;
-
+	c_string_vec *handles;
+	handles = get_connections();
+	if (handles)
+	{
+		// handle_Connect(ctx, handles);
+		SDL_Log("New connections");
+		if (ctx->players[0].status == CONNECTED)
+			send_game_state(ctx, 0);
+	}
 	// msgWasExec = 0;
 	// msg = recv_from(ctx->players[ctx->turn].handle);
 	// if (msg)
@@ -67,13 +75,13 @@ int title_screen(Context *ctx)
 
 int connect_screen(Context *ctx)
 {
-	// c_string_vec *handles;
-	// uint8_t ready;
-	// char *msg;
+	c_string_vec *handles;
+	uint8_t ready;
+	char *msg;
 
-	// handles = get_connections();
-	// if (handles)
-	// 	handle_Connect(ctx, handles);
+	handles = get_connections();
+	if (handles)
+		handle_Connect(ctx, handles);
 
 	// if (ctx->playerCount > 0)
 	// 	ready = READY;

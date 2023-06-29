@@ -56,6 +56,9 @@ void render_connect_screen(Context *ctx)
 			SDL_SetRenderDrawColor(ctx->display->renderer, 0x0, 0x0, 255, 255);
 		SDL_RenderDrawRect(ctx->display->renderer, ctx->connectscreen.playerSprites[i].dst);
 		SDL_RenderDrawRect(ctx->display->renderer, ctx->connectscreen.playerStatus[i].dst);
+	}
+	for (int i = 0; i < ctx->playerCount; i++)
+	{
 		SDLX_RenderQueuePush(&ctx->connectscreen.playerSprites[i]);
 		SDLX_RenderQueuePush(&ctx->connectscreen.playerStatus[i]);
 	}

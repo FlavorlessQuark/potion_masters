@@ -24,8 +24,10 @@ Context *init()
 
 	ctx = SDL_calloc(1, sizeof(Context));
 	init_UI(ctx);
-	// init_connectScreen(ctx);
-	ctx->state = PLAYING;
+	init_connectScreen(ctx);
+	init_new_game(ctx);
+	ctx->state = CONNECT_SCREEN;
+	// ctx->state = PLAYING;
 	ctx->playerCount = 0;
 
 	return ctx;
@@ -52,6 +54,19 @@ void init_new_game(Context *ctx)
 	SDL_SetRenderTarget(ctx->display->renderer, NULL);
 }
 
+void initRowPotions(Context *ctx, int level)
+{
+	Row *row;
+
+	row = &ctx->board.rows[level];
+	row->recipeCount = MAX_ROWCARD;
+	for (int i = 0; i < MAX_ROWCARD; i++)
+	{
+		generatePotion(ctx->assets.texPotions, &row->recipes[i], level);
+	}
+
+}
+
 void fill_board(Context *ctx)
 {
 	SDL_Rect src;
@@ -63,20 +78,12 @@ void fill_board(Context *ctx)
 	ctx->board.rows[TOP_ROW].recipeCount = ROW_CARD_COUNT;
 	ctx->board.rows[MID_ROW].recipeCount = ROW_CARD_COUNT;
 	ctx->board.rows[BOT_ROW].recipeCount = ROW_CARD_COUNT;
+
+	for (int i = 0; i < ROW_COUNT; i++)
+		initRowPotions(ctx, i);
 }
 
-// void initRowPotions(Context *ctx, SDLX_RectContainer *container, int level)
-// {
-// 	Row *row;
 
-// 	row = &ctx->board.rows[level];
-// 	row->recipeCount = MAX_ROWCARD;
-// 	for (int i = 0; i < MAX_ROWCARD; i++)
-// 	{
-// 		generatePotion(ctx->assets.texPotions, &row->recipes[i], level);
-// 	}
-
-// }
 
 void fill_player(Context *ctx, uint8_t id)
 {
@@ -110,29 +117,9 @@ void fill_player(Context *ctx, uint8_t id)
 		ctx->players[id].ressources[i]._src = ctx->assets.textSrc;
 	}
 }
-// # define START 3000
-// void init_connectScreen(Context *ctx)
-// {
-// 	SDLX_RectContainer *root;
-// 	SDL_Surface *surf;
 
-// 	root = loadConfig("assets/startUI");
-
-// 	// ctx->connectscreen.buttons = IMG_Load("assets/buttons.png");
-// 	SDL_Log("Container %d", root->containerCount);
-// 	ctx->connectscreen.counter = START;
-// 	surf = IMG_Load("assets/PMTitle.png");
-// 	ctx->display->background = SDL_CreateTextureFromSurface(ctx->display->renderer, surf);
-// 	ctx->display->bgColor = (SDL_Color){54, 60, 66,255};
-// 	SDL_FreeSurface(surf);
-
-// 	SDLX_SpriteCreate(&ctx->connectscreen.playerSprites[0], 1 , NULL);
-// 	ctx->connectscreen.playerSprites[0]._dst = root->containers[0].elems[0]._boundingBox;
-// 	ctx->connectscreen.playerSprites[0]._src = (SDL_Rect){.x = 0, .y = 0, .w = 500, .h = 700};
-// 	SDLX_SpriteCreate(&ctx->connectscreen.playerSprites[1], 1 , NULL);
-// 	ctx->connectscreen.playerSprites[1]._dst = root->containers[0].elems[1]._boundingBox;
-// 	SDLX_SpriteCreate(&ctx->connectscreen.playerSprites[2], 1 , NULL);
-// 	ctx->connectscreen.playerSprites[2]._dst = root->containers[1].elems[0]._boundingBox;
-// 	SDLX_SpriteCreate(&ctx->connectscreen.playerSprites[3], 1 , NULL);
-// 	ctx->connectscreen.playerSprites[3]._dst = root->containers[1].elems[1]._boundingBox;
-// }
+# define START 3000
+void init_connectScreen(Context *ctx)
+{
+	ctx->connectscreen.counter = START;
+}

@@ -6,8 +6,8 @@ FLAGS = $(DEBUG_FLAGS)
 INCLUDES = -I includes/ -I includes/SDL2/ -I includes/SDLX/ -I includes/MT/
 
 LIB_DIR = libs/
-STATIC_LIB = -l SDL2 -l SDL2_image -l SDL2_ttf -lm -ldl -lpthread
-# STATIC_LIB = libc_controlpads.a -l SDL2 -l SDL2_image -l SDL2_ttf -lm -ldl -lpthread
+# STATIC_LIB = -l SDL2 -l SDL2_image -l SDL2_ttf -lm -ldl -lpthread
+STATIC_LIB = libc_controlpads.a -l SDL2 -l SDL2_image -l SDL2_ttf -lm -ldl -lpthread
 
 SDLX_DIR       = SDLX/
 CONNECTION_DIR = connection/

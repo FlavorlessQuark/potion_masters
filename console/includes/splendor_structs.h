@@ -8,10 +8,11 @@
 # define MAX_POTIONS (10)
 # define MAX_ROWCARD (4)
 # define MAX_MASTER_POTIONS (4)
-
+# define MAX_BREWING (3)
 # define ESSENCE_TYPES (4)
 
-# define CARD_ID_LEN (3 + POTION_TYPES + 2)
+# define MAX_COST_TYPES (3)
+# define CARD_ID_LEN ((sizeof(char) * 8) + (MAX_COST_TYPES * (sizeof(char) * 6)))
 
 # define POTION_TYPES (3)
 
@@ -47,16 +48,19 @@ typedef struct Potion
 typedef struct Player
 {
 	Potion 	owned[MAX_POTIONS];
+	Potion 	brewing;
 	uint8_t tokens[ESSENCE_TYPES];
 	uint8_t potionCount;
 	uint8_t status;
 	uint8_t points;
+	uint8_t isBrewing;
 
 	SDL_Rect pointsTag;
 	SDL_Rect potions[MAX_POTIONS];
 
 	SDLX_Sprite pointSprite;
 	SDLX_Sprite ressources[ESSENCE_TYPES];
+
 
 	char handle[HANDLE_LEN];
 }	Player;
@@ -72,8 +76,9 @@ typedef struct Row
 typedef struct Board
 {
 	Potion		titles[MAX_MASTER_POTIONS];
-
 	Row 		rows[ROW_COUNT];
+
+	uint8_t 	masterCount;
 }	Board;
 
 typedef struct ConnectScreen

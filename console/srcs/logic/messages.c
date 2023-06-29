@@ -16,7 +16,29 @@
 #define MSG_LEN PLAYER_STATE_LEN + BOARD_STATE_LEN
 
 
-static char *msg[MSG_LEN];
+static char msg[MSG_LEN];
+
+int compose_player_state(Player *player, int status, int offset);
+int compose_board_state(Board *board, int offset);
+
+int send_game_state(Context *ctx, int player)
+{
+	int offset;
+
+
+	offset = 0;
+	msg[offset++] = ctx->state + '0';
+	msg[offset++] = '|';
+
+	offset = compose_player_state(&ctx->players[player], ctx->turn == player, offset);
+	offset = compose_board_state(&ctx->board, offset);
+	msg[offset] = '\0';
+	SDL_Log("Sending message to player %d : %s len (%d)",
+		player, msg, offset
+	);
+	send_to(ctx->players[player].handle, msg);
+}
+
  /* STATE MESSAGE
  <stage>|<player_state>|<board_state>
  Stage : 0 - connect , 1 play, 2 over
@@ -27,7 +49,7 @@ static char *msg[MSG_LEN];
 	Brewing:  <bool>:id
 	Points :  integer
  Board state : <master_count>:<master_ids>|<rows>
-	Rows: <count>:<ids>
+	Rows: <count>:<ids>|
 
  Potions ids: <type>|<current_fill>: <max_fill>|<cost>
 	Type:          integer
@@ -50,10 +72,51 @@ End :    e:0
 
 */
 
-int send_game_state(Context *ctx, int player)
+int compose_player_state(Player *player, int status, int offset)
 {
-	int offset;
+	msg[offset++] = status + '0';
+	msg[offset++] = '|';
+	for (int i = 0; i < ESSENCE_TYPES; i ++)
+	{
+		msg[offset++] =  player->tokens[i] + '0';
+		msg[offset++] = ',';
+	}
+	msg[offset++] = '|';
+	msg[offset++] = player->potionCount + '0';
+	for (int i = 0; i < player->potionCount; i++)
+	{
+		SDL_memcpy(msg + offset, player->owned[i].id, CARD_ID_LEN);
+		offset += CARD_ID_LEN;
+		msg[offset++] = ',';
+	}
+	msg[offset++] = '|';
+	msg[offset++] = player->isBrewing + '0';
+	msg[offset++] = ':';
+	if (player->isBrewing)
+	{
+		SDL_memcpy(msg + offset, player->brewing.id, CARD_ID_LEN);
+		offset += CARD_ID_LEN;
+	}
+	msg[offset++] = '|';
 
-	offset = 0;
-	msg[offset] = ctx->state + '0';
+	return offset;
+}
+
+int compose_board_state(Board *board, int offset)
+{
+	msg[offset++] = board->masterCount + '0';
+	msg[offset++] = '|';
+	for (int i = 0; i < ROW_COUNT; i++)
+	{
+		msg[offset++] = board->rows->recipeCount + '0';
+		msg[offset++] = ':';
+		for (int j = 0; j < board->rows[i].recipeCount; j++)
+		{
+			SDL_memcpy(msg + offset, board->rows[i].recipes[j].id, CARD_ID_LEN);
+			offset += CARD_ID_LEN;
+			msg[offset++] = ',';
+		}
+		msg[offset++] = '|';
+	}
+
 }
