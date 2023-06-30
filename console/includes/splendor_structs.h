@@ -12,7 +12,7 @@
 # define ESSENCE_TYPES (4)
 
 # define MAX_COST_TYPES (3)
-# define CARD_ID_LEN ((sizeof(char) * 8) + (MAX_COST_TYPES * (sizeof(char) * 6)))
+# define CARD_ID_LEN ((sizeof(char) * 8) + (MAX_COST_TYPES * (sizeof(char) * 4)) + 1)
 
 # define POTION_TYPES (3)
 

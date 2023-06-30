@@ -94,5 +94,4 @@ void init_board_screen(Context *ctx)
 	// SDL_FreeSurface(surf);
 
 	SDL_SetRenderTarget(ctx->display->renderer, NULL);
-	SDLX_SpritePrint(&ctx->switchSprite);
 }

@@ -26,8 +26,8 @@ Context *init()
 	init_UI(ctx);
 	init_connectScreen(ctx);
 	init_new_game(ctx);
-	ctx->state = CONNECT_SCREEN;
-	// ctx->state = PLAYING;
+	// ctx->state = CONNECT_SCREEN;
+	ctx->state = PLAYING;
 	ctx->playerCount = 0;
 
 	return ctx;

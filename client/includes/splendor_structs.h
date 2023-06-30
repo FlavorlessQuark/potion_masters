@@ -3,16 +3,32 @@
 
 # include "SDLX/SDLX.h"
 
-# define MIN_PLAYERS 2
-# define MAX_PLAYERS 4
-# define MAX_RESERVE 4
-# define MAX_ROWCARD 4
-# define MAX_MASTER_POTIONS 5
+#define PLAYER_STATE_LEN (sizeof(char)+ \
+						 sizeof(char) + \
+						(sizeof(char) * 2 * ESSENCE_TYPES) + \
+						(sizeof(char) * 2 + (MAX_POTIONS)  * CARD_ID_LEN) + \
+						(sizeof(char) * 2 + CARD_ID_LEN)   + \
+						 sizeof(char) * 2 + \
+						 sizeof(char) * 2)
 
-# define POTION_TYPES 3
+#define BOARD_STATE_LEN (sizeof(char) * 2 + (MAX_MASTER_POTIONS) * CARD_ID_LEN) + \
+						(ROW_COUNT * (sizeof(char) * 2 + (MAX_POTIONS * CARD_ID_LEN)))
 
-# define ROW_COUNT 3
-# define ESSENCE_TYPES 5
+#define MSG_LEN PLAYER_STATE_LEN + BOARD_STATE_LEN
+
+# define MIN_PLAYERS (2)
+# define MAX_PLAYERS (4)
+# define MAX_POTIONS (10)
+# define MAX_ROWCARD (4)
+# define MAX_MASTER_POTIONS (4)
+# define MAX_BREWING (3)
+# define ESSENCE_TYPES (4)
+
+# define CARD_ID_LEN (3 + POTION_TYPES + 2)
+
+# define POTION_TYPES (3)
+
+# define ROW_COUNT (3)
 
 # define TOP_ROW 0
 # define MID_ROW 1
@@ -52,10 +68,7 @@
 #define CARD_OFF_Y (CARD_H + (SEP_Y * 2))
 # define CARD_VARIATIONS 0
 
-# define CARD_ID_LEN (3 + POTION_TYPES + 2)
-# define PLAYER_DATA_LEN ((ROW_COUNT * (CARD_ID_LEN + 1) * MAX_ROWCARD) + ESSENCE_TYPES)
-# define BOARD_DATA_LEN ((ESSENCE_TYPES * 2) + (MAX_RESERVE * CARD_ID_LEN))
-# define MSG_LEN PLAYER_DATA_LEN + BOARD_DATA_LEN + 2
+
 // #define MSG_LEN (ESSENCE_TYPES * 3) + (ROW_COUNT * (CARD_ID_LEN + 1) * MAX_ROWCARD) + (MAX_RESERVE * CARD_ID_LEN + 1) + 1 + 3
 
 
@@ -85,7 +98,7 @@ typedef struct Potion
 
 typedef struct Player
 {
-	Potion reserved[MAX_RESERVE];
+	Potion reserved[MAX_POTIONS];
 	uint8_t tokens[ESSENCE_TYPES];
 	uint8_t owned[POTION_TYPES];
 	uint8_t reserveCount;
@@ -136,7 +149,7 @@ typedef struct BuyScreen
 
 typedef struct PlayerUI
 {
-	SDLX_Button reserved[MAX_RESERVE];
+	SDLX_Button reserved[MAX_POTIONS];
 
 	//			 REserved card + tokens + owned + golden + point display + no card + Buy
 	// SDLX_Sprite UI[MAIN_SCREEN_SPRITE_COUNT];

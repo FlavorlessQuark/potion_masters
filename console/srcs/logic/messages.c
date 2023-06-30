@@ -1,7 +1,7 @@
 #include "../includes/splendor.h"
 
 #define PLAYER_STATE_LEN (sizeof(char)+ \
-						 sizeof(char) + \
+						 sizeof(char) * 4 + \
 						(sizeof(char) * 2 * ESSENCE_TYPES) + \
 						(sizeof(char) * 2 + (MAX_POTIONS)  * CARD_ID_LEN) + \
 						(sizeof(char) * 2 + CARD_ID_LEN)   + \
@@ -9,7 +9,7 @@
 						 sizeof(char) * 2)
 
 #define BOARD_STATE_LEN (sizeof(char) * 2 + (MAX_MASTER_POTIONS) * CARD_ID_LEN) + \
-						(ROW_COUNT * (sizeof(char) * 2 + (MAX_POTIONS * CARD_ID_LEN)))
+						(ROW_COUNT * (sizeof(char) * 6 + (MAX_POTIONS * CARD_ID_LEN)))
 
 
 
@@ -75,27 +75,29 @@ End :    e:0
 int compose_player_state(Player *player, int status, int offset)
 {
 	msg[offset++] = status + '0';
-	msg[offset++] = '|';
+	msg[offset++] = '[';
 	for (int i = 0; i < ESSENCE_TYPES; i ++)
 	{
 		msg[offset++] =  player->tokens[i] + '0';
 		msg[offset++] = ',';
 	}
-	msg[offset++] = '|';
+	msg[offset++] = ']';
 	msg[offset++] = player->potionCount + '0';
+	msg[offset++] = '[';
 	for (int i = 0; i < player->potionCount; i++)
 	{
-		SDL_memcpy(msg + offset, player->owned[i].id, CARD_ID_LEN);
-		offset += CARD_ID_LEN;
+		SDL_memcpy(msg + offset, player->owned[i].id, CARD_ID_LEN - 1);
+		offset += CARD_ID_LEN - 1;
 		msg[offset++] = ',';
 	}
+	msg[offset++] = ']';
 	msg[offset++] = '|';
 	msg[offset++] = player->isBrewing + '0';
 	msg[offset++] = ':';
 	if (player->isBrewing)
 	{
-		SDL_memcpy(msg + offset, player->brewing.id, CARD_ID_LEN);
-		offset += CARD_ID_LEN;
+		SDL_memcpy(msg + offset, player->brewing.id, CARD_ID_LEN - 1);
+		offset += CARD_ID_LEN - 1;
 	}
 	msg[offset++] = '|';
 
@@ -105,15 +107,17 @@ int compose_player_state(Player *player, int status, int offset)
 int compose_board_state(Board *board, int offset)
 {
 	msg[offset++] = board->masterCount + '0';
-	msg[offset++] = '|';
+	msg[offset++] = '[';
 	for (int i = 0; i < ROW_COUNT; i++)
 	{
 		msg[offset++] = board->rows->recipeCount + '0';
 		msg[offset++] = ':';
 		for (int j = 0; j < board->rows[i].recipeCount; j++)
 		{
-			SDL_memcpy(msg + offset, board->rows[i].recipes[j].id, CARD_ID_LEN);
-			offset += CARD_ID_LEN;
+			msg[offset++] = '<';
+			SDL_memcpy(msg + offset, board->rows[i].recipes[j].id,  board->rows[i].recipes[j].id[0] - '0');
+			offset +=  board->rows[i].recipes[j].id[0] - '0' ;
+			msg[offset++] = '>';
 			msg[offset++] = ',';
 		}
 		msg[offset++] = '|';

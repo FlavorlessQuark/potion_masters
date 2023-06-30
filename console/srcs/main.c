@@ -9,6 +9,7 @@ int main()
 	init_new_game(ctx);
 	// execMsg(ctx, "0p0|000000");
 	// ctx->display->background = ctx->assets.texPotions;
+
 	while (1)
 	{
 		SDLX_RenderReset(ctx->display);

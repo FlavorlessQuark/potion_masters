@@ -38,14 +38,14 @@ SCREEN_NAMES =			\
 
 SRCS_NAMES =								\
 	$(addprefix $(SDLX_DIR), $(SDLX_NAMES))	\
-	$(addprefix $(INIT_DIR), $(INIT_NAMES))	\
-	$(addprefix $(SCREEN_DIR), $(SCREEN_NAMES))	\
 	config_parser	\
 	connect			\
 	main 			\
 	messages		\
-	utils			\
 	window_events 	\
+	# $(addprefix $(SCREEN_DIR), $(SCREEN_NAMES))	\
+	utils			\
+	$(addprefix $(INIT_DIR), $(INIT_NAMES))	\
 
 SRCS = $(addprefix $(SRCS_DIR), $(addsuffix .c, $(SRCS_NAMES)))
 OBJS = $(addprefix $(BIN_DIR), $(SRCS:.c=.o))
@@ -58,7 +58,6 @@ html:
         -s USE_SDL_TTF=2 \
         -s USE_SDL_IMAGE=2 \
 		-s SDL2_IMAGE_FORMATS='["png"]'\
-        -s WASM=0 \
 		-s EXPORT_ES6=1 \
         -s MODULARIZE=1 \
         -s ENVIRONMENT=web \
@@ -70,6 +69,7 @@ html:
         -o $(NAME).js
 		mv $(NAME).js node/$(NAME).js
 		mv $(NAME).data node/$(NAME).data
+		mv $(NAME).wam node/$(NAME).wasm
 
 $(NAME): $(BIN_DIR) $(OBJS)
 	gcc $(FLAGS) $(INCLUDES) -o $(NAME) $(OBJS)  $(STATIC_LIB)

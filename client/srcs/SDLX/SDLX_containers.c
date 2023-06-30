@@ -117,6 +117,7 @@ int calc_offset(SDLX_RectContainer *container, SDLX_Display *display)
 		offset = direction - measurement;
 	return offset;
 }
+
 int calc_spacing(SDLX_RectContainer *container, SDLX_Display *display)
 {
 	int measurement;
@@ -137,7 +138,14 @@ int calc_spacing(SDLX_RectContainer *container, SDLX_Display *display)
 	if (container->alignment == SDLX_SPACE_EVEN)
 		spacing = (direction - measurement) / (container->elemCount + container->containerCount + 1);
 	else if (container->alignment == SDLX_SPACE_BETWEEN)
-		spacing = direction - measurement;
+	{
+		// SDL_Log("Space between total length %d inner length %d number of elements %d, spacing between %d",
+		// 	direction , measurement, container->elemCount + container->containerCount,
+		// 	(direction - measurement) / MIN(1, container->elemCount + container->containerCount - 1)
+		//  );
+		spacing = (direction - measurement) / MIN(1, container->elemCount + container->containerCount - 1);
+	}
+
 	return spacing;
 }
 
@@ -149,8 +157,10 @@ void position_elems( SDLX_RectContainer *container, SDLX_Display *display)
 	int x;
 	int y;
 
+	SDL_Log("??????????????????? 1");
 	offset = calc_offset(container, display);
 	spacing = calc_spacing(container, display);
+	SDL_Log("??????????????????? 2");
 
 	dir = container->alignDirection == SDLX_ALIGN_VERTICAL;
 	x = container->self.boundingBox->x + (offset * (dir ^ 1));

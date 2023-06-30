@@ -28,11 +28,12 @@ int main_game(Context *ctx)
 	handles = get_connections();
 	if (handles)
 	{
-		// handle_Connect(ctx, handles);
+		handle_Connect(ctx, handles);
 		SDL_Log("New connections");
 		if (ctx->players[0].status == CONNECTED)
 			send_game_state(ctx, 0);
 	}
+		// SDL_Log("New connections");
 	// msgWasExec = 0;
 	// msg = recv_from(ctx->players[ctx->turn].handle);
 	// if (msg)
@@ -79,9 +80,10 @@ int connect_screen(Context *ctx)
 	uint8_t ready;
 	char *msg;
 
-	handles = get_connections();
-	if (handles)
-		handle_Connect(ctx, handles);
+	// SDL_Log("PLOSE");
+	// handles = get_connections();
+	// if (handles)
+	// 	handle_Connect(ctx, handles);
 
 	// if (ctx->playerCount > 0)
 	// 	ready = READY;

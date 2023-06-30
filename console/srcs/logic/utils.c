@@ -94,34 +94,37 @@ int generatePotion(SDL_Texture *base, Potion *card, int level)
 
 	type = rand() % POTION_TYPES;
 
-	card->id[0] = type + '0';
-	card->id[1] = '|';
-	card->id[2] = 3 + '0';
-	card->id[3] = ':';
-	card->id[4] = 3 + '0';
-	card->id[5] = '|';
+	card->id[0] = '5';
+	card->id[1] = type + '0';
+	card->id[2] = ',';
+	card->id[3] = 3 + '0';
+	card->id[4] = ':';
+	card->id[5] = 3 + '0';
+	card->id[6] = ',';
 
-	count = rand() % MAX_COST_TYPES;
+	count = (rand() % MAX_COST_TYPES) + 1;
 
-	card->id[6] = count + '0';
-	card->id[7] = '|';
+	card->id[7] = count + '0';
+	card->id[8] = '|';
 
 	for (int i = 0; i < count; i++)
 	{
-		card->id[8 + i * 3 + 0] = 'e';
-		card->id[8 + i * 3 + 1] = (rand() % POTION_TYPES) + '0';
-		card->id[8 + i * 3 + 2] = (rand() % 4) + '0';
+		card->id[9 + i * 4 + 0] = 'e';
+		card->id[9 + i * 4 + 1] = (rand() % POTION_TYPES) + '0';
+		card->id[9 + i * 4 + 2] = (rand() % 4) + '0';
+		card->id[9 + i * 4 + 3] = ',';
+		// SDL_Log("?? %d %c", 8 + i * 4, card->id[8 + i * 4]);
 	}
-	card->id[8 + count * 3] = '\0';
-
+	// SDL_Log("?? %d %c", 8 + i * 4, card->id[8 + i * 3 ]);
+	card->id[9 + count * 4] = '\0';
+	card->id[0] = strlen(card->id) + '0';
 
 
 	// extract_num(card->id, &card->_id);
 	// generatePotionTexture(base, card, type);
-	// SDL_Log("Generate %s  (%d)",
-	// 	card->id,
-	// 	card->_id
-	// );
+	SDL_Log("Generate %c  %s %d vs %d",
+		card->id[0],card->id, strlen(card->id), CARD_ID_LEN
+	);
 	// SDL_Log("Generate %s  (%d) | Src (%d,%d) Cost: %d %d %d %d, points %d",
 	// 	card->id,
 	// 	card->_id,
