@@ -4,7 +4,7 @@ static SDLX_Button **buttons;
 static size_t capacity;
 static size_t size;
 static SDLX_Button *currentFocus;
-static int keys[6] = {0, 0, 0, 0, 0, 0};
+static int keys[6] = {-1, -1, -1, -1, -1, 0};
 
 # define UP 0
 # define DOWN 1
@@ -12,6 +12,12 @@ static int keys[6] = {0, 0, 0, 0, 0, 0};
 # define RIGHT 3
 # define SELECT 4
 # define HASKEYBOARDSET 5
+
+
+void SDLX_ButtonsCleanup(void)
+{
+	SDL_free(buttons);
+}
 
 void SDLX_ButtonSet_Neighbours(SDLX_Button *dest, SDLX_Button *left, SDLX_Button *right, SDLX_Button *up, SDLX_Button *down)
 {
@@ -44,10 +50,7 @@ void SDLX_ButtonCreate (SDLX_Button *dest, SDL_Rect *boundingBox)
 	if (!boundingBox)
 		dest->boundingBox = &dest->_boundingBox;
 	else
-	{
 		dest->boundingBox = boundingBox;
-		dest->_boundingBox = *boundingBox;
-	}
 
 	dest->state = SDLX_NONE;
 	dest->enabled = SDL_TRUE;

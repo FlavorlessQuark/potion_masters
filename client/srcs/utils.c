@@ -161,22 +161,21 @@ int	extract_num(char *str, int *number)
 	return spn + strspn(str + spn, NUMS);
 }
 
+// void startTurn(Context *ctx)
+// {
+// 	ctx->switchMode.enabled = SDL_TRUE;
+// 	for (int i = 0; i < MAX_RESERVE; i++)
+// 		ctx->UI.reserved[i].enabled = SDL_TRUE;
+// 	SDL_Log("Turn started");
+// }
 
-void startTurn(Context *ctx)
-{
-	ctx->switchMode.enabled = SDL_TRUE;
-	for (int i = 0; i < MAX_RESERVE; i++)
-		ctx->UI.reserved[i].enabled = SDL_TRUE;
-	SDL_Log("Turn started");
-}
-
-void endTurn(Context *ctx)
-{
-	ctx->switchMode.enabled = SDL_FALSE;
-	ctx->state = 0;
-	for (int i = 0; i < MAX_RESERVE; i++)
-		ctx->UI.reserved[i].enabled = SDL_FALSE;
-}
+// void endTurn(Context *ctx)
+// {
+// 	ctx->switchMode.enabled = SDL_FALSE;
+// 	ctx->state = 0;
+// 	for (int i = 0; i < MAX_RESERVE; i++)
+// 		ctx->UI.reserved[i].enabled = SDL_FALSE;
+// }
 
 
 void printRect(SDL_Rect *rect, char * msg)

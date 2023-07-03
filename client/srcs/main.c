@@ -3,6 +3,7 @@
 #include <emscripten.h>
 
 Context ctx;
+SDLX_RectContainer *root;
 
 typedef void (*loop)(Context *);
 
@@ -10,11 +11,11 @@ loop fnloops[4] ={main_screen, board_screen, buy_screen, connect_screen};
 
 void init(Context *ctx, int width, int height)
 {
-	SDLX_RectContainer *root;
+
 	SDL_Surface *surf;
 
 	SDLX_Init("Client", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, 0);
-	// ctx->display = SDLX_DisplayGet();
+	ctx->display = SDLX_DisplayGet();
 
 	// ctx->display->defaultFont = TTF_OpenFont("assets/default.ttf", 80);
 	// SDLX_TextSheet_Create(&ctx->textSheet, ctx->display->win_w, ctx->display->win_h);
@@ -26,7 +27,7 @@ void init(Context *ctx, int width, int height)
 	// surf = IMG_Load("assets/cards.png");
 	// ctx->cardTex  = SDL_CreateTextureFromSurface(ctx->display->renderer, surf);
 	// SDL_FreeSurface(surf);
-
+	root = SDLX_ParseConfig("assets/UI/testUI");
 	// SDLX_Sprite costSprite[POTION_TYPES];
 	// init_connect_screen(ctx);
 	// init_main_screen(ctx);
@@ -45,12 +46,16 @@ void core(void)
 	SDLX_RenderQueueFlushAll();
 	window_events(&ctx);
 	SDLX_InputUpdate();
-	SDLX_ButtonUpdate();
-	if (ctx.connection.hasMessage == SDL_TRUE)
-	{
-		SDL_Log("Received a message %s %p",  ctx.connection.message, ctx.connection.message);
-		parse_message(ctx.connection.message);
-	}
+	SDLX_ContainerUpdate(root, NULL);
+	// SDLX_ButtonUpdate();
+
+	SDLX_DisplayConfig(ctx.display->renderer, root);
+	// if (ctx.connection.hasMessage == SDL_TRUE)
+	// {
+	// 	// SDL_Log("Received a message %s %p",  ctx.connection.message, ctx.connection.message);
+	// 	parse_message(ctx.connection.message);
+	// 	ctx.connection.hasMessage = SDL_FALSE;
+	// }
 	// fnloops[ctx.state](&ctx);
 	SDLX_RenderAll(ctx.display);
 	// SDL_RenderCopy(ctx.display->renderer, ctx.switchSprite.texture, NULL, NULL);

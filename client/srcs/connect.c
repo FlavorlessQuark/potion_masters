@@ -4,9 +4,9 @@ static Context *ctx;
 
 void recvMessage(char *msg)
 {
-	SDL_Log("received message %s LEN -> %lu", msg, MSG_LEN);
+	SDL_Log("received message %s LEN -> %lu", msg, strlen(msg));
 	ctx->connection.hasMessage = SDL_TRUE;
-	SDL_memcpy(ctx->connection.message, msg, MSG_LEN);
+	SDL_memcpy(ctx->connection.message, msg, SDL_strlen(msg));
 	SDL_free(msg);
 	// ctx->connection.message = msg;
 }

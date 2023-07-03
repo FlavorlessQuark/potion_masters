@@ -21,7 +21,7 @@ void SDLX_RenderQueuesCleanup(void)
 	SDL_free(queues.queues);
 }
 
-void SDLX_RenderQueuesInit(void)
+void SDLX_RenderQueuesInit()
 {
 	uint32_t i;
 
@@ -49,7 +49,6 @@ void 		SDLX_RenderAll(SDLX_Display *display)
 	{
 		current = &(queues.queues[i]);
 		n = 0;
-		// SDL_Log("Queue n %d has %ld", i, current->size);
 		while (n < current->size)
 		{
 			SDL_RenderCopyEx(
@@ -72,7 +71,8 @@ void 		SDLX_RenderOne(uint32_t id);
 void        SDLX_RenderReset(SDLX_Display *display)
 {
 	SDL_RenderClear(display->renderer);
-	SDL_SetRenderDrawColor(display->renderer, 54, 60, 66,255);
+	SDL_SetRenderDrawColor(display->renderer, display->bgColor.r, display->bgColor.g, display->bgColor.b, display->bgColor.a);
+	// SDL_SetRenderDrawBlendMode(display->renderer, SDL_BLENDMODE_BLEND);
 	if (display->background)
 		SDL_RenderCopy(display->renderer, display->background, NULL, NULL);
 }
@@ -127,7 +127,6 @@ SDLX_RenderQueue *SDLX_RenderQueueGet(uint32_t id)
 void SDLX_RenderMessageAligned(SDLX_Display *display, int x_align, int y_align, SDL_Color color, char *text)
 {
 	SDL_Surface *surf;
-	SDL_Texture *texture;
 	SDL_Rect 	dst;
 
 	if (!display->defaultFont)
@@ -151,22 +150,24 @@ void SDLX_RenderMessageAligned(SDLX_Display *display, int x_align, int y_align, 
 	else if (y_align == SDLX_CENTER_ALIGN)
 		dst.y = (display->win_h / 2) - (dst.h / 2);
 
-	texture = SDL_CreateTextureFromSurface(display->renderer, surf);
-	SDL_RenderCopy(display->renderer, texture,
+	SDL_RenderCopy(display->renderer, SDL_CreateTextureFromSurface(display->renderer, surf),
 		NULL, &dst);
-	SDL_DestroyTexture(texture);
 	SDL_FreeSurface(surf);
 }
 
 void SDLX_RenderMessage(SDLX_Display *display, SDL_Rect *dst, SDL_Color color, char *text)
 {
 	SDL_Surface *surf;
-	SDL_Texture *texture;
+	SDL_Texture *tex;
 
 	surf = TTF_RenderText_Solid(display->defaultFont, text, color);
-	texture = SDL_CreateTextureFromSurface(display->renderer, surf);
-	SDL_RenderCopy(display->renderer, texture,
-		NULL, dst);
-	SDL_DestroyTexture(texture);
+	tex =  SDL_CreateTextureFromSurface(display->renderer, surf);
+	SDL_RenderCopy(display->renderer, tex, NULL, dst);
 	SDL_FreeSurface(surf);
+	SDL_DestroyTexture(tex);
+}
+
+void SDLX_RenderResetColour(SDLX_Display *display)
+{
+	SDL_SetRenderDrawColor(display->renderer, display->bgColor.r, display->bgColor.g, display->bgColor.b, display->bgColor.a);
 }

@@ -24,7 +24,9 @@ SDL_Texture		*SDLX_TextureLoad(char *path, SDLX_Display *display);
 void 		SDLX_RenderAll(SDLX_Display *display);
 void 		SDLX_RenderOne(uint32_t id);
 void        SDLX_RenderReset(SDLX_Display *display);
+void		SDLX_RenderResetColour(SDLX_Display *display);
 
+void 		SDLX_RenderQueuesCleanup(void);
 void 		SDLX_RenderQueuesInit();
 void		SDLX_RenderQueuePush(SDLX_Sprite *sprite);
 void        SDLX_RenderQueueFlush(uint32_t id);
@@ -46,6 +48,7 @@ void		SDLX_SpriteCreate(SDLX_Sprite *dest, uint32_t layer, SDL_Texture *texture)
  * SDLX Input functions
  */
 
+void 		SDLX_InputCleanup(void);
 void		SDLX_InputUpdate(void);
 SDLX_Input 	SDLX_InputGet(void);
 int SDLX_GetKeyState(int key);
@@ -64,6 +67,7 @@ int			SDLX_PointInCircle(SDL_Point point, SDLX_Circle circle);
 
 
 // buttons
+void 		SDLX_ButtonsCleanup(void);
 void 		SDLX_ButtonUpdate();
 void 		SDLX_ButtonSet_Keys(int left, int right, int up, int down, int select);
 void 		SDLX_ButtonCreate (SDLX_Button *dest, SDL_Rect *boundingBox);
@@ -76,13 +80,14 @@ void		SDLX_ButtonSet_Neighbours(SDLX_Button *dest, SDLX_Button *left, SDLX_Butto
  */
 void 		SDLX_SpritePrint(SDLX_Sprite *sprite);
 
-SDLX_RectContainer *parse_UIConfig(char *filename);
-void SDLX_ContainerPrint(SDLX_RectContainer *current,SDLX_RectContainer *parent);
+SDLX_RectContainer *SDLX_LoadConfig(char *filename);
+SDLX_RectContainer *SDLX_ParseConfig(char *filename);
+void SDLX_CleanupConfig(SDLX_RectContainer *container);
+void SDLX_DisplayConfig(SDL_Renderer *renderer, SDLX_RectContainer *root);
 void SDLX_ContainerElemCreate(SDLX_ContainerElem *dest, SDL_Rect *boundingBox, int margin, int widthType, int heightType);
 void SDLX_ContainerUpdate(SDLX_RectContainer *container, SDLX_RectContainer *parent);
 
-
-void SDLX_TextSheet_Create(SDLX_TextSheet *dst, int maxW, int maxH);
+SDLX_TextSheet SDLX_TextSheet_Create(SDLX_TextSheet *dst, int maxW, int maxH);
 SDL_Rect SDLX_TextSheet_Add(SDLX_TextSheet *dst, char *text, TTF_Font *font, SDL_Color colour);
 
 #endif

@@ -18,6 +18,7 @@
     SDL_Window      *window;
     SDL_Renderer    *renderer;
     SDL_Texture     *background;
+	SDL_Color		bgColor;
 
     TTF_Font        *defaultFont;
 
@@ -90,10 +91,10 @@ typedef struct SDLX_Button
 
 	struct SDLX_Button *neighbours[4];
 }	SDLX_Button;
+
 typedef struct SDLX_ContainerElem
 {
-	SDL_Rect	*boundingBox;
-	SDL_Rect	_boundingBox;
+	SDL_Rect	boundingBox;
 
 	SDL_Rect	_origin;
 
@@ -123,7 +124,6 @@ typedef struct SDLX_Circle
     SDL_Point   center;
     int         radius;
 }   SDLX_Circle;
-
 
 typedef struct SDLX_TextSheet
 {

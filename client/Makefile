@@ -16,6 +16,7 @@ BIN_DIR = bin/
 
 SDLX_NAMES = 			\
 	SDLX_buttons		\
+	SDLX_containers_utils\
 	SDLX_containers		\
 	SDLX_debug			\
 	SDLX_init			\
@@ -38,7 +39,6 @@ SCREEN_NAMES =			\
 
 SRCS_NAMES =								\
 	$(addprefix $(SDLX_DIR), $(SDLX_NAMES))	\
-	config_parser	\
 	connect			\
 	main 			\
 	messages		\
@@ -69,7 +69,7 @@ html:
         -o $(NAME).js
 		mv $(NAME).js node/$(NAME).js
 		mv $(NAME).data node/$(NAME).data
-		mv $(NAME).wam node/$(NAME).wasm
+		mv $(NAME).wasm node/$(NAME).wasm
 
 $(NAME): $(BIN_DIR) $(OBJS)
 	gcc $(FLAGS) $(INCLUDES) -o $(NAME) $(OBJS)  $(STATIC_LIB)

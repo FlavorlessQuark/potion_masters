@@ -4,7 +4,7 @@
 # include "SDLX/SDLX.h"
 
 #define PLAYER_STATE_LEN (sizeof(char)+ \
-						 sizeof(char) + \
+						 sizeof(char) * 4 + \
 						(sizeof(char) * 2 * ESSENCE_TYPES) + \
 						(sizeof(char) * 2 + (MAX_POTIONS)  * CARD_ID_LEN) + \
 						(sizeof(char) * 2 + CARD_ID_LEN)   + \
@@ -12,9 +12,12 @@
 						 sizeof(char) * 2)
 
 #define BOARD_STATE_LEN (sizeof(char) * 2 + (MAX_MASTER_POTIONS) * CARD_ID_LEN) + \
-						(ROW_COUNT * (sizeof(char) * 2 + (MAX_POTIONS * CARD_ID_LEN)))
+						(ROW_COUNT * (sizeof(char) * 6 + (MAX_POTIONS * CARD_ID_LEN)))
+
+
 
 #define MSG_LEN PLAYER_STATE_LEN + BOARD_STATE_LEN
+
 
 # define MIN_PLAYERS (2)
 # define MAX_PLAYERS (4)
@@ -24,7 +27,8 @@
 # define MAX_BREWING (3)
 # define ESSENCE_TYPES (4)
 
-# define CARD_ID_LEN (3 + POTION_TYPES + 2)
+# define MAX_COST_TYPES (3)
+# define CARD_ID_LEN ((sizeof(char) * 8) + (MAX_COST_TYPES * (sizeof(char) * 4)) + 1)
 
 # define POTION_TYPES (3)
 
@@ -104,6 +108,7 @@ typedef struct Player
 	uint8_t reserveCount;
 	uint8_t id;
 	uint8_t points;
+	uint8_t actionsRemaining;
 }	Player;
 
 typedef struct Row

@@ -1,6 +1,6 @@
 #include "../../includes/SDLX/SDLX.h"
 
-void SDLX_TextSheet_Create(SDLX_TextSheet *dst, int maxW, int maxH)
+SDLX_TextSheet SDLX_TextSheet_Create(SDLX_TextSheet *dst, int maxW, int maxH)
 {
 	SDLX_Display *display;
 	SDL_Texture	 *renderTarget;
