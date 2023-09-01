@@ -42,8 +42,8 @@ int send_game_state(Context *ctx, int player)
  /* STATE MESSAGE
  <stage>|<player_state>|<board_state>
  Stage : 0 - connect , 1 play, 2 over
- Player state: <status>|<essences>|<potions>|<brewing>|<points>
-	Status:   0 or 1 (playing /playing, won/lost)
+ Player state: <status>|<actions remaining>|<essences>|<potions>|<brewing>|<points>
+	Status:   0 or 1 (connected/ready, playing /not playing, won/lost)
 	Essences: [essence1Count, essence2Count, ....]
 	Potions:  <count>:[potion1_id, potion2_Id, ...]
 	Brewing:  <bool>:id
@@ -59,6 +59,7 @@ int send_game_state(Context *ctx, int player)
 		identifier:p or e
 		type:      integer
 		count:     integer
+
  */
 
 /* PLAYER MESSAGE
@@ -75,6 +76,9 @@ End :    e:0
 int compose_player_state(Player *player, int status, int offset)
 {
 	msg[offset++] = status + '0';
+	msg[offset++] = '|';
+	msg[offset++] = player->actionsRemaining;
+	msg[offset++] = '|';
 	msg[offset++] = '[';
 	for (int i = 0; i < ESSENCE_TYPES; i ++)
 	{
@@ -86,8 +90,8 @@ int compose_player_state(Player *player, int status, int offset)
 	msg[offset++] = '[';
 	for (int i = 0; i < player->potionCount; i++)
 	{
-		SDL_memcpy(msg + offset, player->owned[i].id, CARD_ID_LEN - 1);
-		offset += CARD_ID_LEN - 1;
+		SDL_memcpy(msg + offset, player->owned[i].id, player->owned[i].id[0] - '0');
+		offset += player->owned[i].id[0] - '0';
 		msg[offset++] = ',';
 	}
 	msg[offset++] = ']';
@@ -96,8 +100,8 @@ int compose_player_state(Player *player, int status, int offset)
 	msg[offset++] = ':';
 	if (player->isBrewing)
 	{
-		SDL_memcpy(msg + offset, player->brewing.id, CARD_ID_LEN - 1);
-		offset += CARD_ID_LEN - 1;
+		SDL_memcpy(msg + offset,  player->brewing.id, player->brewing.id[0] - '0');
+		offset += player->brewing.id[0] - '0';
 	}
 	msg[offset++] = '|';
 

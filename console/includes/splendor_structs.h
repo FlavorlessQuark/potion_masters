@@ -54,6 +54,7 @@ typedef struct Player
 	uint8_t status;
 	uint8_t points;
 	uint8_t isBrewing;
+	uint8_t actionsRemaining;
 
 	SDL_Rect pointsTag;
 	SDL_Rect potions[MAX_POTIONS];

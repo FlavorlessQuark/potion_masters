@@ -60,6 +60,7 @@ void initRowPotions(Context *ctx, int level)
 
 	row = &ctx->board.rows[level];
 	row->recipeCount = MAX_ROWCARD;
+	SDL_Log("Gnereating row %d", level);
 	for (int i = 0; i < MAX_ROWCARD; i++)
 	{
 		generatePotion(ctx->assets.texPotions, &row->recipes[i], level);
