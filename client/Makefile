@@ -26,16 +26,17 @@ SDLX_NAMES = 			\
 	SDLX_utils			\
 
 INIT_NAMES =			\
+	init_global			\
 	init_board			\
-	init_buy			\
-	init_connect_screen	\
-	init_main_screen	\
+	# init_buy			\
+	# init_connect_screen	\
+	# init_main_screen	\
 
 SCREEN_NAMES =			\
 	board_screen		\
-	buy_screen			\
-	connect_screen		\
-	main_screen			\
+	# buy_screen			\
+	# connect_screen		\
+	# main_screen			\
 
 SRCS_NAMES =								\
 	$(addprefix $(SDLX_DIR), $(SDLX_NAMES))	\
@@ -43,9 +44,9 @@ SRCS_NAMES =								\
 	main 			\
 	messages		\
 	window_events 	\
-	# $(addprefix $(SCREEN_DIR), $(SCREEN_NAMES))	\
-	utils			\
 	$(addprefix $(INIT_DIR), $(INIT_NAMES))	\
+	$(addprefix $(SCREEN_DIR), $(SCREEN_NAMES))	\
+	# utils			\
 
 SRCS = $(addprefix $(SRCS_DIR), $(addsuffix .c, $(SRCS_NAMES)))
 OBJS = $(addprefix $(BIN_DIR), $(SRCS:.c=.o))

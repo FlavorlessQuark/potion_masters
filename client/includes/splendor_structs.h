@@ -34,9 +34,10 @@
 
 # define ROW_COUNT (3)
 
-# define TOP_ROW 0
-# define MID_ROW 1
-# define BOT_ROW 2
+# define MASTER_ROW 0
+# define LVL2_ROW 1
+# define LVL1_ROW 2
+# define BASE_ROW 3
 
 # define TOK_A 0
 # define TOK_B 1
@@ -89,6 +90,7 @@ typedef struct Button
 	SDLX_Button button;
 	void *data;
 }	Button;
+
 typedef struct Potion
 {
 	SDLX_Sprite sprite;
@@ -113,20 +115,15 @@ typedef struct Player
 
 typedef struct Row
 {
-	uint8_t revealedCount;//RM
-	SDLX_Sprite rowIcon;//RM BAKE INTO BG
-	Potion	revealed[MAX_ROWCARD];
+	Potion	card[MAX_ROWCARD];
 	SDLX_Button cardButton[MAX_ROWCARD];
 }	Row;
 
 typedef struct Board
 {
-	uint8_t tokens[ESSENCE_TYPES];
-
+	Row 	masterPotions;
 	Row 	rows[ROW_COUNT];
-	SDLX_Button tokenButton[ESSENCE_TYPES + 2];
-	SDLX_Sprite tokenCount[ESSENCE_TYPES];
-	SDLX_Sprite tokenTaken[ESSENCE_TYPES];
+	Button  switchScreen;
 	SDL_Texture *bg;
 }	Board;
 
@@ -138,46 +135,48 @@ typedef struct Connection
 	SDLX_Button connectButton;
 }			Connection;
 
-typedef struct BuyScreen
+typedef struct BuyOverlay
 {
-	SDLX_Sprite showSelected;
-	SDLX_Sprite reserveSprite;
-	SDLX_Sprite buySprite;
-	SDLX_Sprite costSprite[ESSENCE_TYPES - 1];
-	SDLX_Button buyButton;
-	SDLX_Button reserveButton;
-	SDLX_Button exit;
-	Potion  		*selected;
+
+	SDLX_Sprite potion;
+	SDLX_Sprite essences[ESSENCE_TYPES];
+
+	SDL_Rect nameDst;
+	SDL_Rect descDst;
+
+	Button buy;
+	Button exit;
+
+	Potion  	*selected;
 	SDL_Texture *bg;
-	uint8_t cardOrigin; // -1 = no card, 0 = board, 1 reserverd index
-}			BuyScreen;
+}			BuyOverlay;
 
 typedef struct PlayerUI
 {
-	SDLX_Button reserved[MAX_POTIONS];
-
-	//			 REserved card + tokens + owned + golden + point display + no card + Buy
-	// SDLX_Sprite UI[MAIN_SCREEN_SPRITE_COUNT];
 	SDLX_Sprite name;
 	SDLX_Sprite points;
-	SDLX_Sprite permanents[POTION_TYPES];
-	SDLX_Sprite tokens[ESSENCE_TYPES];
+	Potion 		owned[MAX_POTIONS];
+	SDLX_Sprite essences[ESSENCE_TYPES];
 	SDL_Texture *bg;
 }		PlayerUI;
 
-typedef struct Context
+typedef struct Assets
 {
-	Player player;
-	Connection connection;
-	Board board;
-	int state;
-	PlayerUI UI;
-	BuyScreen buyscreen;
-	SDL_Rect nums;
+	SDL_Rect numberDimensions;
 	SDLX_Display *display;
 	SDL_Texture *cardTex;
 	SDLX_TextSheet textSheet;
-	SDLX_Button switchMode;
-	SDLX_Sprite switchSprite;
+}			  Assets;
+
+typedef struct Context
+{
+	int state;
+	Player player;
+	PlayerUI UI;
+	Connection connection;
+	Board board;
+	BuyOverlay buyscreen;
+	Assets assets;
+	SDLX_Display *display;
 }	Context;
 #endif

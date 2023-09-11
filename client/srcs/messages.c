@@ -72,10 +72,10 @@ void parse_message(char *inc_msg)
 int parse_player_state(int offset, char *inc_msg)
 {
 	SDL_Log("Player status %d", inc_msg[offset++] - '0');
-	offset += 2;
+	offset += 1;
 	SDL_Log("Player actions %d", inc_msg[offset++] - '0');
 
-	offset += 3;
+	offset += 2;
 	for (int i = 0; i < ESSENCE_TYPES; i ++)
 	{
 		SDL_Log("Player essence %d count %d", i, inc_msg[offset++] - '0');
@@ -86,6 +86,7 @@ int parse_player_state(int offset, char *inc_msg)
 	offset++;
 	char ID[CARD_ID_LEN];
 	SDL_Log("Player potions %d",count);
+	// return 0;
 	for (int i = 0; i < count; i++)
 	{
 		SDL_memcpy(ID, inc_msg + offset, inc_msg[offset] - '0');

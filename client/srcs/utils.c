@@ -2,15 +2,15 @@
 #define NUMS "0123456789"
 
 
-SDLX_RectContainer *parseUI(char *filename)
-{
-	SDLX_RectContainer *root;
+// SDLX_RectContainer *parseUI(char *filename)
+// {
+// 	SDLX_RectContainer *root;
 
-	root = parse_UIConfig(filename);
-	SDLX_ContainerUpdate(root, NULL);
+// 	root = parse_UIConfig(filename);
+// 	SDLX_ContainerUpdate(root, NULL);
 
-	return root;
-}
+// 	return root;
+// }
 
 void draw_dotted_line(SDL_Point start, int orientation, int dash_size, int len)
 {

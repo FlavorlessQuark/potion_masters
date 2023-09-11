@@ -2,12 +2,12 @@
 # define SPLENDOR_H
 # include "splendor_structs.h"
 
-void init(Context *ctx, int width, int height);
 char *input(Context *ctx);
 
 void window_events(Context *ctx);
 
-void init_board_screen(Context *ctx);
+void init_static(Context *ctx, int width, int height);
+void init_board_static(Context *ctx);
 void init_buy_screen(Context *ctx);
 void init_connect_screen(Context *context);
 void init_main_screen(Context *ctx);

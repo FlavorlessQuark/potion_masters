@@ -87,7 +87,7 @@ void SDLX_DisplayConfig(SDL_Renderer *renderer, SDLX_RectContainer *root);
 void SDLX_ContainerElemCreate(SDLX_ContainerElem *dest, SDL_Rect *boundingBox, int margin, int widthType, int heightType);
 void SDLX_ContainerUpdate(SDLX_RectContainer *container, SDLX_RectContainer *parent);
 
-SDLX_TextSheet SDLX_TextSheet_Create(SDLX_TextSheet *dst, int maxW, int maxH);
+void SDLX_TextSheet_Create(SDLX_TextSheet *dst, int maxW, int maxH);
 SDL_Rect SDLX_TextSheet_Add(SDLX_TextSheet *dst, char *text, TTF_Font *font, SDL_Color colour);
 
 #endif
