@@ -152,14 +152,12 @@ void fillPotion(Potion *card)
 	);
 }
 
-int	extract_num(char *str, int *number)
-{
-	int spn;
+// int	extract_num(char *str, int *number)
+// {
+// 	int spn;
 
-	spn = strcspn(str, NUMS);
-	*number = atoi(str + spn);
-	return spn + strspn(str + spn, NUMS);
-}
+// 	spn = strcspn(str, NUMS);	SDLX_ButtonCreate(&ctx->board.switchScreen.button, &ctx->board.switchScreen.sprite._dst);
+
 
 // void startTurn(Context *ctx)
 // {
@@ -221,7 +219,7 @@ int extract_card_from_input(Context *ctx, Potion *dst, char *input)
 	if (dst->_id != _id)
 	{
 		fillPotion(dst);
-		generatePotionTexture(ctx->cardTex, dst, dst->id[1] - '0');
+		// generatePotionTexture(ctx->cardTex, dst, dst->id[1] - '0');
 	}
 	else
 		return 0;

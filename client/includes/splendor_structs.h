@@ -119,22 +119,6 @@ typedef struct Row
 	SDLX_Button cardButton[MAX_ROWCARD];
 }	Row;
 
-typedef struct Board
-{
-	Row 	masterPotions;
-	Row 	rows[ROW_COUNT];
-	Button  switchScreen;
-	SDL_Texture *bg;
-}	Board;
-
-typedef struct Connection
-{
-	char message[MSG_LEN];
-	uint8_t status;
-	uint8_t hasMessage;
-	SDLX_Button connectButton;
-}			Connection;
-
 typedef struct BuyOverlay
 {
 
@@ -150,6 +134,26 @@ typedef struct BuyOverlay
 	Potion  	*selected;
 	SDL_Texture *bg;
 }			BuyOverlay;
+
+
+typedef struct Board
+{
+	Row 	masterPotions;
+	Row 	rows[ROW_COUNT];
+	Button  switchScreen;
+
+	BuyOverlay overlay;
+	SDL_Texture *bg;
+}	Board;
+
+typedef struct Connection
+{
+	char message[MSG_LEN];
+	uint8_t status;
+	uint8_t hasMessage;
+	SDLX_Button connectButton;
+}			Connection;
+
 
 typedef struct PlayerUI
 {
@@ -175,7 +179,6 @@ typedef struct Context
 	PlayerUI UI;
 	Connection connection;
 	Board board;
-	BuyOverlay buyscreen;
 	Assets assets;
 	SDLX_Display *display;
 }	Context;

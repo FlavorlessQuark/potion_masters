@@ -7,7 +7,7 @@ SDLX_RectContainer *root;
 
 typedef void (*loop)(Context *);
 
-loop fnloops[4] ={main_screen, board_screen, buy_screen, connect_screen};
+loop fnloops[3] ={main_screen, board_screen, connect_screen};
 
 
 
@@ -15,7 +15,7 @@ void core(void)
 {
 	SDLX_RenderReset(ctx.display);
 	SDLX_RenderQueueFlushAll();
-	window_events(&ctx);
+	// window_events(&ctx);
 	SDLX_InputUpdate();
 	// SDLX_ContainerUpdate(root, NULL);
 	//

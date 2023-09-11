@@ -26,6 +26,8 @@ void init_static(Context *ctx, int width, int height)
 	init_board_static(ctx);
 	// init_buy_screen(ctx);
 	initConnection(ctx);
+
+	fill_board(ctx);
 	// endTurn(ctx);
 	// ctx->state = CONNECT;
 

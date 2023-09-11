@@ -4,13 +4,12 @@
 # define MASTER_CARD_COUNT 3
 # define CARDS 1
 
-void initMasterPotions(Context *ctx, Row *row, SDLX_RectContainer *root)
+static SDLX_RectContainer *root = NULL;
+
+void fillMasterPotions(Context *ctx, Row *row, SDLX_RectContainer *root)
 {
 	for (int i = 0; i < MASTER_CARD_COUNT; i++)
 	{
-		SDLX_ButtonCreate(&row->cardButton[i], NULL);
-		SDLX_SpriteCreate(&row->card[i].sprite, 1, ctx->assets.cardTex);
-
 		row->cardButton[i]._boundingBox = root->elems[i].boundingBox;
 		row->card[i].sprite._dst = root->elems[i].boundingBox;
 		row->card[i].sprite.src = NULL;
@@ -18,31 +17,29 @@ void initMasterPotions(Context *ctx, Row *row, SDLX_RectContainer *root)
 	}
 }
 
-void initRowPotions(Context *ctx, Row *row, SDLX_RectContainer *root)
+void fillRowPotions(Context *ctx, Row *row, SDLX_RectContainer *root)
 {
 	// Parse texture data here
 	// row->rowIcon.texture = ctx->cardTex;
 	// get_img_src(&row->rowIcon._src, CARD_BACK, 0);
 	for (int i = 0; i < ROW_CARD_COUNT; i++)
 	{
-		SDLX_ButtonCreate(&row->cardButton[i], NULL);
-		SDLX_SpriteCreate(&row->card[i].sprite, 1, ctx->assets.cardTex);
 
 		row->cardButton[i]._boundingBox = root->elems[i].boundingBox;
 		row->card[i].sprite._dst = root->elems[i].boundingBox;
 		row->card[i].sprite.src = NULL;
-		row->card[i].sprite.texture = SDL_CreateTexture(ctx->display->renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, row->card[i].sprite._dst.w, row->card[i].sprite._dst.h);
-		SDL_SetTextureBlendMode(row->card[i].sprite.texture , SDL_BLENDMODE_BLEND);
 	}
 
 }
 
-void init_board_static(Context *ctx)
+void fill_board(Context *ctx)
 {
 	SDL_Surface *surf;
-	SDLX_RectContainer *root;
 
-	root = SDLX_LoadConfig("assets/UI/boardUI");
+	if (!root)
+		root = SDLX_LoadConfig("assets/UI/boardUI");
+	else
+		SDLX_ContainerUpdate(root, NULL);
 
 	// ctx->board.bg = SDL_CreateTexture(ctx->display->renderer,
 	// 	SDL_PIXELFORMAT_RGBA8888,
@@ -51,15 +48,13 @@ void init_board_static(Context *ctx)
 	// 	);
 	// SDL_SetRenderTarget(ctx->display->renderer, ctx->board.bg);
 
-	// initTokens(ctx, &root->containers[TOKENS]);
-	initMasterPotions(ctx, &ctx->board.masterPotions, &root->containers[CARDS].containers[MASTER_ROW]);
-	initRowPotions(ctx, &ctx->board.rows[0], &root->containers[CARDS].containers[LVL2_ROW]);
-	initRowPotions(ctx, &ctx->board.rows[1], &root->containers[CARDS].containers[LVL1_ROW]);
-	initRowPotions(ctx, &ctx->board.rows[2], &root->containers[CARDS].containers[BASE_ROW]);
+	// fillTokens(ctx, &root->containers[TOKENS]);
+	fillMasterPotions(ctx, &ctx->board.masterPotions, &root->containers[CARDS].containers[MASTER_ROW]);
+	fillRowPotions(ctx, &ctx->board.rows[0], &root->containers[CARDS].containers[LVL2_ROW]);
+	fillRowPotions(ctx, &ctx->board.rows[1], &root->containers[CARDS].containers[LVL1_ROW]);
+	fillRowPotions(ctx, &ctx->board.rows[2], &root->containers[CARDS].containers[BASE_ROW]);
 
 	// surf = IMG_Load("assets/cards.png");
-	SDLX_SpriteCreate(&ctx->board.switchScreen.sprite, 1, NULL);
-	SDLX_ButtonCreate(&ctx->board.switchScreen.button, &ctx->board.switchScreen.sprite._dst);
 
 	ctx->board.switchScreen.sprite._dst = root->containers[0].elems[0].boundingBox;
 	// ctx->switchSprite.texture =
@@ -69,5 +64,5 @@ void init_board_static(Context *ctx)
 	// SDLX_RenderMessage(ctx->display, NULL, (SDL_Color){255,255,255,255}, "->");
 	// SDL_FreeSurface(surf);
 
-	SDL_SetRenderTarget(ctx->display->renderer, NULL);
+	// SDL_SetRenderTarget(ctx->display->renderer, NULL);
 }

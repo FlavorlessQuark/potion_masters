@@ -29,5 +29,7 @@ void resizeWindow(int width, int height)
 	display->win_w = width;
 	display->win_h = height;
 	SDL_SetWindowSize(display->window, width, height);
+
+	// fill_board();
 	// initPositions();
 }

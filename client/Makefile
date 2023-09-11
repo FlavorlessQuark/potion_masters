@@ -10,7 +10,10 @@ STATIC_LIB = -l SDL2 -l SDL2_image -l SDL2_ttf -lm
 SDLX_DIR = SDLX/
 SRCS_DIR = srcs/
 INIT_DIR = init/
-SCREEN_DIR = screens/
+BOARD_DIR = board/
+CONNECT_DIR = connect/
+IO_DIR = I_O/
+PLAYER_DIR = player/
 
 BIN_DIR = bin/
 
@@ -25,27 +28,35 @@ SDLX_NAMES = 			\
 	SDLX_text			\
 	SDLX_utils			\
 
-INIT_NAMES =			\
-	init_global			\
-	init_board			\
-	# init_buy			\
-	# init_connect_screen	\
-	# init_main_screen	\
-
-SCREEN_NAMES =			\
+BOARD_NAMES =			\
 	board_screen		\
-	# buy_screen			\
-	# connect_screen		\
-	# main_screen			\
+	init_board			\
+	fill_board			\
+
+CONNECT_NAMES =			\
+	connect_screen		\
+	init_connect_screen		\
+
+IO_NAMES =			\
+	connection 		\
+	messages		\
+	window_events	\
+
+PLAYER_NAMES =			\
+	init_main_screen	\
+	main_screen			\
+
+
 
 SRCS_NAMES =								\
 	$(addprefix $(SDLX_DIR), $(SDLX_NAMES))	\
-	connect			\
+	init			\
 	main 			\
-	messages		\
-	window_events 	\
-	$(addprefix $(INIT_DIR), $(INIT_NAMES))	\
-	$(addprefix $(SCREEN_DIR), $(SCREEN_NAMES))	\
+	$(addprefix $(INIT_DIR),   $(INIT_NAMES))	\
+	$(addprefix $(BOARD_DIR),  $(BOARD_NAMES))	\
+	$(addprefix $(IO_DIR),     $(IO_NAMES))	\
+	# $(addprefix $(CONNECT_DIR),$(CONNECT_NAMES))	\
+	# $(addprefix $(PLAYER_DIR), $(PLAYER_NAMES))	\
 	# utils			\
 
 SRCS = $(addprefix $(SRCS_DIR), $(addsuffix .c, $(SRCS_NAMES)))
