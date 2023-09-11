@@ -48,6 +48,8 @@ int extract_card_from_input(Context *ctx, Potion *dst, char *input);
 int extract_num(char *str, int *number);
 char *input(Context *ctx);
 
+void set_resize_context(Context *context);
+
 
 
 

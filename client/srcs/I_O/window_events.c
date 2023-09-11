@@ -1,5 +1,9 @@
 #include "../includes/splendor.h"
 
+static Context *ctx;
+
+void set_resize_context(Context *context) {ctx = context;}
+
 void window_events(Context *ctx)
 {
 	SDL_Event event;
@@ -30,6 +34,6 @@ void resizeWindow(int width, int height)
 	display->win_h = height;
 	SDL_SetWindowSize(display->window, width, height);
 
-	// fill_board();
+	fill_board(ctx);
 	// initPositions();
 }

@@ -7,6 +7,7 @@ void init_static(Context *ctx, int width, int height)
 	SDLX_RectContainer *root;
 
 	SDLX_Init("Client", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, 0);
+	set_resize_context(ctx);
 	ctx->display = SDLX_DisplayGet();
 
 	// ctx->display->defaultFont = TTF_OpenFont("assets/default.ttf", 80);
