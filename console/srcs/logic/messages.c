@@ -70,14 +70,14 @@ Use:     u:<potion_id>
 Brew:    b:<potion_id>
 Recycle: r:<potion_id>
 End :    e:0
-
 */
 
 int compose_player_state(Player *player, int status, int offset)
 {
 	msg[offset++] = status + '0';
 	msg[offset++] = '|';
-	msg[offset++] = player->actionsRemaining;
+	// msg[offset++] = player->actionsRemaining;
+	msg[offset++] = 2 + '0';
 	msg[offset++] = '|';
 	msg[offset++] = '[';
 	for (int i = 0; i < ESSENCE_TYPES; i ++)
@@ -128,3 +128,8 @@ int compose_board_state(Board *board, int offset)
 	}
 
 }
+
+// int parse_action(Player *player, )
+// {
+// 	if ()
+// }

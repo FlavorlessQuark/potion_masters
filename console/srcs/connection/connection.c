@@ -80,7 +80,7 @@ int connect_handles(Context *ctx, char **handles, int len)
 			ctx->players[i].status = CONNECTED;
 			SDL_strlcpy(ctx->players[i].handle, handles[n], HANDLE_LEN);
 			SDL_Log("Added player %d - %s", i, handles[n]);
-			send_to(handles[n], msg);
+			// send_to(handles[n], msg);
 			connections++;
 			n++;
 		}

@@ -23,12 +23,13 @@ void init_UI(Context *ctx)
 
 
 	prepare_textures(ctx);
-	init_connect_screen_UI(ctx, &connect_root->containers[0].containers[0]);
-	init_board_UI(ctx, &board_root->containers[UI_BOARD]);
-	init_player_UI(ctx, 0, &board_root->containers[UI_PLAYER_LEFT].containers[0]);
-	init_player_UI(ctx, 1, &board_root->containers[UI_PLAYER_RIGHT].containers[0]);
-	init_player_UI(ctx, 2, &board_root->containers[UI_PLAYER_LEFT].containers[1]);
-	init_player_UI(ctx, 3, &board_root->containers[UI_PLAYER_RIGHT].containers[1]);
+	// TODO : REDO ALL UI INIT WITH NEW UI
+	// init_connect_screen_UI(ctx, &connect_root->containers[0].containers[0]);
+	// init_board_UI(ctx, &board_root->containers[UI_BOARD]);
+	// init_player_UI(ctx, 0, &board_root->containers[UI_PLAYER_LEFT].containers[0]);
+	// init_player_UI(ctx, 1, &board_root->containers[UI_PLAYER_RIGHT].containers[0]);
+	// init_player_UI(ctx, 2, &board_root->containers[UI_PLAYER_LEFT].containers[1]);
+	// init_player_UI(ctx, 3, &board_root->containers[UI_PLAYER_RIGHT].containers[1]);
 
 	SDL_Log("Finished Init");
 }
