@@ -121,18 +121,18 @@ typedef struct Row
 
 typedef struct BuyOverlay
 {
-
+	SDLX_Sprite background;
 	SDLX_Sprite potion;
 	SDLX_Sprite essences[ESSENCE_TYPES];
 
 	SDL_Rect nameDst;
+	SDL_Rect costDst;
 	SDL_Rect descDst;
 
 	Button buy;
 	Button exit;
 
 	Potion  	*selected;
-	SDL_Texture *bg;
 }			BuyOverlay;
 
 

@@ -42,6 +42,7 @@ int main(int argc, char **argv)
 	// for (int i = 0; i < argc; i++)
 	// 	printf("Argument %d : %s\n", i, argv[i]);
 	init_static(&ctx, SDL_atoi(argv[1]), SDL_atoi(argv[2]));
+	root = SDLX_LoadConfig("assets/UI/recipeUI");
 	#ifdef __EMSCRIPTEN__
 			emscripten_set_main_loop(core, 0, 1);
 	#endif

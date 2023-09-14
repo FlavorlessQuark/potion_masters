@@ -12,32 +12,15 @@ typedef struct board_tokens {
 
 static board_tokens tokens = {.lock = -1, .max = MAX_TAKE, .count = 0};
 
-void reset_tokens(void)
+void set_cards_active(Context *ctx, int enabled)
 {
-	SDL_memset(tokens.taken, 0, sizeof(uint8_t) * POTION_TYPES);
-	tokens.count = 0;
-	tokens.lock = -1;
-	tokens.max = MAX_TAKE;
-}
-
-void try_take_token(int index)
-{
-	if (tokens.count >= tokens.max)
-		return ;
-	if (tokens.lock == -1)
+	for (int x = 0; x < ROW_COUNT; x++)
 	{
-		if (tokens.count == 2 && tokens.taken[index] > 0)
-			return ;
-		if (tokens.taken[index] >= 1)
+		for (int i = 0; i < MAX_ROWCARD; i++)
 		{
-			tokens.lock = index;
-			tokens.max -= 1;
+			ctx->board.rows[x].cardButton[i].enabled = enabled;
 		}
 	}
-	else if (tokens.lock != index)
-		return;
-	tokens.count++;
-	tokens.taken[index]++;
 }
 
 void board_screen(Context *ctx)
@@ -47,21 +30,31 @@ void board_screen(Context *ctx)
 	// if (ctx->switchMode.triggered == SDLX_KEYDOWN)
 	// 	ctx->state = 0;
 
+	if (ctx->board.overlay.selected != NULL)
+	{
+		if (ctx->board.overlay.exit.button.triggered == SDLX_KEYDOWN)
+		{
+			set_cards_active(ctx, SDL_TRUE);
+			ctx->board.overlay.selected = NULL;
+			ctx->board.overlay.exit.button.triggered = 0;
+		}
+	}
+	else {
+		for (int x = 0; x < ROW_COUNT; x++)
+		{
+			for (int i = 0; i < MAX_ROWCARD; i++)
+			{
+				if (ctx->board.rows[x].cardButton[i].triggered == SDLX_KEYDOWN)
+				{
+					ctx->board.overlay.selected = &ctx->board.rows[x].card[i];
+					ctx->board.rows[x].cardButton[i].triggered = 0;
+					set_cards_active(ctx, SDL_FALSE);
+					break ;
+				}
+			}
+		}
+	}
 
-	// for (int x = 1; x < ROW_COUNT; x++)
-	// {
-	// 	for (int i = 0; i < MAX_ROWCARD; i++)
-	// 	{
-	// 		if (ctx->board.rows[x].cardButton[i].triggered == SDLX_KEYDOWN)
-	// 		{
-	// 			ctx->state = 2;
-	// 			ctx->buyscreen.cardOrigin = 0;
-	// 			ctx->buyscreen.selected = &ctx->board.rows[x].revealed[i];
-	// 			// ctx->buyscreen.showSelected.src = ctx->buyscreen.selected->sprite.src;
-	// 			ctx->buyscreen.showSelected.texture = ctx->buyscreen.selected->sprite.texture;
-	// 		}
-	// 	}
-	// }
 
 	render_board_screen(ctx);
 }
@@ -81,15 +74,27 @@ void render_board_screen(Context *ctx)
 		// 	{
 		// 		SDLX_RenderQueuePush(&ctx->board.rows[x].revealed[i].sprite);
 		// 	}
-		if (ctx->board.rows[x].cardButton[i].state == SDLX_KEYHELD)
-			SDL_SetRenderDrawColor(ctx->display->renderer, 255, 255, 0, 255);
-		else
-			SDL_SetRenderDrawColor(ctx->display->renderer, 255, 0, 0, 255);
+			if (ctx->board.rows[x].cardButton[i].state == SDLX_KEYHELD)
+				SDL_SetRenderDrawColor(ctx->display->renderer, 255, 255, 0, 255);
+			else
+				SDL_SetRenderDrawColor(ctx->display->renderer, 255, 0, 0, 255);
 			SDL_RenderDrawRect(ctx->display->renderer, ctx->board.rows[x].card[i].sprite.dst);
+
 		}
 		// SDL_Log("HELLO :)");
 		// SDLX_SpritePrint(&ctx->board.rows[x].card->sprite);
 	}
+	if (ctx->board.overlay.selected != NULL)
+	{
+		SDL_RenderDrawRect(ctx->display->renderer, ctx->board.overlay.background.dst);
+		if (ctx->board.overlay.exit.button.state == SDLX_KEYHELD)
+			SDL_SetRenderDrawColor(ctx->display->renderer, 255, 255, 0, 255);
+		else
+			SDL_SetRenderDrawColor(ctx->display->renderer, 255, 0, 0, 255);
+		SDL_RenderDrawRect(ctx->display->renderer, ctx->board.overlay.exit.sprite.dst);
+
+	}
+
 
 	SDL_SetRenderDrawColor(ctx->display->renderer, 0, 0, 0, 255);
 }
