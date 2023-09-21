@@ -58,5 +58,5 @@ rustup default nightly
 cargo build --release
 rustup default stable
 cd "$here"
-cp ../c_controlpads/target/release/libc_controlpads.a console
+cp ../c_controlpads/target/release/libc_controlpads.a console/
 echo "libc_controlpads.a copied"
