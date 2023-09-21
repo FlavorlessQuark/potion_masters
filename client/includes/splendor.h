@@ -16,11 +16,13 @@ void render_board_screen(Context *ctx);
 void initConnection(Context *context);
 void parse_message(char *inc_msg);
 void sendMessage(char *message);
+void send_action(char action, Potion *potion);
 void window_events(Context *ctx);
 
 //-~-~-~-~-~-~-~-~-~-~-~-~ PLAYER -~-~-~-~-~-~-~-~-~-~-~-~
 
 void init_main_screen(Context *ctx);
+void fill_main_screen(Context *ctx);
 void main_screen(Context *ctx);
 void render_main_screen(Context *ctx);
 

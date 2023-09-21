@@ -3,3 +3,4 @@ bin/
 console/libc_controlpads.a
 client/node/client.js
 client/node/client.data
+emsdk/

@@ -68,7 +68,7 @@ void fill_board(Context *ctx)
 	else
 	{
 		_overlayRoot->self.boundingBox.x = SDLX_DisplayGet()->win_w / 3;
-		_overlayRoot->self.boundingBox.y = SDLX_DisplayGet()->win_h / 3;
+		_overlayRoot->self.boundingBox.y = SDLX_DisplayGet()->win_h / 4;
 		SDLX_ContainerUpdate(_root, NULL);
 		SDLX_ContainerUpdate(_overlayRoot, NULL);
 	}
