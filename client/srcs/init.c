@@ -23,15 +23,15 @@ void init_static(Context *ctx, int width, int height)
 	// root = SDLX_ParseConfig("assets/UI/boardUI");
 	// SDLX_Sprite costSprite[POTION_TYPES];
 	// init_connect_screen(ctx);
-	// init_main_screen(ctx);
-	init_board_static(ctx);
 	init_main_screen(ctx);
+	init_board_static(ctx);
 	// init_buy_screen(ctx);
 	initConnection(ctx);
 
-	fill_board(ctx);
 	fill_main_screen(ctx);
+	fill_board(ctx);
 	// endTurn(ctx);
+	// ctx->state = CONNECT;
 	ctx->state = PLAYERSTATUS;
 
 	// sendMessage("Test");

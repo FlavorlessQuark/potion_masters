@@ -40,6 +40,8 @@ void board_screen(Context *ctx)
 		}
 	}
 	else {
+		if (ctx->board.switchScreen.button.triggered == SDLX_KEYDOWN)
+			ctx->state = PLAYERSTATUS;
 		for (int x = 0; x < ROW_COUNT; x++)
 		{
 			for (int i = 0; i < MAX_ROWCARD; i++)
@@ -64,7 +66,8 @@ void render_board_screen(Context *ctx)
 {
 	// SDL_RenderCopy(ctx->display->renderer, ctx->board.bg, NULL, NULL);
 	// SDLX_RenderQueuePush(&ctx->switchSprite);
-
+	SDL_SetRenderDrawColor(ctx->display->renderer, 255, 255, 0, 255);
+	SDL_RenderDrawRect(ctx->display->renderer, ctx->board.switchScreen.sprite.dst);
 	for (int x = 0; x < ROW_COUNT; x++)
 	{
 		// SDLX_RenderQueuePush(&ctx->board.rows[x].rowIcon);

@@ -35,7 +35,7 @@ BOARD_NAMES =			\
 
 CONNECT_NAMES =			\
 	connect_screen		\
-	init_connect_screen	\
+	init_connect_screen		\
 
 IO_NAMES =			\
 	connection 		\
@@ -43,9 +43,9 @@ IO_NAMES =			\
 	window_events	\
 
 PLAYER_NAMES =			\
-	fill_main_screen	\
 	init_main_screen	\
 	main_screen			\
+	fill_main_screen	\
 
 
 

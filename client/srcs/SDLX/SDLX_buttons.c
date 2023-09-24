@@ -62,7 +62,6 @@ void SDLX_ButtonCreate (SDLX_Button *dest, SDL_Rect *boundingBox)
 	dest->neighbours[3] = NULL;
 
 	size++;
-	SDL_Log("Total buttons %zu", size);
 }
 
 void SDLX_ButtonUpdate()

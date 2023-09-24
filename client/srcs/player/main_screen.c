@@ -1,8 +1,5 @@
 #include "../includes/splendor.h"
 
-# define SWITCH_BUTTTON MAIN_SCREEN_SPRITE_COUNT - 2
-# define EXTRA_TOKEN MAIN_SCREEN_SPRITE_COUNT - 1
-
 void main_screen(Context *ctx)
 {
 	if (ctx->mainUI.endTurn.button.triggered == SDLX_KEYDOWN)
