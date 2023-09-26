@@ -25,12 +25,14 @@ void init_static(Context *ctx, int width, int height)
 	// init_connect_screen(ctx);
 	// init_main_screen(ctx);
 	init_board_static(ctx);
+	init_main_screen(ctx);
 	// init_buy_screen(ctx);
 	initConnection(ctx);
 
 	fill_board(ctx);
+	fill_main_screen(ctx);
 	// endTurn(ctx);
-	// ctx->state = CONNECT;
+	ctx->state = PLAYERSTATUS;
 
 	// sendMessage("Test");
 }

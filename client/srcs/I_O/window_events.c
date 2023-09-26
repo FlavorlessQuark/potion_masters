@@ -35,5 +35,6 @@ void resizeWindow(int width, int height)
 	SDL_SetWindowSize(display->window, width, height);
 
 	fill_board(ctx);
+	fill_main_screen(ctx);
 	// initPositions();
 }

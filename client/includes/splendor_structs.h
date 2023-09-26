@@ -21,7 +21,7 @@
 
 # define MIN_PLAYERS (2)
 # define MAX_PLAYERS (4)
-# define MAX_POTIONS (10)
+# define MAX_POTIONS (9)
 # define MAX_ROWCARD (4)
 # define MAX_MASTER_POTIONS (4)
 # define MAX_BREWING (3)
@@ -46,9 +46,9 @@
 # define TOK_R 4
 
 # define PLAYERSTATUS 0
-# define CARDSELECT 1
-# define BUYMENU 2
-# define CONNECT 3
+# define BOARD 1
+# define CONNECT 2
+# define END 3
 
 # define DISCONNECTED 0
 # define CONNECTED 1
@@ -104,10 +104,9 @@ typedef struct Potion
 
 typedef struct Player
 {
-	Potion reserved[MAX_POTIONS];
+	Potion owned[MAX_POTIONS];
 	uint8_t tokens[ESSENCE_TYPES];
-	uint8_t owned[POTION_TYPES];
-	uint8_t reserveCount;
+	uint8_t ownedCount;
 	uint8_t id;
 	uint8_t points;
 	uint8_t actionsRemaining;
@@ -157,8 +156,12 @@ typedef struct Connection
 
 typedef struct PlayerUI
 {
-	SDLX_Sprite name;
 	SDLX_Sprite points;
+
+	Button endTurn;
+	Button switchScreen;
+
+	SDLX_Button ownedButtons[MAX_POTIONS];
 	Potion 		owned[MAX_POTIONS];
 	SDLX_Sprite essences[ESSENCE_TYPES];
 	SDL_Texture *bg;
@@ -176,7 +179,7 @@ typedef struct Context
 {
 	int state;
 	Player player;
-	PlayerUI UI;
+	PlayerUI mainUI;
 	Connection connection;
 	Board board;
 	Assets assets;

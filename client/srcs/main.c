@@ -19,7 +19,7 @@ void core(void)
 	SDLX_InputUpdate();
 	// SDLX_ContainerUpdate(root, NULL);
 	//
-	SDLX_ButtonUpdate();
+	// SDLX_ButtonUpdate();
 
 	// SDLX_DisplayConfig(ctx.display->renderer, root);
 	// if (ctx.connection.hasMessage == SDL_TRUE)
@@ -29,7 +29,10 @@ void core(void)
 	// 	ctx.connection.hasMessage = SDL_FALSE;
 	// }
 	// fnloops[ctx.state](&ctx);
-	board_screen(&ctx);
+	if (ctx.state == BOARD)
+		board_screen(&ctx);
+	else if (ctx.state == PLAYERSTATUS)
+		main_screen(&ctx);
 	// SDLX_RenderAll(ctx.display);
 	// SDL_RenderCopy(ctx.display->renderer, ctx.switchSprite.texture, NULL, NULL);
 	SDL_RenderPresent(ctx.display->renderer);
@@ -42,7 +45,7 @@ int main(int argc, char **argv)
 	// for (int i = 0; i < argc; i++)
 	// 	printf("Argument %d : %s\n", i, argv[i]);
 	init_static(&ctx, SDL_atoi(argv[1]), SDL_atoi(argv[2]));
-	root = SDLX_LoadConfig("assets/UI/recipeUI");
+	root = SDLX_LoadConfig("assets/UI/playerUI");
 	#ifdef __EMSCRIPTEN__
 			emscripten_set_main_loop(core, 0, 1);
 	#endif
