@@ -32,6 +32,7 @@ void init_static(Context *ctx, int width, int height)
 	fill_board(ctx);
 	// endTurn(ctx);
 	// ctx->state = CONNECT;
+	ctx->mainUI.overlay.selected = NULL;
 	ctx->state = PLAYERSTATUS;
 
 	// sendMessage("Test");

@@ -35,8 +35,6 @@ void fillOverlay(Context *ctx, SDLX_RectContainer *root)
 	ctx->board.overlay.exit.sprite._dst.y = root->self.boundingBox.y;
 	ctx->board.overlay.exit.sprite._dst.w = root->self.boundingBox.w / 5;
 	ctx->board.overlay.exit.sprite._dst.h = root->self.boundingBox.w / 5;
-	SDLX_SpritePrint(&ctx->board.overlay.exit.sprite);
-	SDL_Log("S2) hould be %p, is %p", &ctx->board.overlay.exit.sprite._dst, ctx->board.overlay.exit.button.boundingBox);
 }
 
 void fillRowPotions(Context *ctx, Row *row, SDLX_RectContainer *root)
@@ -90,7 +88,6 @@ void fill_board(Context *ctx)
 	// surf = IMG_Load("assets/cards.png");
 
 	ctx->board.switchScreen.sprite._dst = _root->containers[0].elems[0].boundingBox;
-	SDLX_SpritePrint(&ctx->board.overlay.background);
 
 	// SDL_SetRenderTarget(ctx->display->renderer, NULL);
 }

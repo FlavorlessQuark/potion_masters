@@ -1,17 +1,5 @@
 #include "../includes/splendor.h"
 
-# define MAX_TAKE 3
-
-typedef struct board_tokens {
-	uint8_t  taken[ESSENCE_TYPES];
-	uint8_t  count;
-	uint8_t  max;
-	int  lock;
-
-}			board_tokens;
-
-static board_tokens tokens = {.lock = -1, .max = MAX_TAKE, .count = 0};
-
 void set_cards_active(Context *ctx, int enabled)
 {
 	for (int x = 0; x < ROW_COUNT; x++)
@@ -82,7 +70,6 @@ void render_board_screen(Context *ctx)
 			else
 				SDL_SetRenderDrawColor(ctx->display->renderer, 255, 0, 0, 255);
 			SDL_RenderDrawRect(ctx->display->renderer, ctx->board.rows[x].card[i].sprite.dst);
-
 		}
 		// SDL_Log("HELLO :)");
 		// SDLX_SpritePrint(&ctx->board.rows[x].card->sprite);

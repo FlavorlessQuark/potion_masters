@@ -153,6 +153,19 @@ typedef struct Connection
 	SDLX_Button connectButton;
 }			Connection;
 
+typedef struct PotionOverlay {
+
+	Button use;
+	Button exit;
+	Button convert;
+
+	SDLX_Sprite name;
+	SDLX_Sprite potion;
+	SDLX_Sprite effect;
+	SDLX_Sprite fillAmount;
+
+	Potion  	*selected;
+}				PotionOverlay;
 
 typedef struct PlayerUI
 {
@@ -160,6 +173,8 @@ typedef struct PlayerUI
 
 	Button endTurn;
 	Button switchScreen;
+
+	PotionOverlay overlay;
 
 	SDLX_Button ownedButtons[MAX_POTIONS];
 	Potion 		owned[MAX_POTIONS];
