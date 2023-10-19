@@ -53,20 +53,47 @@ void send_action(char action, Potion *potion)
 	sendMessage(msg);
 }
 
-void parse_message(char *inc_msg)
+void parse_message(Context *ctx, char *inc_msg)
 {
 	int offset;
 
 	offset = 0;
 
-	SDL_Log("Stage %d", inc_msg[offset++] - '0');
-	offset++;
+	if (ctx->state == CONNECT)
+	{
+		SDL_Log("Parsin msg %s", inc_msg);
+		if (inc_msg[0] == 'c')
+		{
+			char name[10] = {"Player 0"};
+			ctx->player.id = inc_msg[1] - '0' + 1;
+			ctx->connection.status = CONNECTED;
+			name[7] = inc_msg[1] + 1;
+			overlay_text(ctx->connection.name.texture, NULL, NULL, 0x000000FF, name);
+		}
+		else if (inc_msg[0] == 'r')
+		{
+			SDL_Rect src = {.x = 0, .y = 470, .w = 310, .h = 180};
+			overlay_text(ctx->connection.connectSprite.texture, ctx->assets.texUI, &src,0x000000FF, "Unready");
+			ctx->connection.status = READY;
+		}
+		else if (inc_msg[0] == 'u')
+		{
+			SDL_Rect src = {.x = 0, .y = 472, .w = 310, .h = 180};
+			overlay_text(ctx->connection.connectSprite.texture, ctx->assets.texUI, &src, 0x000000FF, "Ready");
+			ctx->connection.status = CONNECTED;
+		}
+	}
+	else
+	{
+		SDL_Log("Stage %d", inc_msg[offset++] - '0');
+		offset++;
 
-	offset = parse_player_state(offset, inc_msg);
-	SDL_Log("Board state starts here %s", inc_msg + offset);
-	offset = parse_board_state(offset, inc_msg);
+		offset = parse_player_state(offset, inc_msg);
+		SDL_Log("Board state starts here %s", inc_msg + offset);
+		offset = parse_board_state(offset, inc_msg);
 
-	SDL_Log("Parsed len %d", offset);
+		SDL_Log("Parsed len %d", offset);
+	}
 }
 
 int parse_player_state(int offset, char *inc_msg)

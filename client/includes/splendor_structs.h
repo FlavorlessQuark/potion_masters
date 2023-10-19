@@ -52,7 +52,7 @@
 
 # define DISCONNECTED 0
 # define CONNECTED 1
-# define CONNECTEDCONSOLE 2
+# define READY 2
 
 # define CARD_BACK 0
 # define CARD 1
@@ -98,6 +98,7 @@ typedef struct Potion
 	uint8_t cost[ESSENCE_TYPES - 1];
 	uint8_t points;
 	uint8_t type;
+	uint8_t fill;
 	int _id;
 	char id[CARD_ID_LEN];
 }	Potion;
@@ -151,6 +152,9 @@ typedef struct Connection
 	uint8_t status;
 	uint8_t hasMessage;
 	SDLX_Button connectButton;
+	SDLX_Sprite connectSprite;
+	SDLX_Sprite bg;
+	SDLX_Sprite name;
 }			Connection;
 
 typedef struct PotionOverlay {
@@ -187,6 +191,7 @@ typedef struct Assets
 	SDL_Rect numberDimensions;
 	SDLX_Display *display;
 	SDL_Texture *cardTex;
+	SDL_Texture *texUI;
 	SDLX_TextSheet textSheet;
 }			  Assets;
 

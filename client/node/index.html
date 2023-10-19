@@ -80,20 +80,22 @@
 
 	function handleConnect() {
 		// sendToWasm("Message sent from JS")
-		ws.send("r1");
+		sendToConsole("r1")
+		// ws.send("r1");
   }
 
 	function handleDisconnect() {
 		// sendToWasm("Message sent from JS")
-		ws.send("r0");
+		// ws.send("r0");
+		sendToConsole("r0")
   }
 
 	function sendToConsole(message) {
 		// let copy = message
 		// console.log("What??", window.Module)
-		let msg = Module.UTF8ToString(message);
-		console.log("Sending to console", msg);
-		ws.send(msg);
+		// let msg = Module.UTF8ToString(message);
+		console.log("Sending to console", message);
+		ws.send(message);
 	}
 
 

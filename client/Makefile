@@ -35,7 +35,8 @@ BOARD_NAMES =			\
 
 CONNECT_NAMES =			\
 	connect_screen		\
-	init_connect_screen		\
+	init_connect_screen	\
+	fill_connect_screen	\
 
 IO_NAMES =			\
 	connection 		\
@@ -57,8 +58,8 @@ SRCS_NAMES =								\
 	$(addprefix $(BOARD_DIR),  $(BOARD_NAMES))	\
 	$(addprefix $(IO_DIR),     $(IO_NAMES))	\
 	$(addprefix $(PLAYER_DIR), $(PLAYER_NAMES))	\
-	# $(addprefix $(CONNECT_DIR),$(CONNECT_NAMES))	\
-	# utils			\
+	$(addprefix $(CONNECT_DIR),$(CONNECT_NAMES))	\
+	utils			\
 
 SRCS = $(addprefix $(SRCS_DIR), $(addsuffix .c, $(SRCS_NAMES)))
 OBJS = $(addprefix $(BIN_DIR), $(SRCS:.c=.o))
