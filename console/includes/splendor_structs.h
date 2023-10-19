@@ -5,19 +5,21 @@
 
 # define MIN_PLAYERS (2)
 # define MAX_PLAYERS (4)
-# define MAX_POTIONS (10)
+# define MAX_POTIONS (9)
 # define MAX_ROWCARD (4)
-# define MAX_MASTER_POTIONS (4)
+# define MAX_MASTER_POTIONS (3)
 # define MAX_BREWING (3)
 # define ESSENCE_TYPES (4)
 
 # define MAX_COST_TYPES (3)
+// # define CARD_ID_LEN ((sizeof(char) * 8) + (MAX_COST_TYPES * (sizeof(char) * 4)) + 1)
 # define CARD_ID_LEN ((sizeof(char) * 8) + (MAX_COST_TYPES * (sizeof(char) * 4)) + 1)
 
-# define POTION_TYPES (3)
+# define POTION_TYPES (20)
 
 # define ROW_COUNT (3)
 
+# define MAX_FILL (3)
 # define EXIT_GAME (-1)
 # define CONNECT_SCREEN (0)
 # define PLAYING (1)
@@ -40,6 +42,7 @@ typedef struct Potion
 	uint8_t 	cost[ESSENCE_TYPES - 1];
 	uint8_t 	points;
 	uint8_t		type;
+	uint8_t		fill;
 
 	char id[CARD_ID_LEN];
 	int _id;
@@ -56,11 +59,11 @@ typedef struct Player
 	uint8_t isBrewing;
 	uint8_t actionsRemaining;
 
-	SDL_Rect pointsTag;
 	SDL_Rect potions[MAX_POTIONS];
 
-	SDLX_Sprite pointSprite;
-	SDLX_Sprite ressources[ESSENCE_TYPES];
+	SDLX_Sprite name;
+	SDLX_Sprite brew;
+	SDLX_Sprite essences[ESSENCE_TYPES];
 
 
 	char handle[HANDLE_LEN];
@@ -86,7 +89,8 @@ typedef struct ConnectScreen
 {
 	int counter;
 	SDL_Rect status;
-	SDLX_Sprite playerSprites[MAX_PLAYERS];
+	SDLX_Sprite bg;
+	SDLX_Sprite playerName[MAX_PLAYERS];
 	SDLX_Sprite playerStatus[MAX_PLAYERS];
 }	ConnectScreen;
 
@@ -115,4 +119,7 @@ typedef struct Context
 	Player players[MAX_PLAYERS];
 	Assets assets;
 }	Context;
+
+
+
 #endif

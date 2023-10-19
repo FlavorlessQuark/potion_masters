@@ -38,6 +38,7 @@ char *recv_from(char *handle)
 {
 	 CP_CHECK(get_messages(handle, &msg));
 		if (msg.len > 0) {
+			SDL_Log("Received %s from %s", msg.ptr[0], handle);
 			return msg.ptr[0];
 		}
 		return NULL;
@@ -80,7 +81,7 @@ int connect_handles(Context *ctx, char **handles, int len)
 			ctx->players[i].status = CONNECTED;
 			SDL_strlcpy(ctx->players[i].handle, handles[n], HANDLE_LEN);
 			SDL_Log("Added player %d - %s", i, handles[n]);
-			// send_to(handles[n], msg);
+			send_to(handles[n], msg);
 			connections++;
 			n++;
 		}

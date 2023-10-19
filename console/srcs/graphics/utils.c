@@ -1,6 +1,12 @@
 #include "splendor_structs.h"
 
-SDL_Rect scaleAndCenter(double scalar, SDL_Rect parent, SDL_Rect this)
+/*
+	Potion ID
+
+	- tier, effect, components[],
+ */
+
+SDL_Rect scale_and_center(double scalar, SDL_Rect parent, SDL_Rect this)
 {
 	SDL_Rect result;
 
@@ -10,6 +16,49 @@ SDL_Rect scaleAndCenter(double scalar, SDL_Rect parent, SDL_Rect this)
 	result.y = parent.y + ((parent.h / 2) - (result.h / 2));
 
 	return result;
+}
+
+
+void overlay_text(SDL_Texture *dest, SDL_Texture *base, SDL_Rect *baseSrc,  uint32_t color, char *text)
+{
+	SDL_Renderer *renderer;
+	SDL_Texture *renderTarget;
+	SDL_Rect bounds = {0};
+
+	renderer = SDLX_DisplayGet()->renderer;
+	renderTarget = SDL_GetRenderTarget(renderer);
+
+	SDL_SetRenderTarget(renderer, dest);
+	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
+
+	SDL_RenderClear(renderer);
+	SDL_GetRendererOutputSize(renderer, &bounds.w, &bounds.h);
+	if (base)
+	{
+		SDL_RenderCopy(renderer, base, baseSrc, NULL);
+	}
+
+	bounds = scale_and_center(0.6, bounds, bounds);
+
+	SDLX_RenderMessage(SDLX_DisplayGet(), &bounds, (SDL_Color){
+													.r = (color & ((uint32_t)(0xFF << 24))) >> 24,
+													.g = (color & ((uint32_t)(0xFF << 16))) >> 16,
+													.b = (color & ((uint32_t)(0xFF << 8))) >> 8,
+													.a = (color & ((uint32_t)(0xFF << 0))) >> 0}
+													, text);
+	SDL_SetRenderTarget(renderer, renderTarget);
+}
+
+
+SDL_Texture *create_target_texture(int w, int h)
+{
+	SDL_Texture *result = SDL_CreateTexture(
+			SDLX_DisplayGet()->renderer,
+			SDL_PIXELFORMAT_RGBA8888,
+			SDL_TEXTUREACCESS_TARGET, w, h);
+		SDL_SetTextureBlendMode(result , SDL_BLENDMODE_BLEND);
+
+		return result;
 }
 
 void generatePotionTexture(SDL_Texture *base, Potion *card, int type)
@@ -53,7 +102,7 @@ void generatePotionTexture(SDL_Texture *base, Potion *card, int type)
 		{
 			// get_img_src(&src, TOK_HEX, i);
 
-			centereDst = scaleAndCenter(0.5, dst, dst);
+			centereDst = scale_and_center(0.5, dst, dst);
 			// SDL_Log("Token %d x%d  (%s)", i, card->);
 			SDL_RenderCopy(renderer, base, &src, &dst);
 			remainder = card->cost[i];

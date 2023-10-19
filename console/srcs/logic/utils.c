@@ -1,5 +1,6 @@
 #include "../includes/splendor.h"
 
+#include "../includes/table.h"
 
 
 // Potion *findPotion(Context *ctx, char *id, int _id)
@@ -76,65 +77,112 @@
 
 
 /*
-	 Potions ids: <type>|<current_fill>: <max_fill>|<count>|<cost>
+	 Potions ids: <type>|<current_fill>|<cost_count>:<cost>
 	Type:          integer
 	Current_fill : integer
-	Max_fill :     integer
-	Cost: [<identifier>|<type>:<count>]
+	Cost: [<identifier><type>:<count>,pas aux ]
 		identifier:p or e
 		type:      integer
-		count:     integer
  */
 
-int generatePotion(SDL_Texture *base, Potion *card, int level)
+int generatePotion(Context *ctx, Potion *card, int level)
 {
 	int type;
 	int count;
+	int offset;
 	int i;
 
-	type = rand() % POTION_TYPES;
+	offset = 0;
+	type = (rand() % potions_by_tier[level].count) + potions_by_tier[level].entries[0].id;
+	card->type = type;
 
-	card->id[0] = '5';
-	card->id[1] = type + '0';
-	card->id[2] = ',';
-	card->id[3] = 3 + '0';
-	card->id[4] = ':';
-	card->id[5] = 3 + '0';
-	card->id[6] = ',';
+	SDL_memset(card->id, '0', CARD_ID_LEN);
+	SDL_itoa(type, card->id, 10);
+	offset++;
+	if (type >= 10)
+		offset++;
 
-	count = (rand() % MAX_COST_TYPES) + 1;
+	card->id[offset++] = '|';
+	card->id[offset++] = MAX_FILL + '0';
+	card->id[offset++] = '|';
 
-	card->id[7] = count + '0';
-	card->id[8] = '|';
-
-	for (int i = 0; i < count; i++)
+	count = (rand() % (level + 1) * 2) + level;
+	SDL_itoa(potions_by_id[type].cost_count, card->id + offset, 10);
+	offset++;
+	if (potions_by_id[type].cost_count >= 10)
+		offset++;
+	card->id[offset] = '|';
+	for ( i = 0; i < potions_by_id[type].cost_count; i++)
 	{
-		card->id[9 + i * 4 + 0] = 'e';
-		card->id[9 + i * 4 + 1] = (rand() % POTION_TYPES) + '0';
-		card->id[9 + i * 4 + 2] = (rand() % 4) + '0';
-		card->id[9 + i * 4 + 3] = ',';
-		// SDL_Log("?? %d %c", 8 + i * 4, card->id[8 + i * 4]);
+		offset++;
+		SDL_itoa(potions_by_id[type].potion_cost[i], card->id + offset, 10);
+		offset++;
+		if (potions_by_id[type].potion_cost[i] >= 10)
+			offset++;
+		card->id[offset] = '-';
 	}
-	// SDL_Log("?? %d %c", 8 + i * 4, card->id[8 + i * 3 ]);
-	card->id[9 + count * 4] = '\0';
-	card->id[0] = strlen(card->id) + '0';
+	card->id[offset++] = '|';
+	i = 0;
+	uint8_t essences[ESSENCE_TYPES] = {0};
+	while (i < count)
+	{
+		int amount;
+		int tok;
 
+		tok = rand() % ESSENCE_TYPES;
+		amount = rand() % MAX(1, count - i) + 1;
+		essences[tok] += amount;
+		i += (amount + 1);
+	}
 
-	// extract_num(card->id, &card->_id);
-	// generatePotionTexture(base, card, type);
+	for (int i = 0; i < ESSENCE_TYPES; ++i)
+	{
+		// SDL_itoa(essences[i], card->id + offset, 10);
+		SDL_itoa(potions_by_id[type].essences[i], card->id + offset, 10);
+		offset++;
+		card->id[offset++] = ',';
+
+	}
+	card->id[offset] = '\0';
+
 	SDL_Log("Generate %c  %s %d vs %d",
 		card->id[0],card->id, strlen(card->id), CARD_ID_LEN
 	);
-	// SDL_Log("Generate %s  (%d) | Src (%d,%d) Cost: %d %d %d %d, points %d",
-	// 	card->id,
-	// 	card->_id,
-	// 	card->sprite._src.x, card->sprite._src.y,
-	// 	card->cost[0],
-	// 	card->cost[1],
-	// 	card->cost[2],
-	// 	card->cost[3],
-	// 	card->points
-	// );
+
+	overlay_text(card->sprite.texture, NULL, NULL, 0xFFFFFFFF, potions_by_id[type].name);
+
+		SDL_Renderer *renderer;
+		SDL_Texture *renderTarget;
+		SDL_Rect bounds = {0};
+		uint32_t color;
+		char cost[2] = {"00"};
+
+		renderer = SDLX_DisplayGet()->renderer;
+		renderTarget = SDL_GetRenderTarget(renderer);
+
+		SDL_SetRenderTarget(renderer, card->sprite.texture);
+		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
+
+		// SDL_RenderClear(renderer);
+		SDL_GetRendererOutputSize(renderer, &bounds.w, &bounds.h);
+
+		bounds.y = bounds.h - (bounds.h / 5);
+		bounds.w /= 5;
+		bounds.h /= 5;
+		for (int i = 0; i < ESSENCE_TYPES; ++i)
+		{
+			color = ((0xFF000000 >> (5 * i)) + 0xFF);
+			SDL_itoa(potions_by_id[type].essences[i], cost, 10);
+			SDLX_RenderMessage(SDLX_DisplayGet(), &bounds, (SDL_Color){
+													.r = (color & ((uint32_t)(0xFF << 24))) >> 24,
+													.g = (color & ((uint32_t)(0xFF << 16))) >> 16,
+													.b = (color & ((uint32_t)(0xFF << 8))) >> 8,
+													.a = (color & ((uint32_t)(0xFF << 0))) >> 0}
+													, cost);
+			bounds.x += bounds.w;
+
+		}
+		SDL_SetRenderTarget(renderer, renderTarget);
 
 	return 1;
 }

@@ -17,9 +17,7 @@ void init_connectScreen(Context *ctx);
 // ~-~-~-~-~-~-~- messages.c ~-~-~-~-~-~-~-
 int	send_game_state(Context *ctx, int player);
 int execMsg		(Context *ctx, char *msg);
-int execReserve (Context *ctx, uint8_t playerID, char *msg);
-int execBuy		(Context *ctx, uint8_t playerID, char *msg);
-int execTake	(Context *ctx, uint8_t playerID, char *msg);
+int parse_action(Context *ctx, char * msg);
 
 // ~-~-~-~-~-~-~- utils.c ~-~-~-~-~-~-~-
 
@@ -28,12 +26,10 @@ Potion *findPotion		(Context *ctx, char *id, int _id);
 void nextTurn		(Context *ctx);
 void startGame		(Context *ctx);
 
-SDL_Rect scaleAndCenter(double scalar, SDL_Rect parent, SDL_Rect this);
+SDL_Rect scale_and_center(double scalar, SDL_Rect parent, SDL_Rect this);
 
 int	extract_num		(char *str, int *number);
-int generatePotion	(SDL_Texture *base, Potion *card, int level);
-
-void delReserved 	(Player *player, int cardId);
+int generatePotion(Context *ctx, Potion *card, int level);
 
 void cleanup		(Context *ctx);
 

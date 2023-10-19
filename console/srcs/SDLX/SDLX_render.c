@@ -162,7 +162,7 @@ void SDLX_RenderMessage(SDLX_Display *display, SDL_Rect *dst, SDL_Color color, c
 	SDL_Surface *surf;
 	SDL_Texture *tex;
 
-	surf = TTF_RenderText_Solid(display->defaultFont, text, color);
+	surf = TTF_RenderText_Blended(display->defaultFont, text, color);
 	tex =  SDL_CreateTextureFromSurface(display->renderer, surf);
 	SDL_RenderCopy(display->renderer, tex, NULL, dst);
 	SDL_FreeSurface(surf);
