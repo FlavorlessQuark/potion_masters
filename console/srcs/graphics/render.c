@@ -7,18 +7,13 @@ void renderPlayer(Context *ctx, Player *player)
 
 	display = SDLX_DisplayGet();
 
-	// player->pointSprite.src->x = ctx->assets.textSrc.x + (player->points * ctx->assets.textSrc.w);
-
-
 	SDLX_RenderQueuePush(&player->name);
 	for (i = 0; i < ESSENCE_TYPES; i++)
 	{
-		// player->ressources[i].src->x = ctx->assets.textSrc.x + (player->tokens[i] * ctx->assets.textSrc.w);
-
 		SDLX_RenderQueuePush(&player->essences[i]);
 	}
 
-	for (i = 0; i < MAX_POTIONS; i++)
+	for (i = 0; i < player->potionCount; i++)
 	{
 		SDLX_RenderQueuePush(&player->owned[i].sprite);
 	}
@@ -46,25 +41,11 @@ void renderBoard(Context *ctx)
 void render_connect_screen(Context *ctx)
 {
 	SDLX_RenderQueuePush(&ctx->connectscreen.bg);
+	SDLX_RenderQueuePush(&ctx->connectscreen.timer);
 	for (int i = 0; i <  ctx->playerCount; i++)
 	{
-		// if (ctx->players[i].status == DISCONNECTED)
-		// 	SDL_SetRenderDrawColor(ctx->display->renderer, 255, 0x0, 0x0,255);
-		// else if (ctx->players[i].status == READY)
-		// 	SDL_SetRenderDrawColor(ctx->display->renderer, 0x0, 255, 0x0,255);
-		// else if (ctx->players[i].status == CONNECTED)
-		// SDL_SetRenderDrawColor(ctx->display->renderer, 0x0, 0x0, 255, 255);
 		SDLX_RenderQueuePush(&ctx->connectscreen.playerName[i]);
 		SDLX_RenderQueuePush(&ctx->connectscreen.playerStatus[i]);
-		// SDL_RenderDrawRect(ctx->display->renderer, ctx->connectscreen.playerSprites[i].dst);
-		// SDL_RenderDrawRect(ctx->display->renderer, ctx->connectscreen.playerStatus[i].dst);
 	}
-	// for (int i = 0; i < ctx->playerCount; i++)
-	// {
-	// 	SDLX_RenderQueuePush(&ctx->connectscreen.playerSprites[i]);
-	// 	SDLX_RenderQueuePush(&ctx->connectscreen.playerStatus[i]);
-	// }
-	// SDL_SetRenderDrawColor(ctx->display->renderer, 255, 0x0, 0x0,255);
-	// SDL_RenderDrawRect(ctx->display->renderer, &ctx->connectscreen.status);
 	SDLX_RenderResetColour(ctx->display);
 }

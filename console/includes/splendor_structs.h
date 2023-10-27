@@ -10,10 +10,11 @@
 # define MAX_MASTER_POTIONS (3)
 # define MAX_BREWING (3)
 # define ESSENCE_TYPES (4)
+# define MAX_ACTIONS (3)
 
 # define MAX_COST_TYPES (3)
 // # define CARD_ID_LEN ((sizeof(char) * 8) + (MAX_COST_TYPES * (sizeof(char) * 4)) + 1)
-# define CARD_ID_LEN ((sizeof(char) * 8) + (MAX_COST_TYPES * (sizeof(char) * 4)) + 1)
+# define CARD_ID_LEN ((sizeof(char) * 5) + (ESSENCE_TYPES * (sizeof(char) * 3)) - 1)
 
 # define POTION_TYPES (20)
 
@@ -27,6 +28,8 @@
 
 # define HANDLE_LEN (21)
 
+
+
 # define DISCONNECTED (0)
 # define CONNECTED (1)
 # define READY (2)
@@ -39,7 +42,7 @@
 typedef struct Potion
 {
 	SDLX_Sprite sprite;
-	uint8_t 	cost[ESSENCE_TYPES - 1];
+	uint8_t 	cost[ESSENCE_TYPES];
 	uint8_t 	points;
 	uint8_t		type;
 	uint8_t		fill;
@@ -90,6 +93,7 @@ typedef struct ConnectScreen
 	int counter;
 	SDL_Rect status;
 	SDLX_Sprite bg;
+	SDLX_Sprite timer;
 	SDLX_Sprite playerName[MAX_PLAYERS];
 	SDLX_Sprite playerStatus[MAX_PLAYERS];
 }	ConnectScreen;

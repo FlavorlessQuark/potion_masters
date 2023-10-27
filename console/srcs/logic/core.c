@@ -1,4 +1,5 @@
 #include "../includes/splendor.h"
+#include <time.h>
 
 int core(void *arg, char *msg)
 {
@@ -33,23 +34,27 @@ int main_game(Context *ctx)
 		if (ctx->players[0].status == CONNECTED)
 			send_game_state(ctx, 0);
 	}
-		// SDL_Log("New connections");
-	// msgWasExec = 0;
 	msg = recv_from(ctx->players[ctx->turn].handle);
 	if (msg)
 	{
 		SDL_Log("Message from %d %s", ctx->turn, msg);
 		msgWasExec = execMsg(ctx, msg);
+		if (msgWasExec)
+		{
+			for (int i = 0; i < MAX_PLAYERS; i++)
+			{
+				if (ctx->players[i].status != DISCONNECTED)
+				{
+					send_game_state(ctx, ctx->turn);
+				}
+			}
+		}
 	}
-	// if (msgWasExec)
-	// {
-	// 	send_to(ctx->players[ctx->turn].handle, "e");
-	// 	ctx->turn = (ctx->turn + 1) % ctx->playerCount; // 0 if turn == playCount else turn + 1
-	// 	send_game_state(ctx, ctx->turn);
-	// 	SDL_Log("Now player %d turn", ctx->turn);
-	// }
 	for (int i = 0; i < MAX_PLAYERS; i++)
-		renderPlayer(ctx, &ctx->players[i]);
+	{
+		if (ctx->players[i].status != DISCONNECTED)
+			renderPlayer(ctx, &ctx->players[i]);
+	}
 
 	renderBoard(ctx);
 }
@@ -74,8 +79,11 @@ int title_screen(Context *ctx)
 	}
 }
 
+#define WAIT_TIME 1
+
 int connect_screen(Context *ctx)
 {
+	static time_t timer;
 	c_string_vec *handles;
 	uint8_t ready;
 	char *msg;
@@ -103,12 +111,13 @@ int connect_screen(Context *ctx)
 				if (msg[1] == '1')
 				{
 					send_to(ctx->players[i].handle, "r");
+					ctx->players[i].status = READY;
 					ctx->connectscreen.playerStatus[i]._src = (SDL_Rect){.x = 642, .y = 155, .w = 150, .h = 180};
-
 				}
 				if (msg[1] == '0')
 				{
 					send_to(ctx->players[i].handle, "u");
+					ctx->players[i].status = CONNECTED;
 					ctx->connectscreen.playerStatus[i]._src = (SDL_Rect){.x = 490, .y = 155, .w = 150, .h = 180};
 				}
 				ctx->players[i].status = (msg[1] + 1) - '0';
@@ -116,10 +125,23 @@ int connect_screen(Context *ctx)
 		}
 		ready &= ctx->players[i].status;
 	}
-	// if (ready)
-	// {
-	// 	startGame(ctx);
-	// 	ctx->state = PLAYING;
-	// }
+	if (ready)
+	{
+		int diff = (int)difftime(time(NULL), timer);
+		char text[20];
+
+		sprintf(text, "Game starts in: %d", WAIT_TIME - diff);
+		if (diff >= WAIT_TIME)
+		{
+			startGame(ctx);
+			ctx->state = PLAYING;
+		}
+		overlay_text(ctx->connectscreen.timer.texture, NULL, NULL, 0xFFFFFFFF, text);
+	}
+	else
+	{
+		overlay_text(ctx->connectscreen.timer.texture, NULL, NULL, 0xFFFFFFFF, "Waiting...");
+		time(&timer);
+	}
 	render_connect_screen(ctx);
 }

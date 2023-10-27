@@ -17,24 +17,24 @@ void core(void)
 	SDLX_RenderQueueFlushAll();
 	// window_events(&ctx);
 	SDLX_InputUpdate();
-	// SDLX_ContainerUpdate(root, NULL);
+	// SDLX_ContainerUpdate	(root, NULL);
 	//
 	SDLX_ButtonUpdate();
 
 	// SDLX_DisplayConfig(ctx.display->renderer, root);
 	if (ctx.connection.hasMessage == SDL_TRUE)
 	{
-		// SDL_Log("Received a message %s %p",  ctx.connection.message, ctx.connection.message);
+		SDL_Log("Received a message %s",  ctx.connection.message);
 		parse_message(&ctx, ctx.connection.message);
 		ctx.connection.hasMessage = SDL_FALSE;
 	}
 	// fnloops[ctx.state](&ctx);
-	// if (ctx.state == PLAYERSTATUS)
-	// 	main_screen(&ctx);
-	// else if (ctx.state == BOARD)
-	// 	board_screen(&ctx);
-	// else if (ctx.state == CONNECT)
-	// 	connect_screen(&ctx);
+	if (ctx.state == PLAYERSTATUS)
+		main_screen(&ctx);
+	else if (ctx.state == BOARD)
+		board_screen(&ctx);
+	else if (ctx.state == CONNECT)
+		connect_screen(&ctx);
 	SDLX_RenderAll(ctx.display);
 	// SDL_RenderCopy(ctx.display->renderer, ctx.switchSprite.texture, NULL, NULL);
 	SDL_RenderPresent(ctx.display->renderer);

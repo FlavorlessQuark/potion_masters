@@ -89,6 +89,13 @@ void init_connect_screen_UI(Context *ctx, SDLX_RectContainer *root)
 
 
 	SDLX_SpriteCreate(&ctx->connectscreen.bg, 1, ctx->assets.texUI);
+	SDLX_SpriteCreate(&ctx->connectscreen.timer, 1, create_target_texture(ctx->display->win_h *0.6,ctx->display->win_h / 4));
+	ctx->connectscreen.timer._dst = (SDL_Rect){
+		.x = 0,
+		.y = ctx->display->win_h / 4,
+		.w = ctx->display->win_h *0.6,
+		.h = ctx->display->win_h / 3};
+	ctx->connectscreen.timer.src = NULL;
 	ctx->connectscreen.bg._src = (SDL_Rect){.x = 0, .y = 0, .w = 470, .h = 470};
 	ctx->connectscreen.bg._dst = root->self._boundingBox;
 	root = &root->containers[0].containers[0];
@@ -178,7 +185,7 @@ void init_left_player_UI(Context *ctx, uint8_t id, SDLX_RectContainer *root)
 				root->containers[1].containers[0].elems[i]._boundingBox.w,
 				root->containers[1].containers[0].elems[i]._boundingBox.h
 			));
-		overlay_text(ctx->players[id].essences[i].texture,NULL, NULL, ((0xFF000000 >> (5 * i)) + 0xFF),"0");
+		// overlay_text(ctx->players[id].essences[i].texture,NULL, NULL, ((0xFF000000 >> (5 * i)) + 0xFF),"0");
 		ctx->players[id].essences[i]._dst = root->containers[1].containers[0].elems[i]._boundingBox;
 		ctx->players[id].essences[i].src = NULL;
 	}

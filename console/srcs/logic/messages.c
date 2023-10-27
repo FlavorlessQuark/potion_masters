@@ -25,7 +25,7 @@ int send_game_state(Context *ctx, int player)
 	int offset;
 
 	offset = 0;
-	msg[offset++] = ctx->state + '0';
+	msg[offset++] = 's';
 	msg[offset++] = '|';
 
 	offset = compose_player_state(&ctx->players[player], ctx->turn == player, offset);
@@ -73,8 +73,8 @@ int compose_player_state(Player *player, int status, int offset)
 {
 	msg[offset++] = status + '0';
 	msg[offset++] = '|';
-	// msg[offset++] = player->actionsRemaining;
-	msg[offset++] = 2 + '0';
+	msg[offset++] = player->actionsRemaining + '0';
+	// msg[offset++] = 2 + '0';
 	msg[offset++] = '|';
 	msg[offset++] = '[';
 	for (int i = 0; i < ESSENCE_TYPES; i++)
@@ -87,8 +87,9 @@ int compose_player_state(Player *player, int status, int offset)
 	msg[offset++] = '[';
 	for (int i = 0; i < player->potionCount; i++)
 	{
-		SDL_memcpy(msg + offset, player->owned[i].id, player->owned[i].id[0] - '0');
-		offset += player->owned[i].id[0] - '0';
+		SDL_memcpy(msg + offset, player->owned[i].id, SDL_strlen(player->owned[i].id));
+		SDL_Log("PLayer has %d card %s",i,   player->owned[i].id);
+		offset += SDL_strlen(player->owned[i].id);
 		msg[offset++] = ',';
 	}
 	msg[offset++] = ']';
@@ -97,8 +98,8 @@ int compose_player_state(Player *player, int status, int offset)
 	msg[offset++] = ':';
 	if (player->isBrewing)
 	{
-		SDL_memcpy(msg + offset, player->brewing.id, player->brewing.id[0] - '0');
-		offset += player->brewing.id[0] - '0';
+		SDL_memcpy(msg + offset, player->brewing.id, SDL_strlen(player->brewing.id));
+		offset += SDL_strlen(player->brewing.id);
 	}
 	msg[offset++] = '|';
 
@@ -116,12 +117,12 @@ int compose_board_state(Board *board, int offset)
 		for (int j = 0; j < board->rows[i].recipeCount; j++)
 		{
 			msg[offset++] = '<';
-			SDL_memcpy(msg + offset, board->rows[i].recipes[j].id, board->rows[i].recipes[j].id[0] - '0');
-			offset += board->rows[i].recipes[j].id[0] - '0';
+			SDL_memcpy(msg + offset, board->rows[i].recipes[j].id, SDL_strlen(board->rows[i].recipes[j].id));
+			offset += SDL_strlen(board->rows[i].recipes[j].id);
 			msg[offset++] = '>';
 			msg[offset++] = ',';
 		}
-		msg[offset++] = '|';
+		msg[offset] = '|';
 	}
 }
 
@@ -138,46 +139,55 @@ int parse_action(Context *ctx, char * msg)
 {
 	Player *playr;
 	uint8_t potion_idx;
+	char count[2] = {"00"};
 
 	playr = &ctx->players[ctx->turn];
-	potion_idx = msg[1];
+	potion_idx = msg[1] - '0';
 	if (msg[0] == 'e')
-		ctx->turn = (ctx->turn + 1) % ctx->playerCount;
+	{
+		start_next_turn(ctx);
+	}
 	else if (msg[0] == 'u')
 	{
+		SDL_Log("Fill was, %d", playr->owned[potion_idx].fill);
 		playr->owned[potion_idx].fill -= 1;
+		if (playr->owned[potion_idx].fill >= 0)
+			playr->owned[potion_idx].id[3] = playr->owned[potion_idx].fill + '0';
+		SDL_Log("Fill now, %d", playr->owned[potion_idx].fill);
 
 		if (potions_by_id[playr->owned[potion_idx].type].fn)
 			potions_by_id[playr->owned[potion_idx].type].fn(ctx);
 		else
 			SDL_Log("This really shouldn't happen (this potiont cant be used %d)", playr->owned[potion_idx].type);
-		// set fill -1 or del
-		// lookup potion from table and do function
 	}
 	else if (msg[0] == 'b')
 	{
 		uint8_t rows;
 		uint8_t col;
+		int n;
 
-		rows = msg[1] / 3;
-		col = msg[1] / MAX_ROWCARD;
+		n = SDL_atoi(msg + 1);
+		rows = n / MAX_ROWCARD;
+		col = n / 3;
 		playr->isBrewing = SDL_TRUE;
-		playr->brewing = ctx->board.rows[rows].recipes[col];
-		// Get potion from board
-		// Set "brewing" potion
-		// generate new potion
-		SDL_memcpy(playr->brewing.id , ctx->board.rows[rows].recipes[col].id, CARD_ID_LEN);
+		for (int i = 0; i < ESSENCE_TYPES; i++)
+			playr->tokens[i] -= ctx->board.rows[rows].recipes[col].cost[i];
+
+		draw_player_essences(playr);
+		copy_potion(&playr->brewing, & ctx->board.rows[rows].recipes[col]);
 		generatePotion(ctx, &ctx->board.rows[rows].recipes[col], rows);
+		overlay_text(playr->brewing.sprite.texture, NULL, NULL, 0xFFFFFFFF, potions_by_id[playr->brewing.type].name);
+
 	}
 	else if (msg[0] == 'r') {
 		playr->owned[potion_idx].fill -= 1;
+		if (playr->owned[potion_idx].fill >= 0)
+			playr->owned[potion_idx].id[3] = playr->owned[potion_idx].fill + '0';
+		SDL_Log("Fill now at, %d %s", playr->owned[potion_idx].fill, playr->owned[potion_idx].id);
 
 		for (int i = 0; i < ESSENCE_TYPES; ++i)
-		{
 			playr->tokens[i] += potions_by_id[playr->owned[potion_idx].type].essences[i];
-		}
-		// set fill -1 or delete potion
-		// add essences to player
+		draw_player_essences(playr);
 	}
 	playr->actionsRemaining -= 1;
 }

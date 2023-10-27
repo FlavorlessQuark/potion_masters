@@ -1,6 +1,16 @@
 #include "../includes/splendor.h"
+#include "../includes/table.h"
+
 #define NUMS "0123456789"
 
+static int	extract_num(char *str, int *number)
+{
+	int spn;
+
+	spn = strcspn(str, NUMS);
+	*number = atoi(str + spn);
+	return spn + strspn(str + spn, NUMS);
+}
 
 SDL_Rect scale_and_center(double scalar, SDL_Rect parent, SDL_Rect this)
 {
@@ -14,7 +24,7 @@ SDL_Rect scale_and_center(double scalar, SDL_Rect parent, SDL_Rect this)
 	return result;
 }
 
-void overlay_text(SDL_Texture *dest, SDL_Texture *base, SDL_Rect *baseSrc,  uint32_t color, char *text)
+void overlay_text(SDL_Texture *dest, SDL_Texture *base, SDL_Rect *baseSrc, uint32_t color, double scale, char *text)
 {
 	SDL_Renderer *renderer;
 	SDL_Texture *renderTarget;
@@ -33,7 +43,8 @@ void overlay_text(SDL_Texture *dest, SDL_Texture *base, SDL_Rect *baseSrc,  uint
 		SDL_RenderCopy(renderer, base, baseSrc, NULL);
 	}
 
-	bounds = scale_and_center(0.6, bounds, bounds);
+	if (scale != 1)
+		bounds = scale_and_center(0.6, bounds, bounds);
 
 	SDLX_RenderMessage(SDLX_DisplayGet(), &bounds, (SDL_Color){
 													.r = (color & ((uint32_t)(0xFF << 24))) >> 24,
@@ -44,6 +55,7 @@ void overlay_text(SDL_Texture *dest, SDL_Texture *base, SDL_Rect *baseSrc,  uint
 
 	SDL_SetRenderTarget(renderer, renderTarget);
 }
+
 
 SDL_Texture *create_target_texture(int w, int h)
 {
@@ -58,101 +70,66 @@ SDL_Texture *create_target_texture(int w, int h)
 
 void reset_game(Context *ctx)
 {
-	char cost[2] = {"00"};
-	for (int i = 0; i < ESSENCE_TYPES; ++i)
-	{
-		ctx->player.tokens[i] = 3;
-		SDL_itoa(3, cost, 10);
-		overlay_text(ctx->mainUI.essences[i].texture, NULL, NULL, ((0xFF000000 >> (5 * i)) + 0xFF), cost);
-	}
 	for (int i = 0; i < MAX_POTIONS; ++i)
 		ctx->player.owned[i].fill = 0;
 
+	ctx->mainUI.overlay.selected = NULL;
+	ctx->board.overlay.selected = NULL;
 	ctx->player.actionsRemaining = 0;
 	ctx->player.id = 0;
 	ctx->player.ownedCount = 0;
+	ctx->state = CONNECT;
+	set_main_cards_active(ctx, SDL_FALSE);
+	set_board_cards_active(ctx, SDL_FALSE);
 }
 
-// TODO: Update this (very old, do not use)
-// void generatePotionTexture(SDL_Texture *base, Potion *card, int type)
-// {
-// 	SDL_Rect src;
-// 	SDL_Rect dst;
-// 	SDL_Rect centereDst;
-// 	SDL_Renderer *renderer;
-// 	char text[2];
-// 	int remainder;
+void generatePotion(Potion *card)
+{
+	int offset;
 
-// 	text[1] = '\0';
-// 	renderer = SDLX_DisplayGet()->renderer;
-// 	get_img_src(&src, CARD, type);
+	offset = 0;
+	offset += extract_num(card->id + offset, &card->type);
+	offset += extract_num(card->id + offset, &card->fill);
 
-// 	dst.h = card->sprite.dst->h / 7;
-// 	dst.w = dst.h;
-// 	dst.x = card->sprite.dst->w / 10;
-// 	dst.y = card->sprite.dst->h / 10;
-// 	SDL_SetRenderTarget(renderer, card->sprite.texture);
-// 	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
-// 	SDL_SetRenderDrawColor(renderer, 0, 0, 255, 0);
-// 	SDL_RenderFillRect(renderer, NULL);
-// 	SDL_RenderCopy(renderer, base, &src, NULL);
-// 	for (int i = 0; i < POTION_TYPES; i++)
-// 	{
-// 		if (card->cost[i] > 0)
-// 		{
-// 			get_img_src(&src, TOK_HEX, i);
+	overlay_text(card->sprite.texture, NULL, NULL, WHITE, 0.6, potions_by_id[card->type].name);
 
-// 			centereDst = scale_and_center(0.5, dst, dst);
-// 			// SDL_Log("Token %d x%d  (%s)", i, card->);
-// 			SDL_RenderCopy(renderer, base, &src, &dst);
-// 			remainder = card->cost[i];
-// 			if (remainder >= 5)
-// 			{
-// 				remainder -= 5;
-// 				SDLX_RenderMessage(SDLX_DisplayGet(), &centereDst,(SDL_Color){0,0,0,0}, "5");
-// 				dst.x += dst.w / 5;
-// 			}
-// 			for (int x = 0; x < remainder; x++)
-// 			{
-// 				SDL_RenderCopy(renderer, base, &src, &dst);
-// 				dst.x += dst.w / 5;
-// 			}
-// 			dst.y += card->sprite.dst->h / 5;
-// 		}
-// 		dst.x = card->sprite.dst->w / 10;
-// 	}
-// 	dst.x = card->sprite._dst.w * 0.70;
-// 	dst.y = dst.y = card->sprite.dst->h / 10;
-// 	text[0] = card->points + '0';
-// 	SDLX_RenderMessage(SDLX_DisplayGet(), &dst,(SDL_Color){255,255,255,255}, text);
-// 	SDL_SetRenderTarget(renderer, NULL);
-// }
+	SDL_Renderer *renderer;
+	SDL_Texture *renderTarget;
+	SDL_Rect bounds = {0};
+	uint32_t color;
+	char cost[2] = {"00"};
 
-// void fillPotion(Potion *card)
-// {
-// 	char *str;
-// 	int type;
-// 	int i;
+	renderer = SDLX_DisplayGet()->renderer;
+	renderTarget = SDL_GetRenderTarget(renderer);
 
-// 	type = card->id[1] - '0';
-// 	extract_num(card->id, &card->_id);
-// 	if (card->_id <= 0)
-// 		return ;
-// 	get_img_src(&card->sprite._src, CARD, type);
-// 	str = card->id + 3;
-// 	for (i = 0; i < POTION_TYPES + 1; i++)
-// 		card->cost[i] = str[i] - '0';
+	SDL_SetRenderTarget(renderer, card->sprite.texture);
+	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
 
-// 	card->points = str[i] - '0';
-// 	SDL_Log("Generate %s (%d) | Src (%d,%d) Cost: %d %d %d %d",
-// 		card->id, card->_id,
-// 		card->sprite._src.x, card->sprite._src.y,
-// 		card->cost[0],
-// 		card->cost[1],
-// 		card->cost[2],
-// 		card->cost[3]
-// 	);
-// }
+	// SDL_RenderClear(renderer);
+	SDL_GetRendererOutputSize(renderer, &bounds.w, &bounds.h);
+
+	bounds.y = bounds.h - (bounds.h / 5);
+	bounds.w /= 5;
+	bounds.h /= 5;
+	for (int i = 0; i < ESSENCE_TYPES; ++i)
+	{
+		offset += extract_num(card->id + offset, &card->cost[i]);
+		color = ((0xFF000000 >> (5 * i)) + 0xFF);
+		SDL_itoa(card->cost[i], cost, 10);
+		SDLX_RenderMessage(SDLX_DisplayGet(), &bounds, (SDL_Color){
+												.r = (color & ((uint32_t)(0xFF << 24))) >> 24,
+												.g = (color & ((uint32_t)(0xFF << 16))) >> 16,
+												.b = (color & ((uint32_t)(0xFF << 8))) >> 8,
+												.a = (color & ((uint32_t)(0xFF << 0))) >> 0}
+												, cost);
+		bounds.x += bounds.w;
+
+	}
+	SDL_SetRenderTarget(renderer, renderTarget);
+
+}
+
+
 
 // int extract_card_from_input(Context *ctx, Potion *dst, char *input)
 // {

@@ -35,7 +35,7 @@ void SDLX_ButtonSet_Keys(int left, int right, int up, int down, int select)
 	keys[LEFT] = left;
 	keys[RIGHT] = right;
 	keys[SELECT] = select;
-	keys[HASKEYBOARDSET] = SDL_TRUE;
+	keys[HASKEYBOARDSET]  = SDL_TRUE;
 }
 
 void SDLX_ButtonCreate (SDLX_Button *dest, SDL_Rect *boundingBox)

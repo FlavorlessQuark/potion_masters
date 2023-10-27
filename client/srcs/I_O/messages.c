@@ -37,19 +37,27 @@ End :    e
 
 */
 
-int parse_player_state(int offset, char *inc_msg);
-int parse_board_state(int offset, char * inc_msg);
+#define NUMS "0123456789"
 
-void send_action(char action, Potion *potion)
+static int	extract_num(char *str, int *number)
+{
+	int spn;
+
+	spn = strcspn(str, NUMS);
+	*number = atoi(str + spn);
+	return spn + strspn(str + spn, NUMS);
+}
+
+int parse_player_state(Context *ctx, int offset, char *inc_msg);
+int parse_board_state(Context *ctx, int offset, char * inc_msg);
+
+void send_action(char action, int position)
 {
 	msg[0] = action;
-	msg[1] = ':';
-	if (potion)
-	{
-		memcpy(msg + 2, potion->id, potion->id[0] - '0');
-	}
-	else
-		msg[1] = '\0';
+	msg[2] = '\0';
+	msg[3] = '\0';
+	SDL_itoa(position, msg + 1, 10);
+
 	sendMessage(msg);
 }
 
@@ -59,108 +67,102 @@ void parse_message(Context *ctx, char *inc_msg)
 
 	offset = 0;
 
-	if (ctx->state == CONNECT)
-	{
+
 		SDL_Log("Parsin msg %s", inc_msg);
+		ctx->state = CONNECT;
 		if (inc_msg[0] == 'c')
 		{
 			char name[10] = {"Player 0"};
 			ctx->player.id = inc_msg[1] - '0' + 1;
 			ctx->connection.status = CONNECTED;
 			name[7] = inc_msg[1] + 1;
-			overlay_text(ctx->connection.name.texture, NULL, NULL, 0x000000FF, name);
+			overlay_text(ctx->connection.name.texture, NULL, NULL, BLACK, 0.5, name);
 		}
 		else if (inc_msg[0] == 'r')
 		{
 			SDL_Rect src = {.x = 0, .y = 470, .w = 310, .h = 180};
-			overlay_text(ctx->connection.connectSprite.texture, ctx->assets.texUI, &src,0x000000FF, "Unready");
+			overlay_text(ctx->connection.connectSprite.texture, ctx->assets.texUI, &src, BLACK, 0.5, "Unready");
 			ctx->connection.status = READY;
 		}
 		else if (inc_msg[0] == 'u')
 		{
 			SDL_Rect src = {.x = 0, .y = 472, .w = 310, .h = 180};
-			overlay_text(ctx->connection.connectSprite.texture, ctx->assets.texUI, &src, 0x000000FF, "Ready");
+			overlay_text(ctx->connection.connectSprite.texture, ctx->assets.texUI, &src, BLACK, 0.6, "Ready");
 			ctx->connection.status = CONNECTED;
 		}
-	}
-	else
-	{
-		SDL_Log("Stage %d", inc_msg[offset++] - '0');
-		offset++;
-
-		offset = parse_player_state(offset, inc_msg);
-		SDL_Log("Board state starts here %s", inc_msg + offset);
-		offset = parse_board_state(offset, inc_msg);
-
-		SDL_Log("Parsed len %d", offset);
-	}
+		else if (inc_msg[0] == 's')
+		{
+			if (ctx->state == CONNECT)
+			{
+				ctx->state = PLAYERSTATUS;
+				set_main_cards_active(ctx, SDL_TRUE);
+			}
+			offset = parse_player_state(ctx, offset + 2, inc_msg);
+			offset = parse_board_state(ctx, offset, inc_msg);
+		}
 }
 
-int parse_player_state(int offset, char *inc_msg)
+
+int parse_player_state(Context *ctx,int offset, char *inc_msg)
 {
-	SDL_Log("Player status %d", inc_msg[offset++] - '0');
+	ctx->isTurn = inc_msg[offset++] - '0';
 	offset += 1;
-	SDL_Log("Player actions %d", inc_msg[offset++] - '0');
+	ctx->player.actionsRemaining = inc_msg[offset++] - '0';
 
 	offset += 2;
+	char count[2] = {"00"};
 	for (int i = 0; i < ESSENCE_TYPES; i ++)
 	{
-		SDL_Log("Player essence %d count %d", i, inc_msg[offset++] - '0');
-		offset++;
+		offset += extract_num(inc_msg + offset, &ctx->player.tokens[i]) + 1;
+		SDL_itoa(ctx->player.tokens[i], count, 10);
+		overlay_text(ctx->mainUI.essences[i].texture, NULL, NULL, ((0xFF000000 >> (5 * i)) + 0xFF), 1, count);
 	}
 	offset++;
-	int count = inc_msg[offset++] - '0';
+	ctx->player.ownedCount = inc_msg[offset++] - '0';
 	offset++;
-	char ID[CARD_ID_LEN];
-	SDL_Log("Player potions %d",count);
-	// return 0;
-	for (int i = 0; i < count; i++)
+	for (int i = 0; i < ctx->player.ownedCount; i++)
 	{
-		SDL_memcpy(ID, inc_msg + offset, inc_msg[offset] - '0');
-		SDL_Log("Player potions %d  %s",i, ID);
-		offset +=  inc_msg[offset] - '0';
+		SDL_memcpy(ctx->player.owned[i].id, inc_msg + offset, CARD_ID_LEN);
+		generatePotion(&ctx->player.owned[i]);
+		SDL_Log("Player potions %d  %s fill: %d",i, ctx->player.owned[i].id, ctx->player.owned[i].fill);
+		offset += CARD_ID_LEN;
 		offset++;
 	}
 	offset += 2;
-	int isBrewing = inc_msg[offset] - '0';
+	ctx->player.isBrewing = inc_msg[offset] - '0';
 	offset+=2;
-
-	if (isBrewing)
+	if (ctx->player.isBrewing)
 	{
-		SDL_memcpy(ID, inc_msg + offset,  inc_msg[offset] - '0');
-		SDL_Log("Player potions brew ID %s", ID);
-		offset +=  inc_msg[offset] - '0';
+		SDL_memcpy(ctx->player.brewing.id, inc_msg + offset, CARD_ID_LEN);
+		generatePotion(&ctx->player.brewing);
+		SDL_Log("Player potions brew ID %s", ctx->player.brewing.id);
+		overlay_text(ctx->player.brewing.sprite.texture, NULL, NULL, WHITE, 1, "Brewing...");
+		offset += CARD_ID_LEN;
 	}
 	offset++;
 	return offset;
 }
 
-int parse_board_state(int offset, char *inc_msg)
+int parse_board_state(Context *ctx,int offset, char *inc_msg)
 {
 	char ID[CARD_ID_LEN];
 	int masterCount =  inc_msg[offset] - '0';
 	SDL_Log("Board : master count %d ", masterCount);
 	offset+=2;
-	for (int i = 0; i < ROW_COUNT; i++)
-	{
-
-	}
 
 	for (int i = 0; i < ROW_COUNT; i++)
 	{
-		int count = inc_msg[offset] - '0';
-		SDL_Log("Row %d count %d",i,  count);
+		ctx->board.rows[i].count = inc_msg[offset] - '0';
 		offset+=2;
-		for (int j = 0; j < count; j++)
+		for (int j = 0; j < ctx->board.rows[i].count; j++)
 		{
 			offset++;
-			// SDL_Log("ID starts here %s", inc_msg + offset);
-			SDL_memcpy(ID, inc_msg + offset,  inc_msg[offset] - '0');
-			offset +=  inc_msg[offset] - '0';
+			SDL_memcpy(ctx->board.rows[i].card[j].id, inc_msg + offset, CARD_ID_LEN);
+			generatePotion(&ctx->board.rows[i].card[j]);
+			offset +=  CARD_ID_LEN;
 			offset += 2;
-			SDL_Log("ID %d %s", j, ID);
+			SDL_Log("ID %d %s", j, ctx->board.rows[i].card[j].id);
 		}
-		offset++;
 	}
 	return offset;
 }

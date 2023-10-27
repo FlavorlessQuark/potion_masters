@@ -27,8 +27,8 @@ Context *init()
 	init_UI(ctx);
 	init_connectScreen(ctx);
 	init_new_game(ctx);
-	// ctx->state = CONNECT_SCREEN;
-	ctx->state = PLAYING;
+	ctx->state = CONNECT_SCREEN;
+	// ctx->state = PLAYING;
 	ctx->playerCount = 0;
 
 	return ctx;
@@ -42,10 +42,8 @@ void init_new_game(Context *ctx)
 
 	fill_board(ctx);
 
-	// fill_player(ctx, 0);
-	// fill_player(ctx, 1);
-	// fill_player(ctx, 2);
-	// fill_player(ctx, 3);
+	for (int i = 0; i < ctx->playerCount; ++i)
+		fill_player(ctx, i);
 
 	SDL_Log("Init new game");
 	SDL_SetRenderTarget(ctx->display->renderer, NULL);
@@ -89,20 +87,15 @@ void fill_player(Context *ctx, uint8_t id)
 	SDL_Rect src;
 	char name[9] = {'P', 'L', 'A', 'Y', 'E', 'R', ' ', (id + 1) + '0', '\0'};
 
-	memset(ctx->players[id].owned, 0, 5 * sizeof(Potion));
-	memset(ctx->players[id].tokens, 0, 5 * sizeof(uint8_t));
+	memset(ctx->players[id].tokens, 3, 5 * sizeof(uint8_t));
 	ctx->players[id].potionCount = 0;
-	ctx->players[id].status = DISCONNECTED;
-	ctx->players[id].points = 0;
+	ctx->players[id].actionsRemaining = 0;
+	for (int i = 0; i < MAX_POTIONS; ++i)
+	{
+		ctx->players[id].owned[i].fill = 0;
+	}
 
-	// SDLX_RenderMessage(ctx->display, &ctx->players[id].pointsTag, (SDL_Color){255,255,255,255}, name);
-	// for (i = 0; i < ESSENCE_TYPES; i++)
-	// {
-	// 	ctx->players[id].tokens[i] = 0;
-	// 	SDL_RenderCopy(ctx->display->renderer, ctx->assets.mainBg, NULL,  ctx->players[id].ressources[i].dst);
-	// 	// TTF_SizeText(ctx->display->defaultFont, "00", &ctx->players[id].ressources[i]._dst.w, &ctx->players[id].ressources[i]._dst.h);
-	// 	ctx->players[id].ressources[i]._src = ctx->assets.textSrc;
-	// }
+	draw_player_essences(&ctx->players[id]);
 }
 
 #define START 3000

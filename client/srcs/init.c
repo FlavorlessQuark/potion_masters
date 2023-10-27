@@ -36,9 +36,7 @@ void init_static(Context *ctx, int width, int height)
 	fill_board(ctx);
 	fill_connect_screen(ctx);
 	// endTurn(ctx);
-	ctx->mainUI.overlay.selected = NULL;
-	// ctx->state = CONNECT;
-	ctx->state = PLAYERSTATUS;
+	// ctx->state = PLAYERSTATUS;
 	reset_game(ctx);
 	// sendMessage("Test");
 }
@@ -50,7 +48,13 @@ void init_textures(Context *ctx)
 	SDL_Log("Preparing textures...");
 	surf = IMG_Load("assets/ui_p1.png");
 	ctx->assets.texUI = SDL_CreateTextureFromSurface(ctx->display->renderer, surf);
-	SDL_Log("TExture %p", ctx->assets.texUI);
 	SDL_FreeSurface(surf);
+
+	surf = IMG_Load("assets/blurr.png");
+	ctx->assets.blurr = SDL_CreateTextureFromSurface(ctx->display->renderer, surf);
+	SDL_FreeSurface(surf);
+
+
+	SDL_Log("TExture %p", ctx->assets.texUI);
 
 }

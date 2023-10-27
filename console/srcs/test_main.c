@@ -6,7 +6,7 @@ int main()
 	SDLX_Display *display;
 
 	SDLX_InitDefault();
-	root = loadConfig("assets/UI/boardUI");
+	root = loadConfig("assets/UI/playerUI");
 
 	// cleanupUIConfig(root);
 	display = SDLX_DisplayGet();

@@ -21,9 +21,9 @@ int parse_action(Context *ctx, char * msg);
 
 // ~-~-~-~-~-~-~- utils.c ~-~-~-~-~-~-~-
 
-Potion *findPotion		(Context *ctx, char *id, int _id);
+void copy_potion(Potion *dst, Potion *src);
 
-void nextTurn		(Context *ctx);
+void start_next_turn(Context *ctx);
 void startGame		(Context *ctx);
 
 SDL_Rect scale_and_center(double scalar, SDL_Rect parent, SDL_Rect this);
@@ -35,5 +35,4 @@ void cleanup		(Context *ctx);
 
 SDLX_RectContainer *loadConfig(char *filename);
 
-void startGame(Context *ctx);
 void get_img_src(SDL_Rect *dst, int imageType, int index);

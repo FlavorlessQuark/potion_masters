@@ -17,6 +17,7 @@ void renderBoard (Context *ctx);
 
 // ~-~-~-~-~-~-~-~-~- utils.c ~-~-~-~-~-~-~~-~-~-~
 
+void draw_player_essences(Player *player);
 SDL_Rect scale_and_center(double scalar, SDL_Rect parent, SDL_Rect this);
 void overlay_text(SDL_Texture *dest, SDL_Texture *base, SDL_Rect *baseSrc,  uint32_t color, char *text);
 void generatePotionTexture(SDL_Texture *base, Potion *card, int type);

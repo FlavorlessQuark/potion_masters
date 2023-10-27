@@ -14,13 +14,16 @@ void fill_potions(Context *ctx, SDLX_RectContainer *root)
 	{
 		for (int j = 0; j < MAX_POTIONS / 3; ++j)
 		{
-			ctx->mainUI.owned[i * 3 + j].sprite._dst = root->containers[0].containers[i].containers[0].elems[j].boundingBox;
+			ctx->player.owned[i * 3 + j].sprite._dst = root->containers[0].containers[i].containers[0].elems[j].boundingBox;
+
+			ctx->player.owned[i * 3 + j].sprite.src = NULL;
 		}
 	}
 	for (int i = 0; i < ESSENCE_TYPES; ++i)
 	{
-		ctx->mainUI.essences[i]._dst = root->containers[1].containers[0].containers[0].elems[i].boundingBox;
+		ctx->mainUI.essences[i]._dst = root->containers[1].containers[0].containers[1].elems[i].boundingBox;
 	}
+	ctx->player.brewing.sprite._dst =  root->containers[1].containers[0].containers[0].containers[0].elems[0].boundingBox;
 }
 void fill_main_overlay(Context *ctx, SDLX_RectContainer *root)
 {

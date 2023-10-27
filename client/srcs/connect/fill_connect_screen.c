@@ -39,7 +39,7 @@ void fill_connect_screen(Context *ctx)
 	SDL_Rect src = {.x = 0, .y = 470, .w = 310, .h = 180};
 	// src = scale_and_center(0.5, src, src);
 
-	overlay_text(ctx->connection.connectSprite.texture, ctx->assets.texUI, &src, 0x000000FF, "Ready");
+	overlay_text(ctx->connection.connectSprite.texture, ctx->assets.texUI, &src, BLACK, 0.6, "Ready");
 	ctx->connection.name._dst.y -= 50;
 
 

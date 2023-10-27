@@ -1,80 +1,30 @@
 #include "../includes/splendor.h"
-
 #include "../includes/table.h"
 
+void start_next_turn(Context *ctx)
+{
+	ctx->players[ctx->turn].actionsRemaining = 0;
+	ctx->turn = (ctx->turn + 1)  % ctx->playerCount;
+	ctx->players[ctx->turn].actionsRemaining = MAX_ACTIONS;
+	if (ctx->players[ctx->turn].isBrewing)
+	{
+		int count = ctx->players[ctx->turn].potionCount;
+		ctx->players[ctx->turn].isBrewing = SDL_FALSE;
+		copy_potion(&ctx->players[ctx->turn].owned[count], &ctx->players[ctx->turn].brewing);
+		SDL_Log("Copying to potion n%d, %s from %s",count, ctx->players[ctx->turn].owned[count].id, ctx->players[ctx->turn].brewing.id);
+		overlay_text(ctx->players[ctx->turn].owned[count].sprite.texture, NULL, NULL, 0xFFFFFFFF,
+			potions_by_id[ctx->players[ctx->turn].owned[count].type].name
+		);
+		ctx->players[ctx->turn].potionCount++;
+	}
+}
 
-// Potion *findPotion(Context *ctx, char *id, int _id)
-// {
-// 	int level;
-// 	int i;
-
-// 	i = 0;
-// 	level = id[0] - '0';
-// 	SDL_Log("Try find %d", _id);
-// 	for (i = 0; i < MAX_ROWCARD; i++)
-// 	{
-// 		SDL_Log("CMP %s[%d] -> %s[%d]",
-// 		ctx->board.rows[level].revealed[i].id, ctx->board.rows[level].revealed[i]._id,
-// 		id, _id);
-// 		if (ctx->board.rows[level].revealed[i]._id == _id)
-// 			return &ctx->board.rows[level].revealed[i];
-// 	}
-// 	return NULL;
-// }
-
-// void nextTurn(Context *ctx)
-// {
-// 	int i;
-
-// 	i = (ctx->turn + 1) % MAX_PLAYERS;
-// 	while (i != ctx->turn)
-// 	{
-// 		if (ctx->players[i].status == READY)
-// 		{
-// 			ctx->turn = i;
-// 			break ;
-// 		}
-// 		i = (i + 1) % MAX_PLAYERS;
-// 	}
-// 	send_game_state(ctx, ctx->turn);
-// }
-
-// void startGame(Context *ctx)
-// {
-// 	ctx->turn = 0;
-// 	initNewGame(ctx);
-// 	for (int i = 0; i < MAX_PLAYERS; i++)
-// 	{
-// 		if (ctx->players[i].status == READY)
-// 			send_to(ctx->players[i].handle, "s");
-// 	}
-// 	send_game_state(ctx, ctx->turn);
-// }
-
-
-// int	extract_num(char *str, int *number)
-// {
-// 	int spn;
-
-// 	spn = strcspn(str, NUMS);
-// 	*number = atoi(str + spn);
-// 	return spn + strspn(str + spn, NUMS);
-// }
-
-// void delReserved(Player *player, int cardId)
-// {
-// 	// for (int i = 0; i < MAX_RESERVE; i++)
-// 	// {
-// 	// 	if (player->reserved[i]._id == cardId)
-// 	// 	{
-// 	// 		player->reserved[i] = player->reserved[player->reserveCount - 1];
-// 	// 		player->reserveCount--;
-// 	// 		break ;
-// 	// 	}
-// 	// }
-// }
-
-
+void startGame(Context *ctx)
+{
+	ctx->turn = -1;
+	init_new_game(ctx);
+	start_next_turn(ctx);
+}
 
 /*
 	 Potions ids: <type>|<current_fill>|<cost_count>:<cost>
@@ -95,33 +45,8 @@ int generatePotion(Context *ctx, Potion *card, int level)
 	offset = 0;
 	type = (rand() % potions_by_tier[level].count) + potions_by_tier[level].entries[0].id;
 	card->type = type;
+	card->fill = MAX_FILL;
 
-	SDL_memset(card->id, '0', CARD_ID_LEN);
-	SDL_itoa(type, card->id, 10);
-	offset++;
-	if (type >= 10)
-		offset++;
-
-	card->id[offset++] = '|';
-	card->id[offset++] = MAX_FILL + '0';
-	card->id[offset++] = '|';
-
-	count = (rand() % (level + 1) * 2) + level;
-	SDL_itoa(potions_by_id[type].cost_count, card->id + offset, 10);
-	offset++;
-	if (potions_by_id[type].cost_count >= 10)
-		offset++;
-	card->id[offset] = '|';
-	for ( i = 0; i < potions_by_id[type].cost_count; i++)
-	{
-		offset++;
-		SDL_itoa(potions_by_id[type].potion_cost[i], card->id + offset, 10);
-		offset++;
-		if (potions_by_id[type].potion_cost[i] >= 10)
-			offset++;
-		card->id[offset] = '-';
-	}
-	card->id[offset++] = '|';
 	i = 0;
 	uint8_t essences[ESSENCE_TYPES] = {0};
 	while (i < count)
@@ -135,18 +60,19 @@ int generatePotion(Context *ctx, Potion *card, int level)
 		i += (amount + 1);
 	}
 
-	for (int i = 0; i < ESSENCE_TYPES; ++i)
-	{
-		// SDL_itoa(essences[i], card->id + offset, 10);
-		SDL_itoa(potions_by_id[type].essences[i], card->id + offset, 10);
-		offset++;
-		card->id[offset++] = ',';
+	card->cost[0] = potions_by_id[type].essences[0];
+	card->cost[1] = potions_by_id[type].essences[1];
+	card->cost[2] = potions_by_id[type].essences[2];
+	card->cost[3] = potions_by_id[type].essences[3];
+	SDL_snprintf(card->id, CARD_ID_LEN + 1, "%02d|%d|%02d,%02d,%02d,%02d", type, MAX_FILL,
+		potions_by_id[type].essences[0],
+		potions_by_id[type].essences[1],
+		potions_by_id[type].essences[2],
+		potions_by_id[type].essences[3]
+	 );
 
-	}
-	card->id[offset] = '\0';
-
-	SDL_Log("Generate %c  %s %d vs %d",
-		card->id[0],card->id, strlen(card->id), CARD_ID_LEN
+	SDL_Log("Generate  %s %d vs %d",
+		card->id, strlen(card->id), CARD_ID_LEN
 	);
 
 	overlay_text(card->sprite.texture, NULL, NULL, 0xFFFFFFFF, potions_by_id[type].name);
@@ -187,44 +113,11 @@ int generatePotion(Context *ctx, Potion *card, int level)
 	return 1;
 }
 
-
-
-
-// void cleanup(Context *ctx)
-// {
-// 	SDL_free(ctx);
-// }
-
-void get_img_src(SDL_Rect *dst, int imageType, int index)
+void copy_potion(Potion *dst, Potion *src)
 {
-	// if (index < 0 || index >= POTION_TYPES)
-	// 	return ;
-	// if (imageType == CARD_BACK)
-	// {
-	// 	dst->w = CARD_W;
-	// 	dst->h = CARD_H;
-	// 	dst->x = OFF_X + (index * (CARD_W + SEP_X));
-	// 	dst->y = OFF_Y;
-	// }
-	// else if (imageType == CARD)
-	// {
-	// 	dst->w = CARD_W;
-	// 	dst->h = CARD_H;
-	// 	dst->x = OFF_X + (index * (CARD_W + SEP_X));
-	// 	dst->y = OFF_Y + CARD_H + SEP_Y;
-	// }
-	// else if (imageType == TOK_HEX)
-	// {
-	// 	dst->w = TOK_W;
-	// 	dst->h = TOK_H;
-	// 	dst->x = OFF_X + (POTION_TYPES * (CARD_W + SEP_X)) - SEP_X + TOK_OFF_X;
-	// 	dst->y = OFF_Y + (index * (TOK_H + TOK_OFF_Y));
-	// }
-	// else if (imageType == TOK_RECT)
-	// {
-	// 	dst->w = TOK_W;
-	// 	dst->h = TOK_H;
-	// 	dst->x = OFF_X + (POTION_TYPES * (CARD_W + SEP_X)) - SEP_X + TOK_W + (TOK_OFF_X * 2);
-	// 	dst->y = OFF_Y + (index * (TOK_H + TOK_OFF_Y));
-	// }
+	dst->fill = src->fill;
+	dst->type = src->type;
+	SDL_memcpy(dst->id ,src->id, CARD_ID_LEN);
+	SDL_memcpy(dst->cost ,src->cost, ESSENCE_TYPES * sizeof(int));
+
 }

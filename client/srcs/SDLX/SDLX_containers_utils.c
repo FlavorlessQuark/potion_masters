@@ -37,7 +37,7 @@
 
 # define NUMS	"-0123456789"
 
-int	extract_num(char *str, int *number)
+static int	extract_num(char *str, int *number)
 {
 	int spn;
 

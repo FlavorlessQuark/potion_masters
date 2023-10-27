@@ -78,7 +78,7 @@ void SDLX_ButtonUpdate()
 	{
 		while(i < 4)
 		{
-			if (currentFocus && SDLX_GetKeyState(keys[i]) == SDLX_KEYDOWN && currentFocus->neighbours[i] != NULL)
+			if (currentFocus && SDLX_GetKeyState(keys[i]) == SDLX_KEYUP && currentFocus->neighbours[i] != NULL)
 			{
 				// SDL_Log("Here %d", i);
 				currentFocus = currentFocus->neighbours[i];
@@ -106,8 +106,8 @@ void SDLX_ButtonUpdate()
 
 			currentFocus = buttons[i];
 			// >:) hehe
-			isTriggered = ((input.mouse_buttons[SDL_BUTTON_LEFT] & 1) * mouseOver) | (input.keyboard[keys[SELECT]] & 1);
-			buttons[i]->triggered += (isTriggered) * !!(input.mouse_buttons[SDL_BUTTON_LEFT] - buttons[i]->triggered - SDLX_KEYHELD);
+			isTriggered = (((input.mouse_buttons[SDL_BUTTON_LEFT] & 1)) * mouseOver);
+			buttons[i]->triggered += (isTriggered) * !!(input.mouse_buttons[SDL_BUTTON_LEFT] - buttons[i]->triggered - SDLX_KEYHELD);;
 			// Trigger will only be set if the mouse was on the rectangle when it was clicked
 			// -> trigger only if mouse button < SDLX_KEYHELD
 			// !! -> set to 0 if number > 0 or  < 1 (! neg = 1 , !1 = 0)  | set to 1 if num == 0

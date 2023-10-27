@@ -28,7 +28,12 @@
 # define ESSENCE_TYPES (4)
 
 # define MAX_COST_TYPES (3)
-# define CARD_ID_LEN ((sizeof(char) * 8) + (MAX_COST_TYPES * (sizeof(char) * 4)) + 1)
+# define CARD_ID_LEN ((sizeof(char) * 5) + (ESSENCE_TYPES * (sizeof(char) * 3)) - 1)
+
+
+# define WHITE 0xFFFFFFFF
+# define BLACK 0x000000FF
+# define TRANSPARENT 0x00000000
 
 # define POTION_TYPES (3)
 
@@ -70,11 +75,7 @@
 #define CARD_H (2342)
 #define CARD_W (1570)
 #define CARD_OFF_X (CARD_W + SEP_X)
-#define CARD_OFF_Y (CARD_H + (SEP_Y * 2))
-# define CARD_VARIATIONS 0
-
-
-// #define MSG_LEN (ESSENCE_TYPES * 3) + (ROW_COUNT * (CARD_ID_LEN + 1) * MAX_ROWCARD) + (MAX_RESERVE * CARD_ID_LEN + 1) + 1 + 3
+#define CARD_OFF_Y (CARD_H + (SEP_Y * 2))// USE SNPRINTF YOU IDIOT
 
 
 #define TOKEN_BUTTON_RESET ESSENCE_TYPES + 0
@@ -94,11 +95,11 @@ typedef struct Button
 typedef struct Potion
 {
 	SDLX_Sprite sprite;
-	SDLX_Sprite costSprite[ESSENCE_TYPES - 1];
-	uint8_t cost[ESSENCE_TYPES - 1];
-	uint8_t points;
-	uint8_t type;
-	uint8_t fill;
+	SDLX_Sprite e_costSprite[ESSENCE_TYPES];
+	SDLX_Sprite p_costSprite[3];
+	int cost[ESSENCE_TYPES];
+	int type;
+	int fill;
 	int _id;
 	char id[CARD_ID_LEN];
 }	Potion;
@@ -106,15 +107,18 @@ typedef struct Potion
 typedef struct Player
 {
 	Potion owned[MAX_POTIONS];
-	uint8_t tokens[ESSENCE_TYPES];
+	Potion brewing;
+	int tokens[ESSENCE_TYPES];
 	uint8_t ownedCount;
 	uint8_t id;
+	uint8_t isBrewing;
 	uint8_t points;
 	uint8_t actionsRemaining;
 }	Player;
 
 typedef struct Row
 {
+	int count;
 	Potion	card[MAX_ROWCARD];
 	SDLX_Button cardButton[MAX_ROWCARD];
 }	Row;
@@ -123,14 +127,15 @@ typedef struct BuyOverlay
 {
 	SDLX_Sprite background;
 	SDLX_Sprite potion;
+	SDLX_Sprite name;
+	SDLX_Sprite desc;
+	SDLX_Sprite cost;
 	SDLX_Sprite essences[ESSENCE_TYPES];
-
-	SDL_Rect nameDst;
-	SDL_Rect costDst;
-	SDL_Rect descDst;
 
 	Button buy;
 	Button exit;
+
+	uint8_t position;
 
 	Potion  	*selected;
 }			BuyOverlay;
@@ -163,6 +168,7 @@ typedef struct PotionOverlay {
 	Button exit;
 	Button convert;
 
+	uint8_t position;
 	SDLX_Sprite name;
 	SDLX_Sprite potion;
 	SDLX_Sprite effect;
@@ -181,7 +187,6 @@ typedef struct PlayerUI
 	PotionOverlay overlay;
 
 	SDLX_Button ownedButtons[MAX_POTIONS];
-	Potion 		owned[MAX_POTIONS];
 	SDLX_Sprite essences[ESSENCE_TYPES];
 	SDL_Texture *bg;
 }		PlayerUI;
@@ -192,12 +197,14 @@ typedef struct Assets
 	SDLX_Display *display;
 	SDL_Texture *cardTex;
 	SDL_Texture *texUI;
+	SDL_Texture *blurr;
 	SDLX_TextSheet textSheet;
 }			  Assets;
 
 typedef struct Context
 {
 	int state;
+	int isTurn;
 	Player player;
 	PlayerUI mainUI;
 	Connection connection;
