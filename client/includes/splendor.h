@@ -48,7 +48,7 @@ SDL_Texture *create_target_texture(int w, int h);
 
 void printRect(SDL_Rect *rect, char * msg);
 void get_img_src(SDL_Rect *dst, int imageType, int index);
-void generatePotion(Potion *card);
+void generatePotion(Context *ctx, Potion *card);
 void generatePotionTexture(SDL_Texture *base, Potion *card, int type);
 // int	extract_num(char *str, int *number);
 

@@ -104,9 +104,7 @@ typedef struct Assets
 	SDL_Texture *mainBg;
 	SDL_Texture *texPotions;
 	SDL_Texture *texUI;
-	SDLX_TextSheet text;
-
-	SDL_Rect textSrc;
+	SDL_Texture *essences;
 
 }	Assets;
 

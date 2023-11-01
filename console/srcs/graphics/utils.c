@@ -61,13 +61,22 @@ SDL_Texture *create_target_texture(int w, int h)
 		return result;
 }
 
-void draw_player_essences(Player *player)
+void draw_player_essences(Context *ctx, Player *player)
 {
 	char count[2] = {"00"};
+	SDL_Rect src = {.x = 20, .y = 0, .w = 260, .h = 360};
 
 	for (int i = 0; i < ESSENCE_TYPES; i++)
 	{
 		SDL_itoa(player->tokens[i], count, 10);
-		overlay_text(player->essences[i].texture, NULL, NULL, ((0xFF000000 >> (5 * i)) + 0xFF), count);
+		overlay_text(player->essences[i].texture, ctx->assets.essences, &src, 0x000000FF, count);
+		if (i == 1)
+		{
+			src.x = 20;
+			src.y += src.h + 10;
+		}
+		else
+			src.x += src.w;
+
 	}
 }

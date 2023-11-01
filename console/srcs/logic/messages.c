@@ -173,7 +173,7 @@ int parse_action(Context *ctx, char * msg)
 		for (int i = 0; i < ESSENCE_TYPES; i++)
 			playr->tokens[i] -= ctx->board.rows[rows].recipes[col].cost[i];
 
-		draw_player_essences(playr);
+		draw_player_essences(ctx, playr);
 		copy_potion(&playr->brewing, & ctx->board.rows[rows].recipes[col]);
 		generatePotion(ctx, &ctx->board.rows[rows].recipes[col], rows);
 		overlay_text(playr->brewing.sprite.texture, NULL, NULL, 0xFFFFFFFF, potions_by_id[playr->brewing.type].name);
@@ -187,7 +187,7 @@ int parse_action(Context *ctx, char * msg)
 
 		for (int i = 0; i < ESSENCE_TYPES; ++i)
 			playr->tokens[i] += potions_by_id[playr->owned[potion_idx].type].essences[i];
-		draw_player_essences(playr);
+		draw_player_essences(ctx, playr);
 	}
 	playr->actionsRemaining -= 1;
 }

@@ -30,11 +30,12 @@ void init_overlay(Context *ctx)
 
 	overlay_text(ctx->mainUI.overlay.use.sprite.texture, ctx->assets.texUI, &(SDL_Rect){.x = 0, .y = 470, .w = 310, .h = 180}, BLACK, 0.6, "Use");
 	overlay_text(ctx->mainUI.overlay.convert.sprite.texture, ctx->assets.texUI, &(SDL_Rect){.x = 0, .y = 470, .w = 310, .h = 180}, BLACK, 0.6, "Convert");
-	ctx->mainUI.overlay.exit.sprite._src = (SDL_Rect){.x = 490, .y = 0, .w = 140, .h = 155};
+	ctx->mainUI.overlay.exit.sprite._src = (SDL_Rect){.x = 485, .y = 0, .w = 140, .h = 155};
 	ctx->mainUI.overlay.use.sprite.src = NULL;
 	ctx->mainUI.overlay.convert.sprite.src = NULL;
 
 
+	SDLX_SpriteCreate(&ctx->mainUI.overlay.bg, 1, ctx->assets.overlayBG);
 	SDLX_SpriteCreate(&ctx->mainUI.overlay.name, 1, create_target_texture(200, 100));
 	SDLX_SpriteCreate(&ctx->mainUI.overlay.potion, 1, create_target_texture(500, 500));
 	SDLX_SpriteCreate(&ctx->mainUI.overlay.effect, 1, create_target_texture(200, 100));
@@ -45,12 +46,17 @@ void init_overlay(Context *ctx)
 	ctx->mainUI.overlay.name.src = NULL;
 	ctx->mainUI.overlay.effect.src = NULL;
 	ctx->mainUI.overlay.fillAmount.src = NULL;
+	ctx->mainUI.overlay.bg.src = NULL;
+	ctx->mainUI.overlay.bg.dst = NULL;
+	SDLX_SpritePrint(&ctx->mainUI.overlay.bg);
+
 }
 
 void init_main_screen(Context *ctx)
 {
 	init_potions(ctx);
 	init_overlay(ctx);
+	SDLX_SpriteCreate(&ctx->mainUI.actions, 1, NULL);
 	SDLX_SpriteCreate(&ctx->mainUI.switchScreen.sprite, 1, ctx->assets.texUI);
 	SDLX_ButtonCreate(&ctx->mainUI.switchScreen.button, &ctx->mainUI.switchScreen.sprite._dst);
 	ctx->mainUI.switchScreen.sprite._src = (SDL_Rect){.x = 640, .y = 0, .w = 140, .h = 155};

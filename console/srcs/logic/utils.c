@@ -80,7 +80,7 @@ int generatePotion(Context *ctx, Potion *card, int level)
 		SDL_Renderer *renderer;
 		SDL_Texture *renderTarget;
 		SDL_Rect bounds = {0};
-		uint32_t color;
+		uint32_t color = 0x000000FF;
 		char cost[2] = {"00"};
 
 		renderer = SDLX_DisplayGet()->renderer;
@@ -95,10 +95,12 @@ int generatePotion(Context *ctx, Potion *card, int level)
 		bounds.y = bounds.h - (bounds.h / 5);
 		bounds.w /= 5;
 		bounds.h /= 5;
+
+		SDL_Rect src = {.x = 20, .y = 0, .w = 260, .h = 360};
 		for (int i = 0; i < ESSENCE_TYPES; ++i)
 		{
-			color = ((0xFF000000 >> (5 * i)) + 0xFF);
 			SDL_itoa(potions_by_id[type].essences[i], cost, 10);
+			SDL_RenderCopy(ctx->display->renderer, ctx->assets.essences,&src, &bounds);
 			SDLX_RenderMessage(SDLX_DisplayGet(), &bounds, (SDL_Color){
 													.r = (color & ((uint32_t)(0xFF << 24))) >> 24,
 													.g = (color & ((uint32_t)(0xFF << 16))) >> 16,
@@ -106,6 +108,13 @@ int generatePotion(Context *ctx, Potion *card, int level)
 													.a = (color & ((uint32_t)(0xFF << 0))) >> 0}
 													, cost);
 			bounds.x += bounds.w;
+			if (i == 1)
+			{
+				src.x = 20;
+				src.y += src.h + 10;
+			}
+			else
+				src.x += src.w;
 
 		}
 		SDL_SetRenderTarget(renderer, renderTarget);

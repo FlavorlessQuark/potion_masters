@@ -66,7 +66,10 @@ void render_main_screen(Context *ctx)
 	}
 
 	if (ctx->isTurn)
+	{
 		SDLX_RenderQueuePush(&ctx->mainUI.endTurn.sprite);
+		SDLX_RenderQueuePush(&ctx->mainUI.actions);
+	}
 	SDLX_RenderQueuePush(&ctx->mainUI.switchScreen.sprite);
 
 	if (ctx->player.isBrewing)
@@ -75,6 +78,7 @@ void render_main_screen(Context *ctx)
 	}
 	if (ctx->mainUI.overlay.selected != NULL)
 	{
+		SDLX_RenderQueuePush(&ctx->mainUI.overlay.bg);
 		SDLX_RenderQueuePush(&ctx->mainUI.overlay.name);
 		SDLX_RenderQueuePush(&ctx->mainUI.overlay.fillAmount);
 		SDLX_RenderQueuePush(&ctx->mainUI.overlay.effect);

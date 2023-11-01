@@ -83,7 +83,7 @@ void reset_game(Context *ctx)
 	set_board_cards_active(ctx, SDL_FALSE);
 }
 
-void generatePotion(Potion *card)
+void generatePotion(Context *ctx, Potion *card)
 {
 	int offset;
 
@@ -111,11 +111,13 @@ void generatePotion(Potion *card)
 	bounds.y = bounds.h - (bounds.h / 5);
 	bounds.w /= 5;
 	bounds.h /= 5;
+	SDL_Rect src = {.x = 20, .y = 0, .w = 260, .h = 360};
+	color = 0x000000FF;
 	for (int i = 0; i < ESSENCE_TYPES; ++i)
 	{
 		offset += extract_num(card->id + offset, &card->cost[i]);
-		color = ((0xFF000000 >> (5 * i)) + 0xFF);
 		SDL_itoa(card->cost[i], cost, 10);
+		SDL_RenderCopy(ctx->display->renderer, ctx->assets.essence, &src, &bounds);
 		SDLX_RenderMessage(SDLX_DisplayGet(), &bounds, (SDL_Color){
 												.r = (color & ((uint32_t)(0xFF << 24))) >> 24,
 												.g = (color & ((uint32_t)(0xFF << 16))) >> 16,
@@ -123,6 +125,13 @@ void generatePotion(Potion *card)
 												.a = (color & ((uint32_t)(0xFF << 0))) >> 0}
 												, cost);
 		bounds.x += bounds.w;
+		if (i == 1)
+		{
+			src.x = 20;
+			src.y += src.h + 10;
+		}
+		else
+			src.x += src.w;
 
 	}
 	SDL_SetRenderTarget(renderer, renderTarget);

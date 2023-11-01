@@ -50,11 +50,11 @@ void init_textures(Context *ctx)
 	ctx->assets.texUI = SDL_CreateTextureFromSurface(ctx->display->renderer, surf);
 	SDL_FreeSurface(surf);
 
-	surf = IMG_Load("assets/blurr.png");
-	ctx->assets.blurr = SDL_CreateTextureFromSurface(ctx->display->renderer, surf);
+	surf = IMG_Load("assets/bg.png");
+	ctx->assets.overlayBG = SDL_CreateTextureFromSurface(ctx->display->renderer, surf);
 	SDL_FreeSurface(surf);
 
-
-	SDL_Log("TExture %p", ctx->assets.texUI);
-
+	surf = IMG_Load("assets/essences.png");
+	ctx->assets.essence = SDL_CreateTextureFromSurface(ctx->display->renderer, surf);
+	SDL_FreeSurface(surf);
 }

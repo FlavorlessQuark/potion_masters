@@ -64,4 +64,9 @@ void fill_main_screen(Context *ctx)
 
 	ctx->mainUI.endTurn.sprite._dst = _root->containers[1].containers[1].elems[0].boundingBox;
 	ctx->mainUI.switchScreen.sprite._dst = _root->containers[1].containers[1].elems[1].boundingBox;
+	ctx->mainUI.actions.texture = create_target_texture(ctx->mainUI.endTurn.sprite._dst.w, ctx->mainUI.endTurn.sprite._dst.h);
+	ctx->mainUI.actions._dst = ctx->mainUI.endTurn.sprite._dst;
+	ctx->mainUI.actions._dst.y = 0;
+	ctx->mainUI.actions._dst.h = ctx->mainUI.endTurn.sprite._dst.y;
+	ctx->mainUI.actions.src = NULL;
 }

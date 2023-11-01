@@ -169,6 +169,7 @@ typedef struct PotionOverlay {
 	Button convert;
 
 	uint8_t position;
+	SDLX_Sprite bg;
 	SDLX_Sprite name;
 	SDLX_Sprite potion;
 	SDLX_Sprite effect;
@@ -179,7 +180,7 @@ typedef struct PotionOverlay {
 
 typedef struct PlayerUI
 {
-	SDLX_Sprite points;
+	SDLX_Sprite actions;
 
 	Button endTurn;
 	Button switchScreen;
@@ -197,8 +198,8 @@ typedef struct Assets
 	SDLX_Display *display;
 	SDL_Texture *cardTex;
 	SDL_Texture *texUI;
-	SDL_Texture *blurr;
-	SDLX_TextSheet textSheet;
+	SDL_Texture *overlayBG;
+	SDL_Texture *essence;
 }			  Assets;
 
 typedef struct Context

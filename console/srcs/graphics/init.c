@@ -63,17 +63,12 @@ void prepare_textures(Context * ctx)
 	ctx->assets.texUI = SDL_CreateTextureFromSurface(ctx->display->renderer, surf);
 	SDL_FreeSurface(surf);
 
+	surf = IMG_Load("assets/Textures/essences.png");
+	ctx->assets.essences = SDL_CreateTextureFromSurface(ctx->display->renderer, surf);
+	SDL_FreeSurface(surf);
+
 
 	ctx->display->defaultFont = TTF_OpenFont("assets/underwood.ttf", 40);
-	SDLX_TextSheet_Create(&ctx->assets.text, ctx->display->win_w, ctx->display->win_h);
-	ctx->assets.textSrc = SDLX_TextSheet_Add(
-							&ctx->assets.text,
-							"0123456789",
-							ctx->display->defaultFont,
-							(SDL_Color){255, 255, 255, 255});
-	TTF_SizeText(ctx->display->defaultFont, "0", &ctx->assets.textSrc.w, &ctx->assets.textSrc.h);
-
-
 	ctx->display->background = SDL_CreateTexture(
 			ctx->display->renderer,
 			SDL_PIXELFORMAT_RGBA8888,
@@ -226,13 +221,15 @@ void init_right_player_UI(Context *ctx, uint8_t id, SDLX_RectContainer *root)
 	ctx->players[id].name.src = NULL;
 
 	// SDL_Log("A");
+	src = (SDL_Rect){.x = 20, .y = 0, .w = 260, .h = 360};
 	for (int i = 0; i < ESSENCE_TYPES; ++i)
 	{
 		SDLX_SpriteCreate(&ctx->players[id].essences[i], 1, create_target_texture(
 				root->containers[1].containers[1].elems[i]._boundingBox.w,
 				root->containers[1].containers[1].elems[i]._boundingBox.h
 			));
-		overlay_text(ctx->players[id].essences[i].texture,NULL, NULL, ((0xFF000000 >> (5 * i)) + 0xFF),"0");
+		// overlay_text(ctx->players[id].essences[i].texture,ctx->assets.essences, &src, ((0xFF000000 >> (5 * i)) + 0xFF),"0");
+
 		ctx->players[id].essences[i]._dst = 	root->containers[1].containers[1].elems[i]._boundingBox;
 		ctx->players[id].essences[i].src = NULL;
 	}

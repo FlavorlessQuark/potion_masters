@@ -15,7 +15,7 @@ void initMasterPotions(Context *ctx, Row *row)
 
 void initRecipeOverlay( Context *ctx)
 {
-	SDLX_SpriteCreate(&ctx->board.overlay.background, 1, ctx->assets.blurr);
+	SDLX_SpriteCreate(&ctx->board.overlay.background, 1, ctx->assets.overlayBG);
 	SDLX_SpriteCreate(&ctx->board.overlay.potion, 1, NULL);
 	SDLX_SpriteCreate(&ctx->board.overlay.name, 1, NULL);
 	// SDLX_SpriteCreate(&ctx->board.overlay.fill, 1, NULL);
@@ -31,7 +31,7 @@ void initRecipeOverlay( Context *ctx)
 	ctx->board.overlay.cost.src = NULL;
 	ctx->board.overlay.buy.sprite.src = NULL;
 	// overlay_text(ctx->board.overlay.buy.sprite.texture, ctx->assets.texUI, &(SDL_Rect){.x = 0, .y = 470, .w = 310, .h = 180}, WHITE, 0.6, "Use");
-	ctx->board.overlay.exit.sprite._src = (SDL_Rect){.x = 490, .y = 0, .w = 140, .h = 155};
+	ctx->board.overlay.exit.sprite._src = (SDL_Rect){.x = 485, .y = 0, .w = 140, .h = 155};
 
 
 	SDLX_ButtonCreate(&ctx->board.overlay.buy.button, &ctx->board.overlay.buy.sprite._dst);

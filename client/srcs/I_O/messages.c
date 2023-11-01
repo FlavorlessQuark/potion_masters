@@ -105,17 +105,29 @@ void parse_message(Context *ctx, char *inc_msg)
 
 int parse_player_state(Context *ctx,int offset, char *inc_msg)
 {
+	char *text = {"Actions  "};
 	ctx->isTurn = inc_msg[offset++] - '0';
 	offset += 1;
-	ctx->player.actionsRemaining = inc_msg[offset++] - '0';
-
+	text[8] = inc_msg[offset];
+	ctx->player.actionsRemaining = inc_msg[offset++] + '0';
+	SDL_Log("wut %s", text);
+	overlay_text(ctx->mainUI.actions.texture, NULL, NULL, 0xFFFFFFFF, 0.8, text);
 	offset += 2;
 	char count[2] = {"00"};
+	SDL_Rect src = {.x = 20, .y = 0, .w = 260, .h = 360};
 	for (int i = 0; i < ESSENCE_TYPES; i ++)
 	{
 		offset += extract_num(inc_msg + offset, &ctx->player.tokens[i]) + 1;
 		SDL_itoa(ctx->player.tokens[i], count, 10);
-		overlay_text(ctx->mainUI.essences[i].texture, NULL, NULL, ((0xFF000000 >> (5 * i)) + 0xFF), 1, count);
+		overlay_text(ctx->mainUI.essences[i].texture, ctx->assets.essence, &src, 0x000000FF, 0.8, count);
+
+		if (i == 1)
+		{
+			src.x = 20;
+			src.y += src.h + 10;
+		}
+		else
+			src.x += src.w;
 	}
 	offset++;
 	ctx->player.ownedCount = inc_msg[offset++] - '0';
@@ -123,7 +135,7 @@ int parse_player_state(Context *ctx,int offset, char *inc_msg)
 	for (int i = 0; i < ctx->player.ownedCount; i++)
 	{
 		SDL_memcpy(ctx->player.owned[i].id, inc_msg + offset, CARD_ID_LEN);
-		generatePotion(&ctx->player.owned[i]);
+		generatePotion(ctx, &ctx->player.owned[i]);
 		SDL_Log("Player potions %d  %s fill: %d",i, ctx->player.owned[i].id, ctx->player.owned[i].fill);
 		offset += CARD_ID_LEN;
 		offset++;
@@ -134,7 +146,7 @@ int parse_player_state(Context *ctx,int offset, char *inc_msg)
 	if (ctx->player.isBrewing)
 	{
 		SDL_memcpy(ctx->player.brewing.id, inc_msg + offset, CARD_ID_LEN);
-		generatePotion(&ctx->player.brewing);
+		generatePotion(ctx, &ctx->player.brewing);
 		SDL_Log("Player potions brew ID %s", ctx->player.brewing.id);
 		overlay_text(ctx->player.brewing.sprite.texture, NULL, NULL, WHITE, 1, "Brewing...");
 		offset += CARD_ID_LEN;
@@ -158,7 +170,7 @@ int parse_board_state(Context *ctx,int offset, char *inc_msg)
 		{
 			offset++;
 			SDL_memcpy(ctx->board.rows[i].card[j].id, inc_msg + offset, CARD_ID_LEN);
-			generatePotion(&ctx->board.rows[i].card[j]);
+			generatePotion(ctx, &ctx->board.rows[i].card[j]);
 			offset +=  CARD_ID_LEN;
 			offset += 2;
 			SDL_Log("ID %d %s", j, ctx->board.rows[i].card[j].id);

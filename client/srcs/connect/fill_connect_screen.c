@@ -43,5 +43,4 @@ void fill_connect_screen(Context *ctx)
 	ctx->connection.name._dst.y -= 50;
 
 
-	SDLX_SpritePrint(&ctx->connection.name);
 }

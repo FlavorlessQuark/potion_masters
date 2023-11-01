@@ -56,6 +56,7 @@ void board_screen(Context *ctx)
 				if (ctx->board.rows[x].cardButton[i].triggered == SDLX_KEYUP)
 				{
 					char cost[2] = {"00"};
+					SDL_Rect src = {.x = 20, .y = 0, .w = 260, .h = 360};
 					ctx->board.overlay.position = x * MAX_ROWCARD + i;
 					ctx->board.overlay.selected = &ctx->board.rows[x].card[i];
 					ctx->board.rows[x].cardButton[i].triggered = 0;
@@ -64,7 +65,14 @@ void board_screen(Context *ctx)
 					for (int i = 0; i < ESSENCE_TYPES; ++i)
 					{
 						SDL_itoa(ctx->board.overlay.selected->cost[i], cost, 10);
-						overlay_text(ctx->board.overlay.essences[i].texture, NULL, NULL, ((0xFF000000 >> (5 * i)) + 0xFF), 1, cost);
+						overlay_text(ctx->board.overlay.essences[i].texture, ctx->assets.essence, &src, ((0xFF000000 >> (5 * i)) + 0xFF), 1, cost);
+						if (i == 1)
+						{
+							src.x = 20;
+							src.y += src.h + 10;
+						}
+						else
+						src.x += src.w;
 					}
 					set_board_cards_active(ctx, SDL_FALSE);
 					break ;
@@ -92,6 +100,7 @@ void render_board_screen(Context *ctx)
 	}
 	if (ctx->board.overlay.selected != NULL)
 	{
+		SDLX_RenderQueuePush(&ctx->board.overlay.background);
 		SDLX_RenderQueuePush(&ctx->board.overlay.name);
 		SDLX_RenderQueuePush(&ctx->board.overlay.desc);
 		SDLX_RenderQueuePush(&ctx->board.overlay.cost);

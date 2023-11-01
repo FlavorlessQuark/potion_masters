@@ -95,7 +95,7 @@ void fill_player(Context *ctx, uint8_t id)
 		ctx->players[id].owned[i].fill = 0;
 	}
 
-	draw_player_essences(&ctx->players[id]);
+	draw_player_essences(ctx, &ctx->players[id]);
 }
 
 #define START 3000
