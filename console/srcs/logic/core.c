@@ -122,7 +122,6 @@ int title_screen(Context *ctx)
 			SDL_SetTextureAlphaMod(ctx->display->background, ctx->connectscreen.counter / MULT);
 		}
 		ctx->connectscreen.counter--;
-		// SDL_RenderCopy(ctx->display->renderer, ctx->di)
 	}
 	else
 	{
@@ -130,6 +129,7 @@ int title_screen(Context *ctx)
 		// ctx->display->background = NULL;
 		ctx->state = CONNECT_SCREEN;
 	}
+	SDL_RenderCopy(ctx->display->renderer, ctx->display->background,  NULL, NULL);
 }
 
 

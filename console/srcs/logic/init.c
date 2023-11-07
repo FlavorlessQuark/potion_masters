@@ -28,7 +28,8 @@ Context *init()
 	init_connectScreen(ctx);
 	init_new_game(ctx);
 	// ctx->state = WIN;
-	ctx->state = CONNECT_SCREEN;
+	ctx->state = TITLE;
+	// ctx->state = CONNECT_SCREEN;
 	// ctx->state = PLAYING;
 	ctx->playerCount = 0;
 
@@ -93,7 +94,7 @@ void fill_player(Context *ctx, uint8_t id)
 	SDL_Rect src;
 	char name[9] = {'P', 'L', 'A', 'Y', 'E', 'R', ' ', (id + 1) + '0', '\0'};
 
-	memset(ctx->players[id].tokens, 80, ESSENCE_TYPES * sizeof(uint8_t));
+	memset(ctx->players[id].tokens, 3, ESSENCE_TYPES * sizeof(uint8_t));
 	ctx->players[id].potionCount = 0;
 	ctx->players[id].actionsRemaining = 0;
 	for (int i = 0; i < MAX_POTIONS; ++i)

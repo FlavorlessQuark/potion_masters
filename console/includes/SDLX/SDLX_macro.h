@@ -5,8 +5,8 @@
 # define DEFAULT_WIN_NAME "SDLX_Default"
 # define DEFAULT_WIN_X SDL_WINDOWPOS_CENTERED
 # define DEFAULT_WIN_Y SDL_WINDOWPOS_CENTERED
-# define DEFAULT_WIN_W 1920 / 2
-# define DEFAULT_WIN_H 1080 / 2
+# define DEFAULT_WIN_W 1920
+# define DEFAULT_WIN_H 1080
 
 // Render queue macros
 

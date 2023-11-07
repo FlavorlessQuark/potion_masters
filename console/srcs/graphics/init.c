@@ -46,7 +46,18 @@ void prepare_textures(Context * ctx)
 {
 	SDL_Surface *surf;
 
+	ctx->display->defaultFont = TTF_OpenFont("assets/underwood.ttf", 40);
+	// ctx->display->background = SDL_CreateTexture(
+	// 		ctx->display->renderer,
+	// 		SDL_PIXELFORMAT_RGBA8888,
+	// 		SDL_TEXTUREACCESS_TARGET,
+	// 		ctx->display->win_w, ctx->display->win_h
+	// 		);
 	// SDL_Log("Preparing textures...");
+	surf = IMG_Load("assets/Textures/title.png");
+	ctx->display->background = SDL_CreateTextureFromSurface(ctx->display->renderer, surf);
+	SDL_FreeSurface(surf);
+
 	surf = IMG_Load("assets/Textures/background.png");
 	ctx->assets.connectBg = SDL_CreateTextureFromSurface(ctx->display->renderer, surf);
 	SDL_FreeSurface(surf);
@@ -72,13 +83,6 @@ void prepare_textures(Context * ctx)
 	SDL_FreeSurface(surf);
 
 
-	ctx->display->defaultFont = TTF_OpenFont("assets/underwood.ttf", 40);
-	ctx->display->background = SDL_CreateTexture(
-			ctx->display->renderer,
-			SDL_PIXELFORMAT_RGBA8888,
-			SDL_TEXTUREACCESS_TARGET,
-			ctx->display->win_w, ctx->display->win_h
-			);
 	// SDL_Log("Done with textures");
 }
 
