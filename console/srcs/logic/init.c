@@ -27,6 +27,7 @@ Context *init()
 	init_UI(ctx);
 	init_connectScreen(ctx);
 	init_new_game(ctx);
+	// ctx->state = WIN;
 	ctx->state = CONNECT_SCREEN;
 	// ctx->state = PLAYING;
 	ctx->playerCount = 0;
@@ -45,7 +46,9 @@ void init_new_game(Context *ctx)
 	for (int i = 0; i < ctx->playerCount; ++i)
 		fill_player(ctx, i);
 
-	SDL_Log("Init new game");
+	// TODO PCOUNT - 1
+	ctx->board.masterCount = ctx->playerCount;
+	// SDL_Log("Init new game");
 	SDL_SetRenderTarget(ctx->display->renderer, NULL);
 }
 
@@ -55,11 +58,10 @@ void initRowPotions(Context *ctx, int level)
 
 	row = &ctx->board.rows[level];
 	row->recipeCount = MAX_ROWCARD;
-	SDL_Log("Gnereating row %d", level);
+	// SDL_Log("Gnereating row %d", level);
 	for (int i = 0; i < MAX_ROWCARD; i++)
 	{
-		generatePotion(ctx, &row->recipes[i], level);
-
+		generate_potion(ctx, &row->recipes[i], level);
 	}
 }
 
@@ -75,9 +77,13 @@ void fill_board(Context *ctx)
 	ctx->board.rows[MID_ROW].recipeCount = ROW_CARD_COUNT;
 	ctx->board.rows[BOT_ROW].recipeCount = ROW_CARD_COUNT;
 
-	SDL_Log("fil board");
+	// SDL_Log("fill board");
 	for (int i = 0; i < ROW_COUNT; i++)
 		initRowPotions(ctx, i);
+	for (int i = 0; i < MAX_MASTER_POTIONS; i++)
+	{
+		generate_potion(ctx, &ctx->board.master[i], ROW_COUNT);
+	}
 }
 
 void fill_player(Context *ctx, uint8_t id)
@@ -87,7 +93,7 @@ void fill_player(Context *ctx, uint8_t id)
 	SDL_Rect src;
 	char name[9] = {'P', 'L', 'A', 'Y', 'E', 'R', ' ', (id + 1) + '0', '\0'};
 
-	memset(ctx->players[id].tokens, 3, 5 * sizeof(uint8_t));
+	memset(ctx->players[id].tokens, 80, ESSENCE_TYPES * sizeof(uint8_t));
 	ctx->players[id].potionCount = 0;
 	ctx->players[id].actionsRemaining = 0;
 	for (int i = 0; i < MAX_POTIONS; ++i)

@@ -82,7 +82,7 @@ char *parse_object(SDLX_RectContainer *current,SDLX_RectContainer *parent, char 
 {
 	int count;
 
-	// SDL_Log("Start %s", line);
+	// // SDL_Log("Start %s", line);
 	fill_container(current, parent, line);
 	line = strtok(NULL, "\n");
 

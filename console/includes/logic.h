@@ -26,13 +26,12 @@ void copy_potion(Potion *dst, Potion *src);
 void start_next_turn(Context *ctx);
 void startGame		(Context *ctx);
 
-SDL_Rect scale_and_center(double scalar, SDL_Rect parent, SDL_Rect this);
+int can_buy_potion(Player *player, Potion *potion);
 
 int	extract_num		(char *str, int *number);
-int generatePotion(Context *ctx, Potion *card, int level);
+int generate_potion(Context *ctx, Potion *card, int level);
 
 void cleanup		(Context *ctx);
 
 SDLX_RectContainer *loadConfig(char *filename);
 
-void get_img_src(SDL_Rect *dst, int imageType, int index);

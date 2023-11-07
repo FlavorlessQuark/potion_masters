@@ -25,6 +25,7 @@
 # define CONNECT_SCREEN (0)
 # define PLAYING (1)
 # define TITLE (2)
+# define WIN (4)
 
 # define HANDLE_LEN (21)
 
@@ -82,7 +83,7 @@ typedef struct Row
 
 typedef struct Board
 {
-	Potion		titles[MAX_MASTER_POTIONS];
+	Potion		master[MAX_MASTER_POTIONS];
 	Row 		rows[ROW_COUNT];
 
 	uint8_t 	masterCount;
@@ -102,6 +103,7 @@ typedef struct Assets
 {
 	SDL_Texture *connectBg;
 	SDL_Texture *mainBg;
+	SDL_Texture *recipeBg;
 	SDL_Texture *texPotions;
 	SDL_Texture *texUI;
 	SDL_Texture *essences;
@@ -113,6 +115,7 @@ typedef struct Context
 	uint8_t playerCount;
 	uint8_t turn;
 	uint8_t state;
+	uint8_t winner;
 
 	SDLX_Display 	*display;
 

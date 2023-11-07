@@ -7,6 +7,7 @@ void renderPlayer(Context *ctx, Player *player)
 
 	display = SDLX_DisplayGet();
 
+	SDL_RenderCopy(ctx->display->renderer, ctx->assets.mainBg, NULL, NULL);
 	SDLX_RenderQueuePush(&player->name);
 	for (i = 0; i < ESSENCE_TYPES; i++)
 	{
@@ -23,6 +24,8 @@ void renderBoard(Context *ctx)
 {
 	int i;
 
+	// SDLX_RenderQueuePush(&ctx->assets);
+	SDL_RenderCopy( ctx->display->renderer ,ctx->assets.mainBg, NULL, NULL);
 	SDL_SetRenderDrawColor(ctx->display->renderer, 255, 0,0,255);
 
 	for (i = 0; i < ROW_COUNT; i++)
@@ -33,7 +36,7 @@ void renderBoard(Context *ctx)
 
 	for (i = 0; i < MAX_MASTER_POTIONS; i++)
 	{
-		SDLX_RenderQueuePush(&ctx->board.titles[i].sprite);
+		SDLX_RenderQueuePush(&ctx->board.master[i].sprite);
 	}
 	SDLX_RenderResetColour(ctx->display);
 }

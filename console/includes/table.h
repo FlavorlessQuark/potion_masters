@@ -4,8 +4,8 @@
 
 # define POTION_TYPES_COUNT 3
 # define TABLE_0_COUNT 4
-# define TABLE_1_COUNT 6
-# define TABLE_2_COUNT 3
+# define TABLE_1_COUNT 5
+# define TABLE_2_COUNT 9
 # define TABLE_3_COUNT 4
 
 typedef void (potion_fn)(Context *);
@@ -25,34 +25,39 @@ typedef struct {
 }			table_arr;
 
 static table_entry potions_by_id[TABLE_0_COUNT + TABLE_1_COUNT + TABLE_2_COUNT + TABLE_3_COUNT] = {
-	{.id = 0, .fn = NULL, .essences = {0,0,0,1}, .potion_cost ={2, 5, 6}, .cost_count = 3, .name ="FIR"},
-	{.id = 2, .fn = NULL, .essences = {0,0,0,1}, .potion_cost ={2, 5, 6}, .cost_count = 3, .name ="WAT"},
-	{.id = 3, .fn = NULL, .essences = {0,0,0,1}, .potion_cost ={2, 5, 6}, .cost_count = 3, .name ="EAR"},
-	{.id = 4, .fn = NULL, .essences = {0,0,0,1}, .potion_cost ={2, 5, 6}, .cost_count = 3, .name ="AIR"},
+	{.id = 0, .fn = NULL, .essences = {0,0,0,1}, .potion_cost ={0, 0, 0}, .cost_count = 0, .name ="FIR"},
+	{.id = 1, .fn = NULL, .essences = {0,0,0,1}, .potion_cost ={0, 0, 0}, .cost_count = 0, .name ="WAT"},
+	{.id = 2, .fn = NULL, .essences = {0,0,0,1}, .potion_cost ={0, 0, 0}, .cost_count = 0, .name ="EAR"},
+	{.id = 3, .fn = NULL, .essences = {0,0,0,1}, .potion_cost ={0, 0, 0}, .cost_count = 0, .name ="AIR"},
 
-	{.id = 5, .fn = NULL, .essences = {0,0,0,1}, .potion_cost ={2, 5, 6}, .cost_count = 3, .name ="PSN"},
-	{.id = 6, .fn = NULL, .essences = {0,0,0,1}, .potion_cost ={2, 5, 6}, .cost_count = 3, .name ="ACD"},
-	{.id = 7, .fn = NULL, .essences = {0,0,0,1}, .potion_cost ={2, 5, 6}, .cost_count = 3, .name ="VOD"},
-	{.id = 8, .fn = NULL, .essences = {0,0,0,1}, .potion_cost ={2, 5, 6}, .cost_count = 3, .name ="PLS"},
-	{.id = 9, .fn = NULL, .essences = {0,0,0,1}, .potion_cost ={2, 5, 6}, .cost_count = 3, .name ="PLT"},
-	{.id = 10, .fn = NULL, .essences = {0,0,0,1}, .potion_cost ={2, 5, 6}, .cost_count = 3, .name ="HAL"},
+	{.id = 4, .fn = NULL, .essences = {0,0,0,1}, .potion_cost ={2, 3, 0}, .cost_count = 2, .name ="MET"},
+	{.id = 5, .fn = NULL, .essences = {0,0,0,1}, .potion_cost ={3, 0, 0}, .cost_count = 2, .name ="LIG"},
+	{.id = 6, .fn = NULL, .essences = {0,0,0,1}, .potion_cost ={0, 1, 0}, .cost_count = 2, .name ="VPR"},
+	{.id = 7, .fn = NULL, .essences = {0,0,0,1}, .potion_cost ={2, 0, 0}, .cost_count = 2, .name ="LVA"},
+	{.id = 8, .fn = NULL, .essences = {0,0,0,1}, .potion_cost ={3, 1, 0}, .cost_count = 2, .name ="RAI"},
 
-	{.id = 11, .fn = NULL, .essences = {0,0,0,1}, .potion_cost ={2, 5, 6}, .cost_count = 3, .name ="DEC"},
-	{.id = 12, .fn = NULL, .essences = {0,0,0,1}, .potion_cost ={2, 5, 6}, .cost_count = 3, .name ="SLO"},
-	{.id = 13, .fn = NULL, .essences = {0,0,0,1}, .potion_cost ={2, 5, 6}, .cost_count = 3, .name ="MAG"},
+	{.id = 9, .fn = NULL, .essences = {0,0,0,1}, .potion_cost ={4, 1, 2}, .cost_count = 3, .name ="PSN"},
+	{.id = 10, .fn = NULL, .essences = {0,0,0,1}, .potion_cost ={8, 7, 0}, .cost_count = 2, .name ="ACD"},
+	{.id = 11, .fn = NULL, .essences = {0,0,0,1}, .potion_cost ={5, 3, 0}, .cost_count = 2, .name ="VOD"},
+	{.id = 12, .fn = NULL, .essences = {0,0,0,1}, .potion_cost ={7, 4, 0}, .cost_count = 2, .name ="PLS"},
+	{.id = 13, .fn = NULL, .essences = {0,0,0,1}, .potion_cost ={8, 2, 0}, .cost_count = 2, .name ="PLT"},
+	{.id = 14, .fn = NULL, .essences = {0,0,0,1}, .potion_cost ={5, 6, 0}, .cost_count = 2, .name ="HAL"},
+	{.id = 15, .fn = NULL, .essences = {0,0,0,1}, .potion_cost ={8, 4, 0}, .cost_count = 2, .name ="DEC"},
+	{.id = 16, .fn = NULL, .essences = {0,0,0,1}, .potion_cost ={3, 6, 0}, .cost_count = 2, .name ="SLO"},
+	{.id = 17, .fn = NULL, .essences = {0,0,0,1}, .potion_cost ={4, 5, 0}, .cost_count = 2, .name ="MAG"},
 
-	{.id = 14, .fn = NULL, .essences = {0,0,0,1}, .potion_cost ={2, 5, 6}, .cost_count = 3, .name ="DTH"},
-	{.id = 15, .fn = NULL, .essences = {0,0,0,1}, .potion_cost ={2, 5, 6}, .cost_count = 3, .name ="OBL"},
-	{.id = 16, .fn = NULL, .essences = {0,0,0,1}, .potion_cost ={2, 5, 6}, .cost_count = 3, .name ="AGL"},
-	{.id = 17, .fn = NULL, .essences = {0,0,0,1}, .potion_cost ={2, 5, 6}, .cost_count = 3, .name ="HRO"},
+	{.id = 18, .fn = NULL, .essences = {0,0,0,1}, .potion_cost ={11, 10, 9}, .cost_count = 3, .name ="DTH"},
+	{.id = 19, .fn = NULL, .essences = {0,0,0,1}, .potion_cost ={11, 14, 12}, .cost_count = 3, .name ="OBL"},
+	{.id = 20, .fn = NULL, .essences = {0,0,0,1}, .potion_cost ={11, 14, 13}, .cost_count = 3, .name ="AGL"},
+	{.id = 21, .fn = NULL, .essences = {0,0,0,1}, .potion_cost ={11, 10, 4}, .cost_count = 3, .name ="HRO"},
 
 };
 
 static table_arr potions_by_tier[4] = {
 	{TABLE_0_COUNT, &potions_by_id[0]},
-	{TABLE_1_COUNT, &potions_by_id[5]},
-	{TABLE_2_COUNT, &potions_by_id[11]},
-	{TABLE_3_COUNT, &potions_by_id[14]},
+	{TABLE_1_COUNT, &potions_by_id[4]},
+	{TABLE_2_COUNT, &potions_by_id[9]},
+	{TABLE_3_COUNT, &potions_by_id[18]},
 };
 
 // static table_entry *_table0[TABLE_0_COUNT] = {

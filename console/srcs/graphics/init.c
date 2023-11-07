@@ -25,37 +25,41 @@ void init_UI(Context *ctx)
 
 	prepare_textures(ctx);
 
-	SDL_Log("Init connect screen...");
+	// SDL_Log("Init connect screen...");
 	init_connect_screen_UI(ctx, &connect_root->containers[0].containers[0]);
 
-	SDL_Log("Init board...");
+	// SDL_Log("Init board...");
 	init_board_UI(ctx, &board_root->containers[UI_BOARD]);
-	SDL_Log("Init P1...");
+	// SDL_Log("Init P1...");
 	init_left_player_UI(ctx, 0, &board_root->containers[UI_PLAYER_LEFT].containers[0]);
-	SDL_Log("Init P2...");
+	// SDL_Log("Init P2...");
 	init_right_player_UI(ctx, 1, &board_root->containers[UI_PLAYER_RIGHT].containers[0]);
-	SDL_Log("Init P3...");
+	// SDL_Log("Init P3...");
 	init_left_player_UI(ctx, 2, &board_root->containers[UI_PLAYER_LEFT].containers[1]);
-	SDL_Log("Init P4...");
+	// SDL_Log("Init P4...");
 	init_right_player_UI(ctx, 3, &board_root->containers[UI_PLAYER_RIGHT].containers[1]);
 
-	SDL_Log("Finished Init");
+	// SDL_Log("Finished Init");
 }
 
 void prepare_textures(Context * ctx)
 {
 	SDL_Surface *surf;
 
-	SDL_Log("Preparing textures...");
-	surf = IMG_Load("assets/Textures/bg_placeholder.jpg");
+	// SDL_Log("Preparing textures...");
+	surf = IMG_Load("assets/Textures/background.png");
 	ctx->assets.connectBg = SDL_CreateTextureFromSurface(ctx->display->renderer, surf);
 	SDL_FreeSurface(surf);
 
-	surf = IMG_Load("assets/Textures/bg_placeholder.jpg");
+	surf = IMG_Load("assets/Textures/background.png");
 	ctx->assets.mainBg = SDL_CreateTextureFromSurface(ctx->display->renderer, surf);
 	SDL_FreeSurface(surf);
 
-	surf = IMG_Load("assets/Textures/cards.png");
+	surf = IMG_Load("assets/Textures/recipebg.png");
+	ctx->assets.recipeBg = SDL_CreateTextureFromSurface(ctx->display->renderer, surf);
+	SDL_FreeSurface(surf);
+
+	surf = IMG_Load("assets/Textures/potions.png");
 	ctx->assets.texPotions = SDL_CreateTextureFromSurface(ctx->display->renderer, surf);
 	SDL_FreeSurface(surf);
 
@@ -75,7 +79,7 @@ void prepare_textures(Context * ctx)
 			SDL_TEXTUREACCESS_TARGET,
 			ctx->display->win_w, ctx->display->win_h
 			);
-	SDL_Log("Done with textures");
+	// SDL_Log("Done with textures");
 }
 
 void init_connect_screen_UI(Context *ctx, SDLX_RectContainer *root)
@@ -116,11 +120,11 @@ void init_board_UI(Context *ctx, SDLX_RectContainer *container)
 {
 	for (int i = 0; i < MAX_MASTER_POTIONS; i++)
 	{
-		SDLX_SpriteCreate(&ctx->board.titles[i].sprite, 1,  create_target_texture(
+		SDLX_SpriteCreate(&ctx->board.master[i].sprite, 1,  create_target_texture(
 			container->containers[0].elems[i]._boundingBox.w,
 			container->containers[0].elems[i]._boundingBox.h));
-		ctx->board.titles[i].sprite._dst = container->containers[0].elems[i]._boundingBox;
-		ctx->board.titles[i].sprite.src = NULL;
+		ctx->board.master[i].sprite._dst = container->containers[0].elems[i]._boundingBox;
+		ctx->board.master[i].sprite.src = NULL;
 	}
 	for (int i = 0; i < ROW_COUNT; i++)
 	{
@@ -155,14 +159,14 @@ void init_left_player_UI(Context *ctx, uint8_t id, SDLX_RectContainer *root)
 	{
 		for (int n = 0; n < 3; ++n)
 		{
-			SDLX_SpriteCreate(&ctx->players[id].owned[i * (3) + n].sprite, 1, create_target_texture(
-				root->containers[1].containers[1].containers[0].containers[i].elems[n]._boundingBox.w,
-				root->containers[1].containers[1].containers[0].containers[i].elems[n]._boundingBox.h
-				)
-			);
-			overlay_text(ctx->players[id].owned[i * (3) + n].sprite.texture, NULL, NULL, 0xFFFFFFFF,"none");
+			SDLX_SpriteCreate(&ctx->players[id].owned[i * (3) + n].sprite, 1, ctx->assets.texPotions);
+			// SDLX_SpriteCreate(&ctx->players[id].owned[i * (3) + n].sprite, 1, create_target_texture(
+			// 	root->containers[1].containers[1].containers[0].containers[i].elems[n]._boundingBox.w,
+			// 	root->containers[1].containers[1].containers[0].containers[i].elems[n]._boundingBox.h
+			// 	)
+			// overlay_text(ctx->players[id].owned[i * (3) + n].sprite.texture, NULL, NULL, 0xFFFFFFFF,"none");
 			ctx->players[id].owned[i * (3) + n].sprite._dst = root->containers[1].containers[1].containers[0].containers[i].elems[n]._boundingBox;
-			ctx->players[id].owned[i * (3) + n].sprite.src = NULL;
+			// ctx->players[id].owned[i * (3) + n].sprite.src = NULL;
 		}
 	}
 	name[7] = id + 1 + '0';
@@ -184,7 +188,7 @@ void init_left_player_UI(Context *ctx, uint8_t id, SDLX_RectContainer *root)
 		ctx->players[id].essences[i]._dst = root->containers[1].containers[0].elems[i]._boundingBox;
 		ctx->players[id].essences[i].src = NULL;
 	}
-	SDL_Log("Done!");
+	// SDL_Log("Done!");
 }
 
 
@@ -220,7 +224,7 @@ void init_right_player_UI(Context *ctx, uint8_t id, SDLX_RectContainer *root)
 	ctx->players[id].name._dst = root->containers[0].elems[1]._boundingBox;
 	ctx->players[id].name.src = NULL;
 
-	// SDL_Log("A");
+	// // SDL_Log("A");
 	src = (SDL_Rect){.x = 20, .y = 0, .w = 260, .h = 360};
 	for (int i = 0; i < ESSENCE_TYPES; ++i)
 	{
@@ -233,5 +237,5 @@ void init_right_player_UI(Context *ctx, uint8_t id, SDLX_RectContainer *root)
 		ctx->players[id].essences[i]._dst = 	root->containers[1].containers[1].elems[i]._boundingBox;
 		ctx->players[id].essences[i].src = NULL;
 	}
-	SDL_Log("Done!");
+	// SDL_Log("Done!");
 }

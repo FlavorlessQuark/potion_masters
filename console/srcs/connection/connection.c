@@ -38,7 +38,7 @@ char *recv_from(char *handle)
 {
 	 CP_CHECK(get_messages(handle, &msg));
 		if (msg.len > 0) {
-			SDL_Log("Received %s from %s", msg.ptr[0], handle);
+			// SDL_Log("Received %s from %s", msg.ptr[0], handle);
 			return msg.ptr[0];
 		}
 		return NULL;
@@ -47,7 +47,7 @@ char *recv_from(char *handle)
 
 int send_to(char *handle, char *msg)
 {
-	SDL_Log("Send message %s to %s", msg, handle);
+	// SDL_Log("Send message %s to %s", msg, handle);
 	CP_CHECK(send_message(handle, msg));
 }
 
@@ -72,7 +72,7 @@ int connect_handles(Context *ctx, char **handles, int len)
 	msg[0] = 'c';
 	for (int i = 0; i < MAX_PLAYERS && n < len; i++)
 	{
-		SDL_Log("Try connect Player id %d -> %d| handle %s =? %s", i, ctx->players[i].status, ctx->players[i].handle, handles[n]);
+		// SDL_Log("Try connect Player id %d -> %d| handle %s =? %s", i, ctx->players[i].status, ctx->players[i].handle, handles[n]);
 		if (ctx->players[i].status == DISCONNECTED)
 		{
 			// ctx->players[i].handle = SDL_calloc(HANDLE_LEN, sizeof(char));
@@ -80,7 +80,7 @@ int connect_handles(Context *ctx, char **handles, int len)
 			msg[2] = '\0';
 			ctx->players[i].status = CONNECTED;
 			SDL_strlcpy(ctx->players[i].handle, handles[n], HANDLE_LEN);
-			SDL_Log("Added player %d - %s", i, handles[n]);
+			// SDL_Log("Added player %d - %s", i, handles[n]);
 			send_to(handles[n], msg);
 			connections++;
 			n++;
@@ -97,10 +97,10 @@ int disconnect_handles(Context *ctx, char **handles, int len)
 	n = 0;
 	for (int i = 0; i < MAX_PLAYERS && n < len; i++)
 	{
-		SDL_Log("Try disconnect Player id %d | handle %s =? %s", i, ctx->players[i].handle, handles[n]);
+		// SDL_Log("Try disconnect Player id %d | handle %s =? %s", i, ctx->players[i].handle, handles[n]);
 		if (ctx->players[i].status != DISCONNECTED && !SDL_strcmp(ctx->players[i].handle, handles[n]))
 		{
-			SDL_Log("Remove player %d -> %s", i, handles[n]);
+			// SDL_Log("Remove player %d -> %s", i, handles[n]);
 			// SDL_free(ctx->players[i].handle);
 			ctx->players[i].status = DISCONNECTED;
 			n++;
@@ -137,7 +137,7 @@ int handle_Connect(Context *ctx, c_string_vec *new)
 	discLen = 0;
 	//current handles is short than handles ptr
 
-	SDL_Log("HANDLE CONNNECT----------------");
+	// SDL_Log("HANDLE CONNNECT----------------");
 
 
 	while (i < new->len && n < MAX_PLAYERS)
@@ -187,21 +187,21 @@ int handle_Connect(Context *ctx, c_string_vec *new)
 
 	for (int i = 0; i < discLen; i++)
 	{
-		SDL_Log("DISCONNECT Handle %s", discHandles[i]);
+		// SDL_Log("DISCONNECT Handle %s", discHandles[i]);
 	}
 	for (int i = 0; i < newLen; i++)
 	{
-		SDL_Log("CONNECT Handle %s", newHandles[i]);
+		// SDL_Log("CONNECT Handle %s", newHandles[i]);
 	}
 	ctx->playerCount -= disconnect_handles(ctx, discHandles, discLen);
 	ctx->playerCount += connect_handles(ctx, newHandles, newLen);
 
-	SDL_Log("Connect %d players", ctx->playerCount);
+	// SDL_Log("Connect %d players", ctx->playerCount);
 	for (int i = 0; i < ctx->playerCount; i++)
 	{
-		SDL_Log("Player %d| Status : %d | Handle %s", i, ctx->players[i].status, ctx->players[i].handle);
+		// SDL_Log("Player %d| Status : %d | Handle %s", i, ctx->players[i].status, ctx->players[i].handle);
 	}
-	SDL_Log("End connect");
+	// SDL_Log("End connect");
 	return newLen;
 }
 
