@@ -109,11 +109,11 @@ typedef struct Player
 	Potion owned[MAX_POTIONS];
 	Potion brewing;
 	int tokens[ESSENCE_TYPES];
-	uint8_t ownedCount;
+	int ownedCount;
 	uint8_t id;
-	uint8_t isBrewing;
+	int isBrewing;
 	uint8_t points;
-	uint8_t actionsRemaining;
+	int actionsRemaining;
 }	Player;
 
 typedef struct Row
@@ -125,12 +125,16 @@ typedef struct Row
 
 typedef struct BuyOverlay
 {
-	SDLX_Sprite background;
+	//  Must be sprite otherwise render order will be messed up
+	SDLX_Sprite bg;
 	SDLX_Sprite potion;
 	SDLX_Sprite name;
-	SDLX_Sprite desc;
+	SDLX_Sprite effect;
 	SDLX_Sprite cost;
-	SDLX_Sprite essences[ESSENCE_TYPES];
+	SDLX_Sprite recycle;
+	SDLX_Sprite ecost;
+	SDLX_Sprite pcost;
+	SDLX_Sprite rcost;
 
 	Button buy;
 	Button exit;
@@ -173,6 +177,7 @@ typedef struct PotionOverlay {
 	SDLX_Sprite name;
 	SDLX_Sprite potion;
 	SDLX_Sprite effect;
+	SDLX_Sprite recyle;
 	SDLX_Sprite fillAmount;
 
 	Potion  	*selected;
@@ -196,16 +201,21 @@ typedef struct Assets
 {
 	SDL_Rect numberDimensions;
 	SDLX_Display *display;
-	SDL_Texture *cardTex;
+	SDL_Texture *potions;
 	SDL_Texture *texUI;
 	SDL_Texture *overlayBG;
 	SDL_Texture *essence;
+	SDL_Texture *main_bg;
+	SDL_Texture *board_bg;
+	SDL_Texture *shelf;
+	SDL_Texture *recipe;
 }			  Assets;
 
 typedef struct Context
 {
 	int state;
 	int isTurn;
+	int winner;
 	Player player;
 	PlayerUI mainUI;
 	Connection connection;

@@ -31,13 +31,9 @@ void fill_connect_screen(Context *ctx)
 	ctx->connection.bg.center = &ctx->connection.bg._center;
 	ctx->connection.bg._center = (SDL_Point){.x = 0, .y = 0};
 
-	// ctx->connection.name._src = (SDL_Rect){.x = 0, .y = 470, .w = 150, .h = 180};
 	ctx->connection.connectSprite.src = NULL;
 	ctx->connection.name.src = NULL;
-	// ctx->connection.connectSprite._src = (SDL_Rect){.x = 320, .y = 470, .w = 310, .h = 180};
-	// SDL_Rect src = {.x = 320, .y = 470, .w = 305, .h = 180};
 	SDL_Rect src = {.x = 0, .y = 470, .w = 310, .h = 180};
-	// src = scale_and_center(0.5, src, src);
 
 	overlay_text(ctx->connection.connectSprite.texture, ctx->assets.texUI, &src, BLACK, 0.6, "Ready");
 	ctx->connection.name._dst.y -= 50;

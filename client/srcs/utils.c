@@ -56,6 +56,19 @@ void overlay_text(SDL_Texture *dest, SDL_Texture *base, SDL_Rect *baseSrc, uint3
 	SDL_SetRenderTarget(renderer, renderTarget);
 }
 
+void get_render_texture_dimensions(SDL_Texture *texture, int *w, int *h)
+{
+	SDL_Renderer *renderer;
+	SDL_Texture *renderTarget;
+
+	renderer = SDLX_DisplayGet()->renderer;
+	renderTarget = SDL_GetRenderTarget(renderer);
+
+	SDL_SetRenderTarget(renderer, texture);
+	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
+	SDL_GetRendererOutputSize(renderer, w, h);
+	SDL_SetRenderTarget(renderer, renderTarget);
+}
 
 SDL_Texture *create_target_texture(int w, int h)
 {
@@ -83,109 +96,139 @@ void reset_game(Context *ctx)
 	set_board_cards_active(ctx, SDL_FALSE);
 }
 
-void generatePotion(Context *ctx, Potion *card)
+#define POTION_PER_ROW (5)
+#define HORZ_SEP (10)
+#define VERT_SEP (10)
+
+void overlay_texture(SDL_Texture *to, SDL_Texture *from, SDL_Rect *dst, SDL_Rect *src)
+{
+	SDL_Renderer *renderer;
+	SDL_Texture *renderTarget;
+
+	renderer = SDLX_DisplayGet()->renderer;
+	renderTarget = SDL_GetRenderTarget(renderer);
+
+	SDL_SetRenderTarget(renderer, to);
+	SDL_RenderCopy(renderer, from, src, dst);
+	SDL_SetRenderTarget(renderer, renderTarget);
+}
+
+void generate_potion(Context *ctx, Potion *card, int isOwned)
 {
 	int offset;
+	SDL_Rect potion_src = {0};
+	SDL_Rect essence_src = {0};
+	SDL_Rect potion_dst = {0};
+	SDL_Rect bounds = {0};
+	SDL_Rect scaled_bounds;
+	uint32_t color = 0x000000FF;
+	char cost[2] = {"00"};
 
 	offset = 0;
 	offset += extract_num(card->id + offset, &card->type);
 	offset += extract_num(card->id + offset, &card->fill);
 
-	overlay_text(card->sprite.texture, NULL, NULL, WHITE, 0.6, potions_by_id[card->type].name);
+	potion_src.w = 370;
+	potion_src.h = 540;
+	potion_src.y = (card->type / POTION_PER_ROW) * (potion_src.h + VERT_SEP);
+	potion_src.x = (card->type % POTION_PER_ROW) * (potion_src.w + HORZ_SEP);
 
-	SDL_Renderer *renderer;
-	SDL_Texture *renderTarget;
-	SDL_Rect bounds = {0};
-	uint32_t color;
-	char cost[2] = {"00"};
+	get_render_texture_dimensions(card->sprite.texture, &bounds.w, &bounds.h);
 
-	renderer = SDLX_DisplayGet()->renderer;
-	renderTarget = SDL_GetRenderTarget(renderer);
-
-	SDL_SetRenderTarget(renderer, card->sprite.texture);
-	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
-
-	// SDL_RenderClear(renderer);
-	SDL_GetRendererOutputSize(renderer, &bounds.w, &bounds.h);
-
-	bounds.y = bounds.h - (bounds.h / 5);
-	bounds.w /= 5;
-	bounds.h /= 5;
-	SDL_Rect src = {.x = 20, .y = 0, .w = 260, .h = 360};
-	color = 0x000000FF;
-	for (int i = 0; i < ESSENCE_TYPES; ++i)
+	SDL_SetRenderTarget(ctx->display->renderer, card->sprite.texture);
+	SDL_SetRenderDrawColor(ctx->display->renderer, 0, 0, 0, 0);
+	SDL_RenderClear(ctx->display->renderer);
+	// SDL_RenderCopy(ctx->display->renderer, ctx->assets.recipeBg, NULL, NULL);
+	if (!isOwned)
 	{
-		offset += extract_num(card->id + offset, &card->cost[i]);
-		SDL_itoa(card->cost[i], cost, 10);
-		SDL_RenderCopy(ctx->display->renderer, ctx->assets.essence, &src, &bounds);
-		SDLX_RenderMessage(SDLX_DisplayGet(), &bounds, (SDL_Color){
-												.r = (color & ((uint32_t)(0xFF << 24))) >> 24,
-												.g = (color & ((uint32_t)(0xFF << 16))) >> 16,
-												.b = (color & ((uint32_t)(0xFF << 8))) >> 8,
-												.a = (color & ((uint32_t)(0xFF << 0))) >> 0}
-												, cost);
-		bounds.x += bounds.w;
-		if (i == 1)
-		{
-			src.x = 20;
-			src.y += src.h + 10;
-		}
-		else
-			src.x += src.w;
-
+		potion_dst = scale_and_center(0.6, bounds, bounds);
+		potion_dst.y -= potion_dst.h / 15;
+		SDL_RenderCopy(ctx->display->renderer, ctx->assets.recipe, NULL, NULL);
+		SDL_RenderCopy(ctx->display->renderer, ctx->assets.potions, &potion_src, &potion_dst);
 	}
-	SDL_SetRenderTarget(renderer, renderTarget);
+	else
+		SDL_RenderCopy(ctx->display->renderer, ctx->assets.potions, &potion_src, NULL);
+
+
+	if (!isOwned)
+	{
+		bounds.w /= 7;
+		bounds.y = bounds.h - bounds.w - 10;
+		bounds.h = bounds.w;
+		bounds.x += bounds.w;
+		essence_src = (SDL_Rect){.x = 20, .y = 0, .w = 260, .h = 360};
+		for (int i = 0; i < ESSENCE_TYPES; ++i)
+		{
+			offset += extract_num(card->id + offset, &card->cost[i]);
+			SDL_itoa(card->cost[i], cost, 10);
+			// // SDL_Log(" COST %d", card->cost[i]);
+			if (card->cost[i] > 0)
+			{
+				// SDL_RenderCopy(ctx->display->renderer, ctx->assets.essence, &essence_src, &bounds);
+				SDL_RenderCopy(ctx->display->renderer, ctx->assets.essence, &essence_src, &bounds);
+				scaled_bounds = scale_and_center(0.55, bounds, bounds);
+				SDLX_RenderMessage(SDLX_DisplayGet(), &scaled_bounds, (SDL_Color){
+														.r = (color & ((uint32_t)(0xFF << 24))) >> 24,
+														.g = (color & ((uint32_t)(0xFF << 16))) >> 16,
+														.b = (color & ((uint32_t)(0xFF << 8))) >> 8,
+														.a = (color & ((uint32_t)(0xFF << 0))) >> 0}
+														, cost);
+				bounds.x += bounds.w + 10;
+			}
+			if (i == 1)
+			{
+				essence_src.x = 20;
+				essence_src.y += essence_src.h + 10;
+			}
+			else
+				essence_src.x += essence_src.w;
+
+		}
+
+		bounds.y = bounds.h / 7;
+		for (int i = 0; i < potions_by_id[card->type].cost_count; ++i)
+		{
+			potion_src.y = (potions_by_id[card->type].potion_cost[i] / POTION_PER_ROW) * (potion_src.h + VERT_SEP);
+			potion_src.x = (potions_by_id[card->type].potion_cost[i] % POTION_PER_ROW) * (potion_src.w + HORZ_SEP);
+			SDL_RenderCopy(ctx->display->renderer, ctx->assets.potions, &potion_src,
+			&(SDL_Rect){.x = bounds.w * 5.5, .y = bounds.y + (bounds.h / 7), .w = bounds.w, .h = bounds.h});
+			bounds.y += bounds.h;
+		}
+	}
+
+	SDL_SetRenderTarget(ctx->display->renderer, NULL);
 
 }
 
+int can_buy_potion(Context *ctx, Potion *potion)
+{
+	int x;
+
+	if (ctx->player.isBrewing)
+		return SDL_FALSE;
+	if (ctx->player.actionsRemaining <= 0)
+		return SDL_FALSE;
+	if (ctx->player.ownedCount >= MAX_POTIONS)
+		return SDL_FALSE;
+	for (int i = 0; i < potions_by_id[potion->type].cost_count; ++i)
+	{
+		for (x = 0; x < ctx->player.ownedCount; ++x)
+		{
+			// // SDL_Log("At %d %d Need potion %d", i, ctx->player.owned[i].type, potions_by_id[potion->type].potion_cost[i]);
+			if (ctx->player.owned[x].type == potions_by_id[potion->type].potion_cost[i])
+				break ;
+		}
+		if (x == ctx->player.ownedCount)
+		{
+			return SDL_FALSE;
+		}
+	}
+	for (int i = 0; i < ESSENCE_TYPES ; ++i)
+	{
+		if (ctx->player.tokens[i] < potion->cost[i])
+			return SDL_FALSE;
+	}
 
 
-// int extract_card_from_input(Context *ctx, Potion *dst, char *input)
-// {
-// 	int _id;
-
-// 	memcpy(dst->id, input, CARD_ID_LEN);
-// 	extract_num(dst->id, &_id);
-// 	if (dst->_id != _id)
-// 	{
-// 		fillPotion(dst);
-// 		// generatePotionTexture(ctx->cardTex, dst, dst->id[1] - '0');
-// 	}
-// 	else
-// 		return 0;
-// 	return 1;
-// }
-
-// void get_img_src(SDL_Rect *dst, int imageType, int index)
-// {
-// 	if (index < 0 || index >= POTION_TYPES)
-// 		return ;
-// 	if (imageType == CARD_BACK)
-// 	{
-// 		dst->w = CARD_W;
-// 		dst->h = CARD_H;
-// 		dst->x = OFF_X + (index * (CARD_W + SEP_X));
-// 		dst->y = OFF_Y;
-// 	}
-// 	else if (imageType == CARD)
-// 	{
-// 		dst->w = CARD_W;
-// 		dst->h = CARD_H;
-// 		dst->x = OFF_X + (index * (CARD_W + SEP_X));
-// 		dst->y = OFF_Y + CARD_H + SEP_Y;
-// 	}
-// 	else if (imageType == TOK_HEX)
-// 	{
-// 		dst->w = TOK_W;
-// 		dst->h = TOK_H;
-// 		dst->x = OFF_X + (POTION_TYPES * (CARD_W + SEP_X)) - SEP_X + TOK_OFF_X;
-// 		dst->y = OFF_Y + (index * (TOK_H + TOK_OFF_Y));
-// 	}
-// 	else if (imageType == TOK_RECT)
-// 	{
-// 		dst->w = TOK_W;
-// 		dst->h = TOK_H;
-// 		dst->x = OFF_X + (POTION_TYPES * (CARD_W + SEP_X)) - SEP_X + TOK_W + (TOK_OFF_X * 2);
-// 		dst->y = OFF_Y + (index * (TOK_H + TOK_OFF_Y));
-// 	}
-// }
+	return SDL_TRUE;
+}

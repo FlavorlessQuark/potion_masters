@@ -42,19 +42,20 @@ void startTurn(Context *ctx);
 void endTurn(Context *ctx);
 
 void overlay_text(SDL_Texture *dest, SDL_Texture *base, SDL_Rect *baseSrc, uint32_t color, double scale, char *text);
-void overlay_text_bottom(SDL_Texture *dest, SDL_Texture *base, SDL_Rect *baseSrc, uint32_t color, double scale, char *text);
+void overlay_texture(SDL_Texture *to, SDL_Texture *from, SDL_Rect *dst, SDL_Rect *src);
 SDL_Rect scale_and_center(double scalar, SDL_Rect parent, SDL_Rect this);
 SDL_Texture *create_target_texture(int w, int h);
 
 void printRect(SDL_Rect *rect, char * msg);
 void get_img_src(SDL_Rect *dst, int imageType, int index);
-void generatePotion(Context *ctx, Potion *card);
-void generatePotionTexture(SDL_Texture *base, Potion *card, int type);
+void generate_potion(Context *ctx, Potion *card, int isOwned);
 // int	extract_num(char *str, int *number);
 
 char *input(Context *ctx);
 void reset_game(Context *ctx);
 void set_resize_context(Context *context);
+
+int can_buy_potion(Context *ctx, Potion *potion);
 
 
 

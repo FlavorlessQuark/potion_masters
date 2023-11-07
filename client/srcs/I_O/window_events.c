@@ -27,7 +27,7 @@ void resizeWindow(int width, int height)
 {
 	SDLX_Display *display;
 
-	SDL_Log("RESIZE EVENT %d %d -> %d %d", display->win_w, display->win_h,  width, height);
+	// SDL_Log("RESIZE EVENT %d %d -> %d %d", display->win_w, display->win_h,  width, height);
 
 	display = SDLX_DisplayGet();
 	display->win_w = width;

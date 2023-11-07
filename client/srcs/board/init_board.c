@@ -9,39 +9,45 @@ void initMasterPotions(Context *ctx, Row *row)
 	for (int i = 0; i < MASTER_CARD_COUNT; i++)
 	{
 		SDLX_ButtonCreate(&row->cardButton[i], NULL);
-		SDLX_SpriteCreate(&row->card[i].sprite, 1, ctx->assets.cardTex);
+		SDLX_SpriteCreate(&row->card[i].sprite, 1, ctx->assets.potions);
 	}
 }
 
 void initRecipeOverlay( Context *ctx)
 {
-	SDLX_SpriteCreate(&ctx->board.overlay.background, 1, ctx->assets.overlayBG);
+	SDLX_SpriteCreate(&ctx->board.overlay.bg, 1, NULL);
 	SDLX_SpriteCreate(&ctx->board.overlay.potion, 1, NULL);
 	SDLX_SpriteCreate(&ctx->board.overlay.name, 1, NULL);
-	// SDLX_SpriteCreate(&ctx->board.overlay.fill, 1, NULL);
-	SDLX_SpriteCreate(&ctx->board.overlay.desc, 1, NULL);
+	SDLX_SpriteCreate(&ctx->board.overlay.effect, 1, NULL);
 	SDLX_SpriteCreate(&ctx->board.overlay.cost, 1, NULL);
+	SDLX_SpriteCreate(&ctx->board.overlay.recycle, 1, NULL);
+	SDLX_SpriteCreate(&ctx->board.overlay.ecost, 1, NULL);
+	SDLX_SpriteCreate(&ctx->board.overlay.pcost, 1, NULL);
+	SDLX_SpriteCreate(&ctx->board.overlay.rcost, 1, NULL);
 	SDLX_SpriteCreate(&ctx->board.overlay.buy.sprite,1, NULL);
 	SDLX_SpriteCreate(&ctx->board.overlay.exit.sprite, 1, ctx->assets.texUI);
 
-	ctx->board.overlay.background.src = NULL;
-	ctx->board.overlay.background.dst = NULL;
-	ctx->board.overlay.desc.src = NULL;
+	ctx->board.overlay.bg.src = NULL;
+	ctx->board.overlay.potion.src = NULL;
 	ctx->board.overlay.name.src = NULL;
+	ctx->board.overlay.effect.src = NULL;
+	ctx->board.overlay.recycle.src = NULL;
+	ctx->board.overlay.ecost.src = NULL;
+	ctx->board.overlay.pcost.src = NULL;
+	ctx->board.overlay.rcost.src = NULL;
 	ctx->board.overlay.cost.src = NULL;
 	ctx->board.overlay.buy.sprite.src = NULL;
-	// overlay_text(ctx->board.overlay.buy.sprite.texture, ctx->assets.texUI, &(SDL_Rect){.x = 0, .y = 470, .w = 310, .h = 180}, WHITE, 0.6, "Use");
-	ctx->board.overlay.exit.sprite._src = (SDL_Rect){.x = 485, .y = 0, .w = 140, .h = 155};
+	ctx->board.overlay.exit.sprite._src = (SDL_Rect){.x = 475, .y = 0, .w = 160, .h = 155};
 
 
 	SDLX_ButtonCreate(&ctx->board.overlay.buy.button, &ctx->board.overlay.buy.sprite._dst);
 	SDLX_ButtonCreate(&ctx->board.overlay.exit.button, &ctx->board.overlay.exit.sprite._dst);
 
-	for (int i = 0; i < ESSENCE_TYPES; ++i)
-	{
-		SDLX_SpriteCreate(&ctx->board.overlay.essences[i], 1, NULL);
-		ctx->board.overlay.essences[i].src = NULL;
-	}
+	// for (int i = 0; i < ESSENCE_TYPES; ++i)
+	// {
+	// 	SDLX_SpriteCreate(&ctx->board.overlay.essences[i], 1, NULL);
+	// 	ctx->board.overlay.essences[i].src = NULL;
+	// }
 
 }
 

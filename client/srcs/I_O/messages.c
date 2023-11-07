@@ -68,7 +68,7 @@ void parse_message(Context *ctx, char *inc_msg)
 	offset = 0;
 
 
-		SDL_Log("Parsin msg %s", inc_msg);
+		// SDL_Log("Parsin msg %s", inc_msg);
 		ctx->state = CONNECT;
 		if (inc_msg[0] == 'c')
 		{
@@ -77,6 +77,11 @@ void parse_message(Context *ctx, char *inc_msg)
 			ctx->connection.status = CONNECTED;
 			name[7] = inc_msg[1] + 1;
 			overlay_text(ctx->connection.name.texture, NULL, NULL, BLACK, 0.5, name);
+		}
+		if (inc_msg[0] == 'w')
+		{
+			ctx->winner = inc_msg[1] - '0';
+			ctx->connection.status = END;
 		}
 		else if (inc_msg[0] == 'r')
 		{
@@ -110,7 +115,7 @@ int parse_player_state(Context *ctx,int offset, char *inc_msg)
 	offset += 1;
 	text[8] = inc_msg[offset];
 	ctx->player.actionsRemaining = inc_msg[offset++] + '0';
-	SDL_Log("wut %s", text);
+
 	overlay_text(ctx->mainUI.actions.texture, NULL, NULL, 0xFFFFFFFF, 0.8, text);
 	offset += 2;
 	char count[2] = {"00"};
@@ -119,6 +124,7 @@ int parse_player_state(Context *ctx,int offset, char *inc_msg)
 	{
 		offset += extract_num(inc_msg + offset, &ctx->player.tokens[i]) + 1;
 		SDL_itoa(ctx->player.tokens[i], count, 10);
+		// SDL_Log("Players has %d tokens %d", ctx->player.tokens[i], i);
 		overlay_text(ctx->mainUI.essences[i].texture, ctx->assets.essence, &src, 0x000000FF, 0.8, count);
 
 		if (i == 1)
@@ -130,25 +136,26 @@ int parse_player_state(Context *ctx,int offset, char *inc_msg)
 			src.x += src.w;
 	}
 	offset++;
-	ctx->player.ownedCount = inc_msg[offset++] - '0';
+	offset += extract_num(inc_msg + offset, &ctx->player.ownedCount);
 	offset++;
 	for (int i = 0; i < ctx->player.ownedCount; i++)
 	{
 		SDL_memcpy(ctx->player.owned[i].id, inc_msg + offset, CARD_ID_LEN);
-		generatePotion(ctx, &ctx->player.owned[i]);
-		SDL_Log("Player potions %d  %s fill: %d",i, ctx->player.owned[i].id, ctx->player.owned[i].fill);
+		generate_potion(ctx, &ctx->player.owned[i], SDL_TRUE);
+		// SDL_Log("Player potions %d  %s fill: %d",i, ctx->player.owned[i].id, ctx->player.owned[i].fill);
 		offset += CARD_ID_LEN;
 		offset++;
 	}
 	offset += 2;
-	ctx->player.isBrewing = inc_msg[offset] - '0';
-	offset+=2;
+	// SDL_Log("Before extact brew %s", inc_msg + offset);
+	offset += extract_num(inc_msg + offset, &ctx->player.isBrewing) + 1;
+	// SDL_Log("Adfter extact brew %s", inc_msg + offset);
 	if (ctx->player.isBrewing)
 	{
 		SDL_memcpy(ctx->player.brewing.id, inc_msg + offset, CARD_ID_LEN);
-		generatePotion(ctx, &ctx->player.brewing);
-		SDL_Log("Player potions brew ID %s", ctx->player.brewing.id);
-		overlay_text(ctx->player.brewing.sprite.texture, NULL, NULL, WHITE, 1, "Brewing...");
+		generate_potion(ctx, &ctx->player.brewing, SDL_FALSE);
+		// SDL_Log("Player potions brew ID %s", ctx->player.brewing.id);
+		// overlay_text(ctx->player.brewing.sprite.texture, NULL, NULL, WHITE, 1, "Brewing...");
 		offset += CARD_ID_LEN;
 	}
 	offset++;
@@ -159,9 +166,18 @@ int parse_board_state(Context *ctx,int offset, char *inc_msg)
 {
 	char ID[CARD_ID_LEN];
 	int masterCount =  inc_msg[offset] - '0';
-	SDL_Log("Board : master count %d ", masterCount);
-	offset+=2;
-
+	ctx->board.masterPotions.count = masterCount;
+	// SDL_Log("Board : master count %d ", masterCount);
+	offset ++;
+	for (int i = 0; i < masterCount; i++)
+	{
+		offset++;
+		SDL_memcpy(ctx->board.masterPotions.card[i].id, inc_msg + offset, CARD_ID_LEN);
+		generate_potion(ctx, &ctx->board.masterPotions.card[i], SDL_FALSE);
+		// SDL_Log("Master potion No %d  -> %s", masterCount, ctx->board.masterPotions.card[i].id);
+		offset +=  CARD_ID_LEN;
+	}
+	offset++;
 	for (int i = 0; i < ROW_COUNT; i++)
 	{
 		ctx->board.rows[i].count = inc_msg[offset] - '0';
@@ -170,10 +186,10 @@ int parse_board_state(Context *ctx,int offset, char *inc_msg)
 		{
 			offset++;
 			SDL_memcpy(ctx->board.rows[i].card[j].id, inc_msg + offset, CARD_ID_LEN);
-			generatePotion(ctx, &ctx->board.rows[i].card[j]);
+			generate_potion(ctx, &ctx->board.rows[i].card[j], SDL_FALSE);
 			offset +=  CARD_ID_LEN;
 			offset += 2;
-			SDL_Log("ID %d %s", j, ctx->board.rows[i].card[j].id);
+			// SDL_Log("ID %d %s", j, ctx->board.rows[i].card[j].id);
 		}
 	}
 	return offset;
