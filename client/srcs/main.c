@@ -18,16 +18,16 @@ void end()
 
 	dst.x = 0;
 	dst.y = 0;
-	dst.w = ctx->display->win_w;
-	dst.h = ctx->display->win_h;
+	dst.w = ctx.display->win_w;
+	dst.h = ctx.display->win_h;
 	sdst = dst;
-	if (ctx->winner == ctx.player.id)
+	if (ctx.winner == ctx.player.id)
 		sprintf(text, "YOU WON");
 	else
-		sprintf(text, "PLAYER %d WON!", ctx->winner);
-	TTF_SizeText(ctx->display->defaultFont, text, &sdst.w, &sdst.h);
+		sprintf(text, "PLAYER %d WON!", ctx.winner);
+	TTF_SizeText(ctx.display->defaultFont, text, &sdst.w, &sdst.h);
 	sdst = scale_and_center(0.5, dst, sdst);
-	SDLX_RenderMessage(ctx->display, &sdst,(SDL_Color){.r = (color & ((uint32_t)(0xFF << 24))) >> 24, .g = (color & ((uint32_t)(0xFF << 16))) >> 16, .b = (color & ((uint32_t)(0xFF << 8))) >> 8, .a = (color & ((uint32_t)(0xFF << 0))) >> 0} , text);
+	SDLX_RenderMessage(ctx.display, &sdst,(SDL_Color){.r = (color & ((uint32_t)(0xFF << 24))) >> 24, .g = (color & ((uint32_t)(0xFF << 16))) >> 16, .b = (color & ((uint32_t)(0xFF << 8))) >> 8, .a = (color & ((uint32_t)(0xFF << 0))) >> 0} , text);
 }
 
 void core(void)
