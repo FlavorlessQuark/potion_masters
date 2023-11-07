@@ -32,7 +32,7 @@ int send_game_state(Context *ctx, int player)
 	offset = compose_board_state(&ctx->board, offset);
 	msg[offset] = '\0';
 	// SDL_Log("Sending message to player %d : %s len (%d)",
-			player, msg, offset);
+			// player, msg, offset);
 	send_to(ctx->players[player].handle, msg);
 }
 
@@ -143,7 +143,7 @@ int execMsg		(Context *ctx, char *msg)
 	if (ctx->state == PLAYING)
 		parse_action(ctx, msg);
 	else
-		// SDL_Log("Received message");
+		SDL_Log("Received message");
 }
 
 
@@ -177,7 +177,7 @@ int parse_action(Context *ctx, char * msg)
 		if (potions_by_id[playr->owned[potion_idx].type].fn)
 			potions_by_id[playr->owned[potion_idx].type].fn(ctx);
 		else
-			// SDL_Log("This really shouldn't happen (this potiont cant be used %d)", playr->owned[potion_idx].type);
+			SDL_Log("This really shouldn't happen (this potiont cant be used %d)", playr->owned[potion_idx].type);
 	}
 	else if (msg[0] == 'b')
 	{
