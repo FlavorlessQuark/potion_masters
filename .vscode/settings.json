@@ -2,6 +2,15 @@
 	"C_Cpp.default.configurationProvider": "ms-vscode.makefile-tools",
 	"files.associations": {
 		"*.h": "c",
-		"chrono": "c"
+		"chrono": "c",
+		"array": "c",
+		"charconv": "c",
+		"compare": "c",
+		"functional": "c",
+		"ratio": "c",
+		"tuple": "c",
+		"type_traits": "c",
+		"utility": "c",
+		"variant": "c"
 	}
 }

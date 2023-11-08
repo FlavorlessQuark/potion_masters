@@ -121,14 +121,14 @@ void main_screen(Context *ctx)
 void render_main_screen(Context *ctx)
 {
 	SDL_RenderCopy(ctx->display->renderer, ctx->mainUI.bg, NULL, NULL);
-	SDL_RenderDrawRect(ctx->display->renderer, &ctx->player.brewing.sprite._dst);
+	// SDL_RenderDrawRect(ctx->display->renderer, &ctx->player.brewing.sprite._dst);
 	for (int i = 0; i < ctx->player.ownedCount; ++i)
 	{
 		SDLX_RenderQueuePush(&ctx->player.owned[i].sprite);
 	}
 	for (int i = 0; i < ESSENCE_TYPES; ++i)
 	{
-		SDL_RenderDrawRect(ctx->display->renderer, ctx->mainUI.essences[i].dst);
+		// SDL_RenderDrawRect(ctx->display->renderer, ctx->mainUI.essences[i].dst);
 		SDLX_RenderQueuePush(&ctx->mainUI.essences[i]);
 	}
 
