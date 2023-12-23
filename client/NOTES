@@ -1,4 +1,0 @@
-Needing many sprites to render 1 card is a Parsin
-Instead I should generate a new texture for every card.
-Render the card bG and cost to this texture
-Addittionally, when receiving data, only modify what has changed (i.e there' no point in re-making all the textures)
