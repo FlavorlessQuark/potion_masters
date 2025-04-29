@@ -1,5 +1,5 @@
-#include "../includes/game.h"
-#include "../includes/SDLX/SDLX.h"
+#include "game.h"
+#include "SDLX.h"
 
 Context ctx;
 
@@ -18,7 +18,7 @@ void core(void)
 	SDLX_RenderQueueFlushAll();
 	// window_events(&ctx);
 	SDLX_InputUpdate();
-	SDLX_ContainerUpdate	(root, NULL);
+	// SDLX_ContainerUpdate	(root, NULL);
 	//
 	SDLX_ButtonUpdate();
 

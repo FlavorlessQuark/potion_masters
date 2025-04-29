@@ -21,50 +21,24 @@ typedef struct Row
 	SDLX_Button cardButton[MAX_ROWCARD];
 }	Row;
 
-//-~-~-~-~-~-~-~-~ Host -~-~-~-~-~-~-~-~
+//-~-~-~-~-~-~-~-~ Lobby -~-~-~-~-~-~-~-~
 
-typedef struct HostInput
+typedef struct Join
 {
-	int counter;
-	SDL_Rect status;
-	SDLX_Sprite bg;
-	SDLX_Sprite timer;
-	SDLX_Sprite playerName[MAX_PLAYERS];
-	SDLX_Sprite playerStatus[MAX_PLAYERS];
-}	CliInput;
+	Button nameButton;
+	Button ipButton;
+	Button back;
+	Button start;
 
-typedef struct HostLobby
+}	Join;
+
+typedef struct Lobby
 {
-	int counter;
-	SDL_Rect status;
-	SDLX_Sprite bg;
-	SDLX_Sprite timer;
-	SDLX_Sprite playerName[MAX_PLAYERS];
-	SDLX_Sprite playerStatus[MAX_PLAYERS];
-}	HostInput;
-
-
-//-~-~-~-~-~-~-~-~ Client -~-~-~-~-~-~-~-~
-
-typedef struct CliInput
-{
-	int counter;
-	SDL_Rect status;
-	SDLX_Sprite bg;
-	SDLX_Sprite timer;
-	SDLX_Sprite playerName[MAX_PLAYERS];
-	SDLX_Sprite playerStatus[MAX_PLAYERS];
-}	CliInput;
-
-typedef struct CliLobby
-{
-	int counter;
-	SDL_Rect status;
-	SDLX_Sprite bg;
-	SDLX_Sprite timer;
-	SDLX_Sprite playerName[MAX_PLAYERS];
-	SDLX_Sprite playerStatus[MAX_PLAYERS];
-}	CliLobby;
+	Button start;
+    SDLX_Sprite playerNames[MAX_PLAYERS];
+    SDLX_Sprite playerIcon[MAX_PLAYERS];
+}	Lobby
+;
 
 //-~-~-~-~-~-~-~-~ Core -~-~-~-~-~-~-~-~
 
@@ -72,9 +46,9 @@ typedef struct MainMenu {
     SDLX_Sprite title;
     SDLX_Sprite credit;
 
-    Button host_button;
-    Button join_button;
-    Button exit_button;
+    Button hostButton;
+    Button joinButton;
+    Button exitButton;
 
 }   MainMenu;
 

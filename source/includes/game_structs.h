@@ -41,6 +41,7 @@ typedef struct Context
 	SDLX_Display 	*display;
 
     Connection connection;
+    MainMenu mainMenu;
 	Player  player;
 	Assets  assets;
 }	Context;
